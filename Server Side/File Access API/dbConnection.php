@@ -2,7 +2,7 @@
 /*
 DBConnection for File Access API for Globlock
 Filename:	dbConnection.php
-Version: 	1.0
+Version: 	1.1
 Author: 	Alex Quigley, x10205691
 Created: 	22/02/2014
 Updated: 	22/02/2014
@@ -26,7 +26,7 @@ Usage:
 include 'logWrite.php';
 
 /* Define constants to connect to database */
-	DEFINE('DATABASE_USER', 'aquigley_globlock');
+	DEFINE('DATABASE_USER', 'aquigley_glblck');
 	DEFINE('DATABASE_PASSWORD', '67glblck76');
 	DEFINE('DATABASE_HOST', '50.116.97.181');
 	DEFINE('DATABASE_NAME', 'aquigley_globlock');
