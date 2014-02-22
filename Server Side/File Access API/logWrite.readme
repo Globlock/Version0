@@ -1,7 +1,6 @@
-<?README
 README for Write to logfile for Globlock
 Filename:	logWrite.readme
-Version: 	1.0
+Version: 	1.1
 Author: 	Alex Quigley, x10205691
 Created: 	22/02/2014
 Updated: 	22/02/2014
@@ -26,5 +25,13 @@ Structure:
 	07_a > write to System DB log
 	07_b > write to Error DB log
 	07_c > write to Security DB log
-		
+
+Usage:
+<?php
+	include 'logWrite.php';
+	writeLogInfo("Writing to Transaction Log");
+	writeLogInfo("Writing to System Error Log", 1);
+	writeLogInfo("Writing to Security Log", -1);
+	//Test Case
+	writeLogInfo("Writing to Test Log Log", 99);
 ?>

@@ -16,7 +16,16 @@ Description:
 	
 Successful Operation Result:
 	Successfully writes to a file.
+	>>Successfully write to a DB
 
+Usage: 
+	include 'logWrite.php';
+	writeLogInfo("Writing to Transaction Log");
+	writeLogInfo("Writing to System Error Log", 1);
+	writeLogInfo("Writing to Security Log", -1);
+	//Test Case
+	writeLogInfo("Writing to Test Log Log", 99);
+	
 TO DO:
 >> Have file locations configurable from a central location
 >> Include writing log information to DB.
@@ -54,12 +63,12 @@ function writeLogInfo($info, $type=0){
 			$info = addHeaderInfo($info, "System");
 			$location = $logFiles["system_error"]["directory"].$logFiles["system_error"]["filename"];
 			break;
-		case 2:
+		case -1:
 			$info = addHeaderInfo($info, "!!SECURITY!!");
 			$location = $logFiles["security_err"]["directory"].$logFiles["security_err"]["filename"];
 			break;
 		case 99:
-			$info = addHeaderInfo($info, "!!TESTING!!");
+			$info = addHeaderInfo($info, "--TESTING--");
 			$location = $logFiles["test_logging"]["directory"].$logFiles["test_logging"]["filename"];
 			break;
 		
