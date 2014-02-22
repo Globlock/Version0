@@ -4,8 +4,10 @@ File Access API for Globlock
 Version: 	1.1
 Author: 	Alex Quigley, x10205691
 Created: 	10/02/2014
+Updated: 	22/02/2014
 
 Dependencies:
+	
 	logWrite.php (child)
 	
 Description: 
@@ -21,8 +23,12 @@ Successful Operation Result:
 
 */
 
-/* Global Files, Libraries and Declarations */
-
+	/* Global Files, Libraries and Declarations */
+	
+	
+	/* Strain Inputs */
+	
+	
 	/* DB Configuration/Connectivity */
 	
 	/* 
