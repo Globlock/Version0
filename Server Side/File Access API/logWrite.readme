@@ -1,0 +1,30 @@
+<?README
+README for Write to logfile for Globlock
+Filename:	logWrite.readme
+Version: 	1.0
+Author: 	Alex Quigley, x10205691
+Created: 	22/02/2014
+Updated: 	22/02/2014
+
+logWrite.readme...
+
+Structure:
+01 > Setup Environment Variables
+02 > Check to see if files exist
+	02_a > If not, create
+	02_b > If yes, test write
+03 > Setup DB environment variables
+04 > Check to see if DB exists
+	04_a > If not, error
+	04_b > If yes, test write
+05 > Add Header Information/Time Stamp
+06 > Accept Input and write
+	06_a > write to System log
+	06_b > write to Error log
+	06_c > write to Security log
+07 > Accept Input and write
+	07_a > write to System DB log
+	07_b > write to Error DB log
+	07_c > write to Security DB log
+		
+?>

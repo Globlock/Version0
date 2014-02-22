@@ -1,7 +1,7 @@
 <?php 
 /*
 File Access API for Globlock
-Version: 	1.0
+Version: 	1.1
 Author: 	Alex Quigley, x10205691
 Created: 	10/02/2014
 
