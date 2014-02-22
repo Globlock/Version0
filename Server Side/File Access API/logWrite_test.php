@@ -11,10 +11,9 @@ TO DO:
 >> Test - file locations configurable from a central location
 >> Test - Include writing log information to DB.
 	
- */
+*/
 
- 
- include 'logWrite.php';
+include 'logWrite.php';
 
 // Environment Variables
 echo "<h1>Logfile Environment Variables: </h1>";

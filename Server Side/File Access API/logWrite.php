@@ -19,12 +19,14 @@ Successful Operation Result:
 	>>Successfully write to a DB
 
 Usage: 
-	include 'logWrite.php';
-	writeLogInfo("Writing to Transaction Log");
-	writeLogInfo("Writing to System Error Log", 1);
-	writeLogInfo("Writing to Security Log", -1);
-	//Test Case
-	writeLogInfo("Writing to Test Log Log", 99);
+	<?php
+		include 'logWrite.php';
+		writeLogInfo("Writing to Transaction Log");
+		writeLogInfo("Writing to System Error Log", 1);
+		writeLogInfo("Writing to Security Log", -1);
+		//Test Case
+		writeLogInfo("Writing to Test Log Log", 99);
+	?>
 	
 TO DO:
 >> Have file locations configurable from a central location
