@@ -1,11 +1,11 @@
 <?php 
 /*
-DBConnection for File Access API for Globlock
+Encryption Helper for File Access API - Globlock
 Filename:	encryptionHelper.php
-Version: 	1.0
+Version: 	1.1
 Author: 	Alex Quigley, x10205691
 Created: 	27/02/2014
-Updated: 	27/02/2014
+Updated: 	28/02/2014
 
 Dependencies:
 	logWrite.php (child)
@@ -20,7 +20,7 @@ Successful Operation Result:
 
 Usage: 
 	<?php
-		include handshake.php;
+		include encryptionHelper.php;
 		getHandShakeResponse("_sometext_");
 		addSalt("_sometext_", "handshake"/"other"); //
 		addSalt("_sometext_");
@@ -33,21 +33,25 @@ TO DO:
 */
 
 /* File References */
-include 'logWrite.php';
+//include 'logWrite.php';
 
-/* Declarations [S00]*/
+/* Declarations */
 $saltValues = array("handshake" => "HANDSHAKE:abc123_GloblockDevelopmentTest", 
-					"Other" => "Other:abc123_GloblockDevelopmentTest",
+					"other" => "Other:abc123_GloblockDevelopmentTest",
+					"session" => "Session:laundrytokens",
 					"default" => "Default:abc123_GloblockDevelopmentTest");
 
+/** Testing Only */
+//getHandShakeResponse("Testing");					
+					
 /** getHandShakeResponse
 	Receives a string message, adds the handshake defined salt (addSalt), 
 	encrypts the message (encryptValue), and returns the encrypted string.
+	Logs the IP address of the request during the process.
 	[required] Parameter $message, which defines the information to be encrypted. 
-
 */					
 function getHandShakeResponse($message){
-	writeLogInfo("Handshake Request: ". $_SERVER['REMOTE_ADDR']);
+	writeLogInfo("Handshake Request to :". $_SERVER['SERVER_NAME'] ." | From :". $_SERVER['REMOTE_ADDR']);
 	$message = addSalt($message, "handshake");
 	$message = encryptValue($message);
 	return $message;
@@ -70,4 +74,5 @@ function addSalt($message, $salt = "default"){
 function encryptValue($message){
 	return sha1($message);
 }
+
 ?>

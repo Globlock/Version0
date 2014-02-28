@@ -1,0 +1,8 @@
+create an empty session record in the database
+Activity flag at 0 by default
+When finished/dropped activity flag marked -1
+Activity can then be used to map to each step/stage
+create a random session token
+Write this information to the DB
+
+
