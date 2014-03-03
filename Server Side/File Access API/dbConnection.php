@@ -38,9 +38,9 @@ include 'logWrite.php';
 
 /*Define constant to connect to database */
 	writeLogInfo("Attempting DB Connection...");
-	$dbc = @mysqli_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASS, DATABASE_NAME);
+	$databaseConnection = mysqli_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASS, DATABASE_NAME);
 
-	if (!$dbc) {
+	if (!$databaseConnection) {
 		writeLogInfo("Connection Failed!");
 		writeLogInfo("DB Connection Attempt failed:".mysqli_connect_error(), 1);
 		//trigger_error('Could not connect to MySQL: '. mysqli_connect_error());

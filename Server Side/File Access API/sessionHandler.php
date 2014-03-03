@@ -2,10 +2,10 @@
 /*
 sessionHandler for File Access API for Globlock
 Filename:	sessionHandler.php
-Version: 	1.0
+Version: 	1.1
 Author: 	Alex Quigley, x10205691
 Created: 	28/02/2014
-Updated: 	28/02/2014
+Updated: 	03/02/2014
 
 Dependencies:
 	logWrite.php (child)
@@ -31,7 +31,8 @@ Usage:
 	?>
 
 TO DO:
->> Insert Token in DB
+<< Insert Token in DB
+<< Have single array maintaining all queries
 >> Tidy up definitions
 >> Handle other stages
 
@@ -40,67 +41,210 @@ TO DO:
 //include 'logWrite.php';
 include 'dbconnection.php';
 include 'encryptionHelper.php';
-/* Declarations */
-$createTable = 	"CREATE TABLE IF NOT EXISTS client_sessions (
-					session_id int(11) NOT NULL AUTO_INCREMENT, 
-					session_token CHAR(64) NOT NULL DEFAULT '1',
-					session_activity int(11) NOT NULL DEFAULT '0',
-					PRIMARY KEY (session_id)
-				)";
-				
-$insPlHolder = 	"INSERT INTO client_sessions (
-					session_id, session_token, session_activity
-				) VALUES (
-					NULL, '0', '0'
-				)";
 
+
+/* Declarations */
+$sqlStatements = array(
+	"test_table" => 
+		"SELECT 1 from client_sessions", 
+	"create_table" => 
+		"CREATE TABLE IF NOT EXISTS client_sessions (
+			session_id int(11) NOT NULL AUTO_INCREMENT, 
+			session_token CHAR(64) NOT NULL DEFAULT '1',
+			session_activity int(11) NOT NULL DEFAULT '0',
+			PRIMARY KEY (session_id))", 
+	"insert_placeholder" => 
+		"INSERT INTO client_sessions (
+			session_id, session_token, session_activity ) 
+			VALUES ( NULL, 0, 0 )",
+	"select_session" => 
+		"SELECT session_id FROM client_sessions 
+			WHERE session_activity =?
+			AND session_token=?",
+	"update_token" => "UPDATE client_sessions 
+			SET session_activity =?, session_token=?
+			WHERE session_id =?",
+	"update_session" => "UPDATE client_sessions 
+			SET session_activity =?, session_token=?
+			WHERE session_id =?",		
+	"select_session_token" => 
+		"SELECT session_id FROM client_sessions 
+			WHERE session_token =?
+			AND session_activity != -1,",
+	"dispose_session" => 
+		"UPDATE client_sessions 
+			SET session_activity =-1
+			WHERE session_token =? 
+			AND session_activity != -1"
+);
+
+$sessionStages = array(
+	"initialise_token" 	=> 0,
+	"session_request" 	=> 1,
+	"globe_validation" 	=> 2,
+	"globe_deallocate" 	=> 3,
+	"globe_assignment"  => 4,
+	"globe_pull_assoc"	=> 5,
+	"globe_push_assoc"	=> 6,	
+	
+);
+				
 /** Testing Only */
 generateSessionToken();
+//4CC6A0C8DD2DD0C467183F66CAAD15840210ED2A
+//echo disposeSession("4EDD8418A53FD89D16BD73B1270C090CEF338EE3");
+verifySession("4EDD8418A53FD89D16BD73B1270C090CEF338EE3", 7);
+
 
 /** generateSessionToken */
 function generateSessionToken(){
+	global $sessionStages;
+	writeLogInfo("Generating 'session_token' in [client_sessions]..."); 
 	createDBPlaceholder();
-	$token = generateToken();
+	$session_token = generateToken();
+	$session_record = selectToken(0,0);
+	if (!updateToken($session_record, $session_token, $sessionStages['session_request'])) return null;
+	writeLogInfo("Created 'session_token' in [client_sessions] Table"); 
+	return $session_token;
 }
 
 /** */
 function createDBPlaceholder(){
-	global $dbc;
-	$val = mysqli_query($dbc, 'SELECT 1 from `client_sessions`');
-	if($val == FALSE) createSessionTable();
-	insertPlaceholder();
-}
-
-/** */
-function insertPlaceholder(){
-	global $dbc, $insPlHolder;
-	if (mysqli_query($dbc,$insPlHolder)) {
-			writeLogInfo("Created Placeholder in Table [client_sessions]!"); 
-	} else {
-		writeLogInfo("Create placeholder in [client_sessions] failed!");
-		writeLogInfo("Placeholder cannot be created in Table [client_sessions]! | [". mysqli_error($dbc) ."]", 1) ;
+	global $databaseConnection, $sqlStatements;
+	try{	
+		$result = mysqli_query($databaseConnection, $sqlStatements['test_table']);
+		if($result == FALSE) createSessionTable();
+		insertPlaceholder();
+	} catch (Exception $e){
+		writeLogInfo("Exception occurred in [createDBPlaceholder] ! | [". $e ."]", 1) ;
 	}
 }
 
 /** */
-function insertToken(){
-	// >> TO DO
-}
-/** */
 function createSessionTable(){
-	global $dbc, $createTable;
-	writeLogInfo("Table [client_sessions] not found. Creating...");
-	if (mysqli_query($dbc,$createTable))  {
-			writeLogInfo("Table [client_sessions] created!"); 
-	} else {
+	global $databaseConnection, $sqlStatements;
+	try{
+		writeLogInfo("Table [client_sessions] not found. Creating...");
+		$result = mysqli_query($databaseConnection, $sqlStatements['create_table']);
+		if ($result) writeLogInfo("Table [client_sessions] created!"); 
+		else throw new Exception("Exception Thrown:".mysqli_error($databaseConnection));	
+	} catch (Exception $e) {
 		writeLogInfo("Create Table [client_sessions] failed!");
-		writeLogInfo("Table [client_sessions] cannot be created! | [". mysqli_error($dbc) ."]", 1) ;
+		writeLogInfo("Exception occurred in [createSessionTable] ! | [". $e ."]", 1) ;
+	}
+}
+
+/** */
+function insertPlaceholder(){
+	global $databaseConnection, $sqlStatements;
+	try {	
+		if (!mysqli_query($databaseConnection, $sqlStatements['insert_placeholder'])) 
+		throw new Exception("Exception Thrown:".mysqli_error($databaseConnection));		
+	} catch (Exception $e){
+		writeLogInfo("Create Placeholder in [client_sessions] failed!");
+		writeLogInfo("Exception occurred in [insertPlaceholder] ! | [". $e ."]", 1) ;
+	}
+}
+
+/** */
+function selectToken($session_token, $session_activity=0){
+	global $databaseConnection, $sqlStatements;
+	try {	
+		$prepSTMT =  $databaseConnection->prepare($sqlStatements['select_session']);
+		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
+		$result = $prepSTMT->bind_param('is', $session_activity, $session_token);
+		if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
+		$prepSTMT->execute();
+		$result = $prepSTMT->get_result();
+		if ( $myrow = $result->fetch_assoc()) return $myrow["session_id"];
+		else throw new Exception("Exception Thrown (Resultset):".mysqli_error($databaseConnection));
+		$prepSTMT->close();
+	} catch(Exception $e) { 
+		writeLogInfo("Token select error in [selectToken]!");
+		writeLogInfo("Exception occurred in [selectToken] !  | [". $e ."]", 1) ;
+		return -1;
+	}
+}
+
+/** */
+function updateToken($session_record, $session_token, $session_activity){
+	global $databaseConnection, $sqlStatements;
+	try{
+		$prepSTMT =  $databaseConnection->prepare($sqlStatements['update_token']);
+		if(!$prepSTMT)throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
+		$result = $prepSTMT->bind_param('isi', $session_activity, $session_token, $session_record);
+		if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
+		$prepSTMT->execute();
+		$result = $prepSTMT->affected_rows;
+		$prepSTMT->close();
+		return ($result >= 1);
+	} catch (Exception $e){
+		writeLogInfo("Token update error in [updateToken]!");
+		writeLogInfo("Exception occurred in [updateToken]! | [". $e ."]", 1) ;
+	}
+}
+
+/** */
+function updateSession($session_record, $session_activity){
+	global $databaseConnection, $sqlStatements;
+	try{
+		$prepSTMT =  $databaseConnection->prepare($sqlStatements['update_token']);
+		if(!$prepSTMT)throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
+		$result = $prepSTMT->bind_param('isi', $session_activity, $session_token, $session_record);
+		if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
+		$prepSTMT->execute();
+		$result = $prepSTMT->affected_rows;
+		$prepSTMT->close();
+		return ($result >= 1);
+	} catch (Exception $e){
+		writeLogInfo("Token update error in [updateToken]!");
+		writeLogInfo("Exception occurred in [updateToken]! | [". $e ."]", 1) ;
 	}
 }
 
 /** */
 function generateToken(){
 	$randString = addSalt(date("Ymdhis") . rand(1,1000), "session");
-	return encryptValue($randString);
+	return strtoupper(encryptValue($randString));
 }
+
+/** */
+function verifySession($sessionToken, $session_activity){
+	//return true/false;
+	try{
+		$session_record = selectToken($sessionToken, $session_activity);
+		if($session_record = 1){
+			$updateSession($session_record, $session_activity+1);
+			return true;
+		} else {
+			echo "false".$session_record;
+			throw new Exception("Exception Thrown (session Mismatch), unable to find session at stage [".$session_activity."]");
+		}
+	} catch (Exception $e){
+		writeLogInfo("Token verification failed in [verifySession]!");
+		writeLogInfo("Exception occurred in [verifySession]! | [". $e ."]", -1) ;
+		disposeSessions($sessionToken);
+	}
+	
+}
+
+function disposeSessions($sessionToken){
+	global $databaseConnection, $sqlStatements;
+	try{
+		$prepSTMT =  $databaseConnection->prepare($sqlStatements['dispose_session']);
+		if(!$prepSTMT)throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
+		$result = $prepSTMT->bind_param('s', $sessionToken);
+		if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
+		$prepSTMT->execute();
+		$result = $prepSTMT->affected_rows;
+		$prepSTMT->close();
+		writeLogInfo("Dropping session [disposeSessions]! | [". $sessionToken ."]", -1) ;
+		return ($result >= 1);
+	} catch (Exception $e){
+		writeLogInfo("Token update error in [sessionDispose]!");
+		writeLogInfo("Exception occurred in [sessionDispose]! | [". $e ."]", 1) ;
+	}
+}
+
+
 ?>
