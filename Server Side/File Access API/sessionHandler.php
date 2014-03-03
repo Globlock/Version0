@@ -61,16 +61,16 @@ $sqlStatements = array(
 		"SELECT session_id FROM client_sessions 
 			WHERE session_activity =?
 			AND session_token=?",
+	"select_session_token" => 
+		"SELECT session_id FROM client_sessions 
+			WHERE session_token =?
+			AND session_activity != -1,",
 	"update_token" => "UPDATE client_sessions 
 			SET session_activity =?, session_token=?
 			WHERE session_id =?",
 	"update_session" => "UPDATE client_sessions 
 			SET session_activity =?, session_token=?
 			WHERE session_id =?",		
-	"select_session_token" => 
-		"SELECT session_id FROM client_sessions 
-			WHERE session_token =?
-			AND session_activity != -1,",
 	"dispose_session" => 
 		"UPDATE client_sessions 
 			SET session_activity =-1
@@ -188,9 +188,9 @@ function updateToken($session_record, $session_token, $session_activity){
 function updateSession($session_record, $session_activity){
 	global $databaseConnection, $sqlStatements;
 	try{
-		$prepSTMT =  $databaseConnection->prepare($sqlStatements['update_token']);
+		$prepSTMT =  $databaseConnection->prepare($sqlStatements['update_session']);
 		if(!$prepSTMT)throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		$result = $prepSTMT->bind_param('isi', $session_activity, $session_token, $session_record);
+		$result = $prepSTMT->bind_param('ii', $session_activity, $session_record);
 		if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
 		$prepSTMT->execute();
 		$result = $prepSTMT->affected_rows;
@@ -213,17 +213,13 @@ function verifySession($sessionToken, $session_activity){
 	//return true/false;
 	try{
 		$session_record = selectToken($sessionToken, $session_activity);
-		if($session_record = 1){
-			$updateSession($session_record, $session_activity+1);
-			return true;
-		} else {
-			echo "false".$session_record;
-			throw new Exception("Exception Thrown (session Mismatch), unable to find session at stage [".$session_activity."]");
-		}
+		if($session_record == -1) throw new Exception("Exception Thrown (session Mismatch), unable to find session at stage [".$session_activity."]");
+		return true;		
 	} catch (Exception $e){
 		writeLogInfo("Token verification failed in [verifySession]!");
 		writeLogInfo("Exception occurred in [verifySession]! | [". $e ."]", -1) ;
 		disposeSessions($sessionToken);
+		return false;
 	}
 	
 }
