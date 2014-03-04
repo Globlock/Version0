@@ -2,10 +2,10 @@
 /*
 DBConnection for File Access API for Globlock
 Filename:	dbConnection.php
-Version: 	1.1
+Version: 	1.2
 Author: 	Alex Quigley, x10205691
 Created: 	22/02/2014
-Updated: 	22/02/2014
+Updated: 	04/03/2014
 
 Dependencies:
 	logWrite.php (child)
@@ -23,13 +23,9 @@ Usage:
 	?>
 */
 /* File References */
-include 'logWrite.php';
+//include 'logWrite.php';
 
 /* Define constants to connect to database */
-	//DEFINE('DATABASE_USER', 'aquigley_glblck');
-	//DEFINE('DATABASE_PASS', '67glblck76');
-	//DEFINE('DATABASE_HOST', '50.116.97.181');
-	//DEFINE('DATABASE_NAME', 'aquigley_globlock');
 	DEFINE('DATABASE_USER', 'root');
 	DEFINE('DATABASE_PASS', '');
 	DEFINE('DATABASE_HOST', '127.0.0.1');

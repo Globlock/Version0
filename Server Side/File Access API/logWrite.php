@@ -1,10 +1,11 @@
 <?php
 /*
-Write to logfile for Globlock
-Version: 	1.1
+Write to logfile - Globlock
+Filename:	logWrite.php
+Version: 	1.2
 Author: 	Alex Quigley, x10205691
 Created: 	10/02/2014
-Updated:	22/02/2014
+Updated:	04/03/2014
 
 Dependencies:
 	FileAccessAPI.php (parent)

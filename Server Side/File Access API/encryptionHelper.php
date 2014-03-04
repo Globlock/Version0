@@ -2,10 +2,10 @@
 /*
 Encryption Helper for File Access API - Globlock
 Filename:	encryptionHelper.php
-Version: 	1.1
+Version: 	1.2
 Author: 	Alex Quigley, x10205691
 Created: 	27/02/2014
-Updated: 	28/02/2014
+Updated: 	04/03/2014
 
 Dependencies:
 	logWrite.php (child)
@@ -24,7 +24,7 @@ Usage:
 		getHandShakeResponse("_sometext_");
 		addSalt("_sometext_", "handshake"/"other"); //
 		addSalt("_sometext_");
-		encryptValue("_sometext_");
+		encryptMessage("_sometext_");
 	?>
 
 TO DO:
@@ -46,14 +46,14 @@ $saltValues = array("handshake" => "HANDSHAKE:abc123_GloblockDevelopmentTest",
 					
 /** getHandShakeResponse
 	Receives a string message, adds the handshake defined salt (addSalt), 
-	encrypts the message (encryptValue), and returns the encrypted string.
+	encrypts the message (encryptMessage), and returns the encrypted string.
 	Logs the IP address of the request during the process.
 	[required] Parameter $message, which defines the information to be encrypted. 
 */					
 function getHandShakeResponse($message){
 	writeLogInfo("Handshake Request to :". $_SERVER['SERVER_NAME'] ." | From :". $_SERVER['REMOTE_ADDR']);
 	$message = addSalt($message, "handshake");
-	$message = encryptValue($message);
+	$message = encryptMessage($message);
 	return $message;
 }
 
@@ -67,11 +67,11 @@ function addSalt($message, $salt = "default"){
 	return $saltValues[$salt] . $message;
 }
 
-/**	encryptValue
+/**	encryptMessage
 	Encrypts the message passed in as a parameter (currently uses SHA1).
 	[required] Parameter $message, which defines the information to be encrypted. 
 */	
-function encryptValue($message){
+function encryptMessage($message){
 	return sha1($message);
 }
 

@@ -1,11 +1,11 @@
 <?php
 /*
-sessionHandler for File Access API for Globlock
+Session Handler for File Access API - Globlock
 Filename:	sessionHandler.php
-Version: 	1.1
+Version: 	1.2
 Author: 	Alex Quigley, x10205691
 Created: 	28/02/2014
-Updated: 	03/02/2014
+Updated: 	04/03/2014
 
 Dependencies:
 	logWrite.php (child)
@@ -39,8 +39,8 @@ TO DO:
 */
 /* File References */
 //include 'logWrite.php';
-include 'dbconnection.php';
-include 'encryptionHelper.php';
+//include 'dbconnection.php';
+//include 'encryptionHelper.php';
 
 
 /* Declarations */
@@ -89,13 +89,6 @@ $sessionStages = array(
 	
 );
 				
-/** Testing Only */
-generateSessionToken();
-//4CC6A0C8DD2DD0C467183F66CAAD15840210ED2A
-//echo disposeSession("4EDD8418A53FD89D16BD73B1270C090CEF338EE3");
-verifySession("4EDD8418A53FD89D16BD73B1270C090CEF338EE3", 7);
-
-
 /** generateSessionToken */
 function generateSessionToken(){
 	global $sessionStages;
@@ -103,7 +96,7 @@ function generateSessionToken(){
 	createDBPlaceholder();
 	$session_token = generateToken();
 	$session_record = selectToken(0,0);
-	if (!updateToken($session_record, $session_token, $sessionStages['session_request'])) return null;
+	if (!updateToken($session_record, $session_token, $sessionStages['session_request'])) return -1;
 	writeLogInfo("Created 'session_token' in [client_sessions] Table"); 
 	return $session_token;
 }
@@ -205,7 +198,7 @@ function updateSession($session_record, $session_activity){
 /** */
 function generateToken(){
 	$randString = addSalt(date("Ymdhis") . rand(1,1000), "session");
-	return strtoupper(encryptValue($randString));
+	return strtoupper(encryptMessage($randString));
 }
 
 /** */

@@ -3,26 +3,25 @@
 class requestBroker{
 	
 	var $brokerData = array(
-	"header" => ""
+		"broker_header"	=> "",
+		"broker_errors"	=> "",
+		"session_user" 	=> "",
+		"session_token" => "",
+		"globe_id" 		=> "",
+		"broker_msg"	=> ""
 	);
 		
-	var $request_header, $username, $password;
-	var $message ="";
-	var $session_token = "";
-	var $globe_id = "";
-		
-	function __construct($request_header, $username, $password){
-		$this->$brokerData['header'] = $request_header;
-		//$this -> $brokerData['header'] = $request_header;
-		$this -> $username = $username;
-		$this -> $password = $password;
+	function __construct($request_header, $session_user){
+		$this -> brokerData['broker_header'] = $request_header;
+		$this -> brokerData['session_user'] = $session_user;
 	}
 	
 	function setValue($type, $value){
-		$this -> $type = sanitiseValue($value);
+		$value = $this->sanitiseValue($value);
+		$this -> brokerData[$type] = $value;
 	}
 	
-	function sanitiseValue($data){
+	private function sanitiseValue($data){
 		$data = filter_var($data, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
 		$data = filter_var($data, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
 		$data = trim($data);
@@ -32,14 +31,14 @@ class requestBroker{
 		return $data;
 	}
 	
-	function returnJSON($data){
+	function returnJSON(){
 		header('Content-Type: application/json');
-		return json_encode($data);
+		return json_encode($this->brokerData );
 	}
 }
 
-$bills = new requestBroker("head","name","pass");
-
-$jsonresponse = $bills->returnJSON($bills->brokerData);
+$bills = new requestBroker("head", "ajqshake");
+$bills->setValue("broker_header", "me head");
+$jsonresponse = $bills->returnJSON();
 echo $jsonresponse;
 ?>
