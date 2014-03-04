@@ -52,6 +52,7 @@ $sqlStatements = array(
 			session_id int(11) NOT NULL AUTO_INCREMENT, 
 			session_token CHAR(64) NOT NULL DEFAULT '1',
 			session_activity int(11) NOT NULL DEFAULT '0',
+			session_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			PRIMARY KEY (session_id))", 
 	"insert_placeholder" => 
 		"INSERT INTO client_sessions (
@@ -75,6 +76,11 @@ $sqlStatements = array(
 		"UPDATE client_sessions 
 			SET session_activity =-1
 			WHERE session_token =? 
+			AND session_activity != -1",
+	"dispose_expired" =>
+		"UPDATE client_sessions
+			SET session_activity =-1
+			WHERE DATE_SUB(NOW(),INTERVAL 1 HOUR) > session_create
 			AND session_activity != -1"
 );
 
@@ -92,15 +98,29 @@ $sessionStages = array(
 /** generateSessionToken */
 function generateSessionToken(){
 	global $sessionStages;
-	writeLogInfo("Generating 'session_token' in [client_sessions]..."); 
+	writeLogInfo("Generating 'session_token' in [client_sessions]...");
 	createDBPlaceholder();
 	$session_token = generateToken();
 	$session_record = selectToken(0,0);
 	if (!updateToken($session_record, $session_token, $sessionStages['session_request'])) return -1;
-	writeLogInfo("Created 'session_token' in [client_sessions] Table"); 
+	writeLogInfo("Created 'session_token' in [client_sessions] Table");
+	disposeExpired();	
 	return $session_token;
 }
-
+/** */
+function disposeExpired(){
+	global $databaseConnection, $sqlStatements;
+	try{	
+		if ($stmt = $databaseConnection->prepare($sqlStatements['dispose_expired'])) {
+			$stmt->execute();
+			$count = $stmt->affected_rows;
+			if($count > 0) writeLogInfo("Disposed of  ".$count." expired 'session_token' in [client_sessions] Table");
+			$stmt->close();
+		}
+	} catch (Exception $e){
+		writeLogInfo("Exception occurred in [createDBPlaceholder] ! | [". $e ."]", 1) ;
+	}
+}
 /** */
 function createDBPlaceholder(){
 	global $databaseConnection, $sqlStatements;

@@ -110,7 +110,7 @@ function writeToLog($info, $location){
 	[optional] Parameter $Type, which defines which category of log. Default value of '-'.
 */
 function addHeaderInfo($info, $type="-"){
-	$dateStamp = date('Ymd-Hms');
+	$dateStamp = date('Ymd-His');
 	return $dateStamp."|".$type."|".$info.PHP_EOL;
 }
 

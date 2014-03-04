@@ -1,6 +1,6 @@
 <?php 
 /*
-DBConnection for File Access API for Globlock
+DBConnection for File Access API - Globlock
 Filename:	dbConnection.php
 Version: 	1.2
 Author: 	Alex Quigley, x10205691
