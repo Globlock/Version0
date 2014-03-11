@@ -65,7 +65,7 @@ $sqlStatements = array(
 	"select_session_token" => 
 		"SELECT session_id FROM client_sessions 
 			WHERE session_token =?
-			AND session_activity != -1,",
+			AND session_activity != -1",
 	"update_token" => "UPDATE client_sessions 
 			SET session_activity =?, session_token=?
 			WHERE session_id =?",

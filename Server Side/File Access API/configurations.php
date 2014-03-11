@@ -8,7 +8,8 @@ Created: 	10/03/2014
 Updated: 	10/03/2014
 
 Dependencies:
-	FileAccessAPI.php (parent) 
+	FileAccessAPI.php (parent)
+	Configurations.ini
 	
 Description: 
 	Contains constant delcarations class of static constants,
@@ -38,11 +39,27 @@ class configurations {
 	public const PROJ_AUTH = "Alex Quigley, x10205691";
 	public $Proj = array();
 	    
+	
 	public static function getPrivate_Const() {
         return self::$_instance->_someProperty; // allowed, self::$_instance is static, but a real object nonetheless
     }
 
+	
 }
+
+//Sample code
+//define('BIRD', 'Dodo bird');
+
+// Parse without sections
+//$ini_array = parse_ini_file("sample.ini");
+//print_r($ini_array);
+
+// Parse with sections
+//$ini_array = parse_ini_file("sample.ini", true);
+//print_r($ini_array);
+
+
+
 /** General Constants */
 $proj_constants = array();
 define("PROJ_TITL", "Globlock", true);
