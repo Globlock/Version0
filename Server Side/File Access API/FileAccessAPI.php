@@ -25,40 +25,26 @@ Successful Operation Result:
 TO DO:
 >>MANAGE USER ACCESS and USER TYPE
 */
-// define variables and set to empty values
 
 	/* Global Files, Libraries and Declarations */
-	//include dbConnections etc..
-	//include sessionHandler.php;
+	include 'configurations.php';
 	include 'logWrite.php';
 	include 'dbconnection.php';
 	include 'sessionHandler.php';
 	include 'encryptionHelper.php';
 	include 'requestBroker.php';
 	
-	
-	
-	//include login
-	
 	/* Strain Inputs */
 	//htmlspecialchars etc..
-	 
-	/* DB Configuration/Connectivity */
-	//include dbConnections etc..
-	 
-	/* Error Log/Transaction Log
-		error_log("You messed up!", 3, "/var/tmp/my-errors.log");
-		error_log("You messed up!", 3, "/var/tmp/my-errors.log");
-	*/
 
 
-$broker = new requestBroker("Initialised", null, null);
-if(!start($broker)) exit();
-handleRequest($broker);
+	$broker = new requestBroker("Initialised", null);
+	if(!start($broker)) exit();
+	handleRequest($broker);
 
 function start(&$broker){
 	if (!($_SERVER["REQUEST_METHOD"] == "POST")) {
-		$broker->handleErrors("NON [POST] TYPE SERVER REQUEST ");
+		$broker->handleErrors("NON [POST] TYPE SERVER REQUEST ",121);
 		echo $broker->returnJSON();
 		return false;
 	}

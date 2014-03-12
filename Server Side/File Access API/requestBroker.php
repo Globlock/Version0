@@ -2,13 +2,14 @@
 /*
 Request Broker for File Access API - Globlock
 Filename:	requestBroker.php
-Version: 	1.1
+Version: 	1.2
 Author: 	Alex Quigley, x10205691
 Created: 	04/03/2014
-Updated: 	04/03/2014
+Updated: 	12/03/2014
 
 Dependencies:
 	FileAccessAPI.php (parent)
+	configurations.php (sibling)
 	
 Description: 
 	Class used to store and manage request headers and information from the client.
@@ -28,28 +29,20 @@ Usage:
 */
 class requestBroker{
 
-	var $brokerData = array(
-		"broker_header"	=> null,
-		"error_code"	=> null,
-		"error_message"	=> null,
-		"session_user" 	=> null,
-		"session_token" => null,
-		"request_id"	=> null,
-		"request_body"	=> null,
-		"file_location" => null
-	);
-	var $emptyBroker; 
-		
+	private $brokerData;
+	private $emptyBroker;
+	
 	function __construct($request_header, $session_user){
-		$this -> emptyBroker = $this -> brokerData;
-		$this -> brokerData['broker_header'] = $request_header;
-		$this -> brokerData['session_user'] = $session_user;
-		
+		$configuration = new configurations();
+		$this->emptyBroker = $configuration->extractSection("empty_broker");
+		$this->brokerData = $configuration->extractSection("empty_broker");
+		$this->brokerData['header']['type'] = $request_header;
+		$this->brokerData['user']['name'] = $session_user;
 	}
 	
-	function setValue($type, $value){
+	function setValue($section, $type, $value){
 		$value = $this->sanitiseValue($value);
-		$this -> brokerData[$type] = $value;
+		$this->brokerData[$section][$type] = $value;
 	}
 	
 	private function sanitiseValue($data){
@@ -62,35 +55,38 @@ class requestBroker{
 		return $data;
 	}
 		
-	private function flushBroker(){
-		$this->brokerData = $this->emptyBroker;
-	}
-	
 	function validateHeader(){
-		switch ($this -> brokerData['broker_header']){
+		switch ($this -> brokerData['header']['type']){
 			case "HANDSHAKE":
 			case "SESSION":
+			case "ABORT":
 			case "VALIDATE":
-			case "ASSIGN":
-			case "FORCE":
+			case "SET":
+			case "REDO":
 			case "DROP":
 			case "PULL":
 			case "PUSH":
+			case "TEST":
 				return true;
 			default:
 				return false;
 		}
 	}
+
+	public function flushBroker(){
+		$this->brokerData = $this->emptyBroker;
+	}
 	
 	function handleErrors($errorMessage, $errorCode){
 		$this->flushBroker();
-		$this -> setValue("broker_header", "ERROR!");
-		$this -> setValue("error_message", $errorMessage);
-		$this -> setValue("error_code", $errorCode);
+		$this -> setValue("header", "type", "ERROR!");
+		$this -> setValue("header", "message", "Error occurred during transaction request [".$errorCode."]");
+		$this -> setValue("error", "message", $errorMessage);
+		$this -> setValue("error", "code", $errorCode);
 	}
 	
-	function returnJSON(){
-		header('Content-Type: application/json');
+	function returnJSON($headEncode = 0){
+		if ($headEncode <> 0) header('Content-Type: application/json');
 		return json_encode($this->brokerData );
 	}
 }

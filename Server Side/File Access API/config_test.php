@@ -36,26 +36,22 @@ echo json_encode($configs["project_info"]["version"]);
 echo "<br/>";
 echo json_encode($configs["project_info"]["runmode"]);
 
-echo "<br/>";
-echo "<br/>";
+echo "<br/><br/>";
 
 echo $configs["list_items"]["list1"][0].", ";
 echo $configs["list_items"]["list1"][1].", ";
 echo $configs["list_items"]["list1"][2].", ";
 echo $configs["list_items"]["list1"][3];
 
-echo "<br/>";
-echo "<br/>";
+echo "<br/><br/>";
 
 echo json_encode($configs);
 
-echo "<br/>";
-echo "<br/>";
+echo "<br/><br/>";
 
 $empty_broker = $configuration->extractSection("empty_broker");
 echo json_encode($empty_broker);
-echo "<br/>";
+echo "<br/><br/>";
 
-echo "<br/>";
 echo json_encode($empty_broker["list"][0]);
 ?>

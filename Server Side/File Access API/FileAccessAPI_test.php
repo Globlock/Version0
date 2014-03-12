@@ -36,8 +36,8 @@ $myArray[] = $response;
 //convert to json
 $json = json_encode($myArray);
 echo $json;
-echo "</br>";
-echo "</br>";
+echo "</br></br>";
+
 //$params = array ( "123"=>"123","231"=>"231","321"=>"321" );
 $response = xmlrpc_encode ( $myArray );
 echo ( $response );

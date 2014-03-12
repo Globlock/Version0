@@ -95,6 +95,7 @@ list[]="file7.txt"
 list[]="file8.txt"
 list[]="file9.txt"
 
+;
 [empty_broker]
 header["type"]="-"
 header["message"]="-"
@@ -125,6 +126,11 @@ list[]="-"
 list[]="-"
 list[]="-"
 list[]="-"
+
+;List of different error codes fro return
+[error_codes]
+code[404]="Not Found"
+
 
 ;*/
 
