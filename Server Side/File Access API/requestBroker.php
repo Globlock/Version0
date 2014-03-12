@@ -27,6 +27,7 @@ Usage:
 	?>
 */
 class requestBroker{
+
 	var $brokerData = array(
 		"broker_header"	=> null,
 		"error_code"	=> null,

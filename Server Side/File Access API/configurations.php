@@ -2,49 +2,62 @@
 /*
 Constant Declaration Library - Globlock
 Filename:	configurations.php
-Version: 	1.0
+Version: 	1.2
 Author: 	Alex Quigley, x10205691
 Created: 	10/03/2014
-Updated: 	10/03/2014
+Updated: 	12/03/2014
 
 Dependencies:
 	FileAccessAPI.php (parent)
-	Configurations.ini
+	Configurations.ini.php (child)
 	
 Description: 
-	Contains constant delcarations class of static constants,
+	Contains constant delcarations class of static constants, 
+	and values described in configurations.ini.php file,
 	for use throughout the Globlock Project files.
 
 Successful Operation Result:
-	Creates constants
+	Creates constants and configurations from an ini file
 	
 Usage: 
 	<?php
 		include 'configurations.php';
+		$configuration = new configurations();
+		$configs = $configuration->configs;
+		echo json_encode($configs["project_info"]["name"]);
 	?>
 
-TO DO:
->>Add Declarations for DB
 
 */
 class configurations {
 
     /** General Project Constants */
-    private const PRIVATE_CONST;
+    //private const PRIVATE_CONST;
 
 	/** General Project Constants */
-	public const PROJ_TITL = "Globlock";
-	public const PROJ_DESC = "Globlock - Concurrency controlled 2 phase file access, version control and repository system";
-	public const PROJ_VERS = 0.1;
-	public const PROJ_AUTH = "Alex Quigley, x10205691";
-	public $Proj = array();
-	    
-	
+	//public const PUBLIC_CONST = "Globlock";
+	public $configs = array();
+	   
 	public static function getPrivate_Const() {
-        return self::$_instance->_someProperty; // allowed, self::$_instance is static, but a real object nonetheless
+        return self::PRIVATE_CONST;
     }
-
 	
+	public static function getConfigurations(){
+		$configurations_array = parse_ini_file("configurations.ini.php", true);
+		return $configurations_array;
+	}
+	
+	public function __construct(){
+		 $this->configs = $this::getConfigurations();
+	} 
+	
+	public function extractSection($subsection){
+		try {
+			return $this->configs[$subsection];
+		} catch (Exception $e) {
+			return null;
+		}
+	}
 }
 
 //Sample code
@@ -67,7 +80,7 @@ define("PROJ_DESC", "Globlock - Concurrency controlled 2 phase file access, vers
 define("PROJ_VERS", "0.1", true);
 define("PROJ_AUTH", "Alex Quigley, x10205691", true);
 
-$myArray[] = define;
+
 
 /** Database Constants */
 define("DB_HOST", "Welcome to W3Schools.com!", true);
@@ -76,7 +89,7 @@ define("DB_USER", "Welcome to W3Schools.com!", true);
 define("DB_PASS", "Welcome to W3Schools.com!", true);
 
 //initialize array
-echo json_encode($myArray);
+//echo json_encode($myArray);
 
 //set up the nested associative arrays using literal array notation
 //$firstArray = array("id" => 1, "data" => 45);

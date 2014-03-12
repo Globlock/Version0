@@ -4,9 +4,11 @@
 
 ;Project Information
 [project_info]
-proj_name="Globlock"
-proj_desc="Globlock - Concurrency controlled 2 phase file access, version control and repository system"
-proj_vers= 0.1
+name="Globlock"
+description="Globlock - Concurrency controlled 2 phase file access, version control and repository system"
+version= 0.1
+runmode=test
+
 
 ;Logfile information for logWrite functions
 [logs_transactions]
@@ -56,11 +58,73 @@ session="Session:laundrytokens"
 other="Other:abc123_GloblockDevelopmentTest"
 default="Default:abc123_GloblockDevelopmentTest"
 
-[test_array]
-test1[]=1
-test1[]=2
-test1[]=3
-test1[]=4
+[list_items]
+list1[]=1
+list1[]=2
+list1[]=3
+list1[]=4
+
+[sample_broker]
+header["type"]="TEST_HEAD"
+header["message"]="Test messsage"
+error["code"]=0001
+error["message"]="No errors"
+user["name"]="sampleuser@gmail.com"
+user["pass"]="pass123"
+session["token"]="abcd1234"
+globe["id"]=0000
+globe["project"]=0000
+status["assigned"]=true
+action["test"]=true
+action["set"]=false
+action["abort"]=false
+action["redo"]=false
+action["drop"]=false
+action["pull"]=false
+action["push"]=false
+list["count"]=2
+list["size"]=1000
+list[]="file0.txt"
+list[]="file1.txt"
+list[]="file2.txt"
+list[]="file3.txt"
+list[]="file4.txt"
+list[]="file5.txt"
+list[]="file6.txt"
+list[]="file7.txt"
+list[]="file8.txt"
+list[]="file9.txt"
+
+[empty_broker]
+header["type"]="-"
+header["message"]="-"
+error["code"]=0000
+error["message"]="-"
+user["name"]="-"
+user["pass"]="-"
+session["token"]="-"
+globe["id"]=0000
+globe["project"]=0000
+status["assigned"]=false
+action["test"]=false
+action["set"]=false
+action["abort"]=false
+action["redo"]=false
+action["drop"]=false
+action["pull"]=false
+action["push"]=false
+list["count"]=0
+list["size"]=0
+list[]="-"
+list[]="-"
+list[]="-"
+list[]="-"
+list[]="-"
+list[]="-"
+list[]="-"
+list[]="-"
+list[]="-"
+list[]="-"
 
 ;*/
 
