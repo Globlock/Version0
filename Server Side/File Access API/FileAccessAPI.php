@@ -59,7 +59,8 @@ function verifyUser(){
 }
 
 function handleRequest(&$broker){
-		$broker->setValue('broker_header', $_POST["request_header"]);
+		//To DO - Handle Request, start to finish
+		$broker->setValue("header", "type", $_POST["request_header"]);
 		if (!$broker->validateHeader()) {
 			$broker->handleErrors("BAD REQUEST: UNDEFINED OR MALFORMED HEADER REQUEST", 400);
 			echo $broker->returnJSON();

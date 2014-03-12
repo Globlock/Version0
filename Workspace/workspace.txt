@@ -3,17 +3,26 @@
         <Folder name="LogFiles">
             <File name="X:\Version0\Server Side\File Access API\LogFiles\transactions.log" />
         </Folder>
+        <File name="X:\Version0\Server Side\File Access API\configurations.ini.php" />
+        <File name="X:\Version0\Server Side\File Access API\configurations.php" />
+        <File name="X:\Version0\Server Side\File Access API\config_test.php" />
         <File name="X:\Version0\Server Side\File Access API\dbConnection.php" />
         <File name="X:\Version0\Server Side\File Access API\dbConnection.readme" />
         <File name="X:\Version0\Server Side\File Access API\dbConnection_test.php" />
         <File name="X:\Version0\Server Side\File Access API\encryptionHelper.php" />
         <File name="X:\Version0\Server Side\File Access API\FileAccessAPI.php" />
         <File name="X:\Version0\Server Side\File Access API\FileAccessAPI.readme" />
+        <File name="X:\Version0\Server Side\File Access API\FileAccessAPI_test.php" />
+        <File name="X:\Version0\Server Side\File Access API\globeHandler.php" />
+        <File name="X:\Version0\Server Side\File Access API\globeHandler.readme" />
         <File name="X:\Version0\Server Side\File Access API\logWrite.php" />
         <File name="X:\Version0\Server Side\File Access API\logWrite.readme" />
         <File name="X:\Version0\Server Side\File Access API\logWrite_test.php" />
+        <File name="X:\Version0\Server Side\File Access API\NewFileTemplate.php" />
         <File name="X:\Version0\Server Side\File Access API\readme.txt" />
+        <File name="X:\Version0\Server Side\File Access API\requestBroker.php" />
         <File name="X:\Version0\Server Side\File Access API\sessionHandler.php" />
         <File name="X:\Version0\Server Side\File Access API\sessionHandler.readme" />
+        <File name="X:\Version0\Server Side\File Access API\requestBroker_test.php" />
     </Project>
 </NotepadPlus>
