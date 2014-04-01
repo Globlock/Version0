@@ -5,7 +5,7 @@ Filename:	FileAccessAPI.php
 Version: 	1.2
 Author: 	Alex Quigley, x10205691
 Created: 	10/02/2014
-Updated: 	04/03/2014
+Updated: 	01-Apr-14
 
 Dependencies:
 	logWrite.php (child)
@@ -33,6 +33,7 @@ TO DO:
 	include 'sessionHandler.php';
 	include 'encryptionHelper.php';
 	include 'requestBroker.php';
+	include 'userHandler.php';
 	
 	/* Strain Inputs */
 	//htmlspecialchars etc..
@@ -48,15 +49,9 @@ function start(&$broker){
 		echo $broker->returnJSON();
 		return false;
 	}
+	//echo $broker->brokerData['header']['type'];
 	return true;
 }	
-
-/** verifyUser
-	//TO DO:
-*/
-function verifyUser(){
-	//TO DO:
-}
 
 function handleRequest(&$broker){
 		//To DO - Handle Request, start to finish
@@ -66,14 +61,18 @@ function handleRequest(&$broker){
 			echo $broker->returnJSON();
 			return false;
 		}
-		switch ($broker->brokerData['broker_header']){
-			case "HANDSHAKE":
-				$broker->setValue('request_body', $_POST["request_header"]);
+		switch ($broker->brokerData['header']['type']){
+			case "HANDSHAKE":	//
+				$broker->setValue('header', 'type' $_POST["request_header"]);
 				echo returnHandshake($broker);
 				break;
 			case "SESSION":
-				echo returnSessionToken($broker);
+				if (validUser($broker)) getSessionToken($broker);
+				echo $broker->returnJSON();
 				break;
+			case "VALIDATE":
+				
+				
 		}
 }
 
@@ -91,10 +90,9 @@ function returnHandshake(&$broker){
 	}
 }
 
-function returnSessionToken(&$broker){
+function getSessionToken(&$broker){
 	$message = generateSessionToken();
-	$broker->setValue('broker_header', "SESSION TOKEN RESPONSE");
-	$broker->setValue('session_token', $message);
-	return $broker->returnJSON();
+	$broker->setValue('header', 'type', "SESSION TOKEN RESPONSE");
+	$broker->setValue('session', 'token', $message);
 }
 ?>

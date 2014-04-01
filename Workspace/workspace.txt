@@ -1,28 +1,63 @@
 <NotepadPlus>
     <Project name="Globlock">
-        <Folder name="LogFiles">
-            <File name="X:\Version0\Server Side\File Access API\LogFiles\transactions.log" />
+        <Folder name="Client Side">
+            <Folder name="Hardware Arduino">
+                <File name="X:\Version0\Client Side\Hardware Arduino\readme.txt" />
+            </Folder>
+            <Folder name="Installation Files">
+                <File name="X:\Version0\Client Side\Installation Files\readme.txt" />
+            </Folder>
+            <Folder name="Windows Application">
+                <File name="X:\Version0\Client Side\Windows Application\readme.txt" />
+            </Folder>
+            <File name="X:\Version0\Client Side\readme.txt" />
         </Folder>
-        <File name="X:\Version0\Server Side\File Access API\configurations.ini.php" />
-        <File name="X:\Version0\Server Side\File Access API\configurations.php" />
-        <File name="X:\Version0\Server Side\File Access API\config_test.php" />
-        <File name="X:\Version0\Server Side\File Access API\dbConnection.php" />
-        <File name="X:\Version0\Server Side\File Access API\dbConnection.readme" />
-        <File name="X:\Version0\Server Side\File Access API\dbConnection_test.php" />
-        <File name="X:\Version0\Server Side\File Access API\encryptionHelper.php" />
-        <File name="X:\Version0\Server Side\File Access API\FileAccessAPI.php" />
-        <File name="X:\Version0\Server Side\File Access API\FileAccessAPI.readme" />
-        <File name="X:\Version0\Server Side\File Access API\FileAccessAPI_test.php" />
-        <File name="X:\Version0\Server Side\File Access API\globeHandler.php" />
-        <File name="X:\Version0\Server Side\File Access API\globeHandler.readme" />
-        <File name="X:\Version0\Server Side\File Access API\logWrite.php" />
-        <File name="X:\Version0\Server Side\File Access API\logWrite.readme" />
-        <File name="X:\Version0\Server Side\File Access API\logWrite_test.php" />
-        <File name="X:\Version0\Server Side\File Access API\NewFileTemplate.php" />
-        <File name="X:\Version0\Server Side\File Access API\readme.txt" />
-        <File name="X:\Version0\Server Side\File Access API\requestBroker.php" />
-        <File name="X:\Version0\Server Side\File Access API\sessionHandler.php" />
-        <File name="X:\Version0\Server Side\File Access API\sessionHandler.readme" />
-        <File name="X:\Version0\Server Side\File Access API\requestBroker_test.php" />
+        <Folder name="Server Side">
+            <Folder name="File Access API">
+                <Folder name="LogFiles">
+                    <File name="X:\Version0\Server Side\File Access API\LogFiles\transactions.log" />
+                </Folder>
+                <File name="X:\Version0\Server Side\File Access API\configurations.ini.php" />
+                <File name="X:\Version0\Server Side\File Access API\configurations.php" />
+                <File name="X:\Version0\Server Side\File Access API\config_test.php" />
+                <File name="X:\Version0\Server Side\File Access API\dbConnection.php" />
+                <File name="X:\Version0\Server Side\File Access API\dbConnection.readme" />
+                <File name="X:\Version0\Server Side\File Access API\dbConnection_test.php" />
+                <File name="X:\Version0\Server Side\File Access API\encryptionHelper.php" />
+                <File name="X:\Version0\Server Side\File Access API\FileAccessAPI.php" />
+                <File name="X:\Version0\Server Side\File Access API\FileAccessAPI.readme" />
+                <File name="X:\Version0\Server Side\File Access API\FileAccessAPI_test.php" />
+                <File name="X:\Version0\Server Side\File Access API\globeHandler.php" />
+                <File name="X:\Version0\Server Side\File Access API\globeHandler.readme" />
+                <File name="X:\Version0\Server Side\File Access API\logWrite.php" />
+                <File name="X:\Version0\Server Side\File Access API\logWrite.readme" />
+                <File name="X:\Version0\Server Side\File Access API\logWrite_test.php" />
+                <File name="X:\Version0\Server Side\File Access API\NewFileTemplate.php" />
+                <File name="X:\Version0\Server Side\File Access API\readme.txt" />
+                <File name="X:\Version0\Server Side\File Access API\requestBroker.php" />
+                <File name="X:\Version0\Server Side\File Access API\requestBroker_test.php" />
+                <File name="X:\Version0\Server Side\File Access API\sessionHandler.php" />
+                <File name="X:\Version0\Server Side\File Access API\sessionHandler.readme" />
+            </Folder>
+            <Folder name="File Push API">
+                <File name="X:\Version0\Server Side\File Push API\readme.txt" />
+            </Folder>
+            <Folder name="Garbage Collection">
+                <File name="X:\Version0\Server Side\Garbage Collection\readme.txt" />
+            </Folder>
+            <Folder name="Installation Files">
+                <File name="X:\Version0\Server Side\Installation Files\readme.txt" />
+            </Folder>
+            <Folder name="Management Suite">
+                <File name="X:\Version0\Server Side\Management Suite\README.md" />
+                <File name="X:\Version0\Server Side\Management Suite\readme.txt" />
+                <File name="X:\Version0\Server Side\Management Suite\setting.txt" />
+            </Folder>
+            <File name="X:\Version0\Server Side\readme.txt" />
+        </Folder>
+        <Folder name="Workspace">
+            <File name="workspace.txt" />
+        </Folder>
+        <File name="X:\Version0\README.md" />
     </Project>
 </NotepadPlus>

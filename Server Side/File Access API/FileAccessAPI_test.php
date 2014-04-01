@@ -9,8 +9,8 @@ Header: <input type='text' name='request_header'><br>
 Message: <input type='text' name='request_body'><br>
 TEST: <input type='text' name='testtest'><br>
 Session Token: <input type='text' name='session_token'><br>
-Username: <input type='text' name='username'><br>
-Password: <input type='text' name='password'><br>
+Username: <input type='text' name='user_name'><br>
+Password: <input type='text' name='user_pass'><br>
 <input type='submit'>
 </form>
 </body>

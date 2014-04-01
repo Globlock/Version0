@@ -6,7 +6,7 @@
 [project_info]
 name="Globlock"
 description="Globlock - Concurrency controlled 2 phase file access, version control and repository system"
-version= 0.1
+version= 0.2
 runmode=test
 
 
@@ -39,6 +39,8 @@ update_token="UPDATE client_sessions SET session_activity =?, session_token=? WH
 update_session="UPDATE client_sessions SET session_activity =?, session_token=? WHERE session_id =?"
 dispose_session="UPDATE client_sessions SET session_activity =-1 WHERE session_token =?  AND session_activity != -1"
 dispose_expired="UPDATE client_sessions SET session_activity =-1 WHERE DATE_SUB(NOW(),INTERVAL 1 HOUR) > session_create AND session_activity != -1"
+verify_user="SELECT * FROM system_user WHERE user_name = ? AND user_pass = ?"
+verify_globe="SELECT * FROM globe_assets WHERE globe_object = ?"
 
 ;Session stages
 [session_stages]

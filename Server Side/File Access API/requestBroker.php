@@ -29,7 +29,7 @@ Usage:
 */
 class requestBroker{
 
-	private $brokerData;
+	public $brokerData;
 	private $emptyBroker;
 	
 	function __construct($request_header, $session_user){
@@ -45,7 +45,7 @@ class requestBroker{
 		$this->brokerData[$section][$type] = $value;
 	}
 	
-	private function sanitiseValue($data){
+	function sanitiseValue($data){
 		$data = filter_var($data, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
 		$data = filter_var($data, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
 		$data = trim($data);

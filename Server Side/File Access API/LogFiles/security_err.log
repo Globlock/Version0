@@ -1,0 +1,13 @@
+20140401-012915|-|File Created...
+20140401-012915|!!SECURITY!!|Exception occurred in [searchUser] !  | [exception 'Exception' with message 'Exception Thrown (Resultset):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php:47
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php(66): searchUser(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(70): validateUser(Object(requestBroker))
+#2 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(44): handleRequest(Object(requestBroker))
+#3 {main}]
+20140401-012925|!!SECURITY!!|Exception occurred in [searchUser] !  | [exception 'Exception' with message 'Exception Thrown (Resultset):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php:47
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php(66): searchUser(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(70): validateUser(Object(requestBroker))
+#2 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(44): handleRequest(Object(requestBroker))
+#3 {main}]

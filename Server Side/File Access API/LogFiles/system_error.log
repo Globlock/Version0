@@ -1,0 +1,58 @@
+20140401-011959|-|File Created...
+20140401-011959|System|Exception occurred in [validateUser]! | [exception 'Exception' with message 'Exception Thrown (EMPTY POST):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php:61
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(70): validateUser(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(44): handleRequest(Object(requestBroker))
+#2 {main}]
+20140401-012242|System|Exception occurred in [validateUser]! | [exception 'Exception' with message 'Exception Thrown (EMPTY POST):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php:61
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(70): validateUser(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(44): handleRequest(Object(requestBroker))
+#2 {main}]
+20140401-012250|System|Exception occurred in [validateUser]! | [exception 'Exception' with message 'Exception Thrown (EMPTY POST):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php:61
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(70): validateUser(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(44): handleRequest(Object(requestBroker))
+#2 {main}]
+20140401-012615|System|Exception occurred in [validateUser]! | [exception 'Exception' with message 'Exception Thrown (EMPTY POST):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php:61
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(70): validateUser(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(44): handleRequest(Object(requestBroker))
+#2 {main}]
+20140401-012624|System|Exception occurred in [validateUser]! | [exception 'Exception' with message 'Exception Thrown (EMPTY POST):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php:61
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(70): validateUser(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(44): handleRequest(Object(requestBroker))
+#2 {main}]
+20140401-012702|System|Exception occurred in [validateUser]! | [exception 'Exception' with message 'Exception Thrown (EMPTY POST):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php:61
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(70): validateUser(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(44): handleRequest(Object(requestBroker))
+#2 {main}]
+20140401-012915|System|Exception occurred in [searchUser] !  | [exception 'Exception' with message 'Exception Thrown (Resultset):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php:47
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php(66): searchUser(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(70): validateUser(Object(requestBroker))
+#2 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(44): handleRequest(Object(requestBroker))
+#3 {main}]
+20140401-012915|System|Exception occurred in [validateUser]! | [exception 'Exception' with message 'Exception Thrown (Resultset):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php:67
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(70): validateUser(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(44): handleRequest(Object(requestBroker))
+#2 {main}]
+20140401-012925|System|Exception occurred in [searchUser] !  | [exception 'Exception' with message 'Exception Thrown (Resultset):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php:47
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php(66): searchUser(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(70): validateUser(Object(requestBroker))
+#2 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(44): handleRequest(Object(requestBroker))
+#3 {main}]
+20140401-012925|System|Exception occurred in [validateUser]! | [exception 'Exception' with message 'Exception Thrown (Resultset):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php:67
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(70): validateUser(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(44): handleRequest(Object(requestBroker))
+#2 {main}]
+20140401-020434|System|Exception occurred in [validateUser]! | [exception 'Exception' with message 'Exception Thrown (Resultset):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\userHandler.php:67
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(71): validUser(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(44): handleRequest(Object(requestBroker))
+#2 {main}]
