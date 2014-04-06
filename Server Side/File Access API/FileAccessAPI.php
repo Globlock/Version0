@@ -34,6 +34,7 @@ TO DO:
 	include 'encryptionHelper.php';
 	include 'requestBroker.php';
 	include 'userHandler.php';
+	include 'globeHandler.php';
 	
 	/* Strain Inputs */
 	//htmlspecialchars etc..
@@ -63,7 +64,7 @@ function handleRequest(&$broker){
 		}
 		switch ($broker->brokerData['header']['type']){
 			case "HANDSHAKE":	//
-				$broker->setValue('header', 'type' $_POST["request_header"]);
+				$broker->setValue('header', 'type', $_POST["request_header"]);
 				echo returnHandshake($broker);
 				break;
 			case "SESSION":
@@ -71,10 +72,42 @@ function handleRequest(&$broker){
 				echo $broker->returnJSON();
 				break;
 			case "VALIDATE":
-				
-				
+				reqValidate($broker);
+				echo $broker->returnJSON();
+				break;
 		}
 }
+
+/**
+HANDSHAKE	- in [message], out [response]
+SESSION		- in [user/pass], out [Session Token]
+VALIDATE	- in [Session, Globe ID], out [Action list]
+ABORT		- in [Session, Abort Header], session dropped
+SET			- in [Session, Globe Project, Globe ID], out [success result]
+FORCE		- in [Session, Globe Project, Globe ID], out [success result]
+DROP		- in [Session, Globe Project, Globe ID], out [success result]
+PUSH		- in [Session, Globe Project, Globe ID, Files], out [success result]
+PULL		- in [Session, Globe Project, Globe ID], out [File list]
+
+ */
+
+
+/** */
+//VALIDATE GLOBE
+function reqVALIDATE(&$broker){
+	$broker->setValue('header','type', "VALIDATE RESPONSE");
+	//Pass broker to validSession wityh activity at 1 (gets updated)
+	//if (validSession($broker, 1)){
+		validGlobe($broker);
+	//}
+	
+	
+}
+
+
+
+
+
 
 function returnHandshake(&$broker){
 	if (empty($_POST["request_body"])){ 
@@ -82,10 +115,10 @@ function returnHandshake(&$broker){
 		echo $broker->returnJSON();
 		return false;
 	} else {
-		$broker->setValue('request_body', $_POST["request_body"]);
-		$message = getHandShakeResponse($broker->brokerData['request_body']);
-		$broker->setValue('broker_header', "HANDSHAKE RESPONSE");
-		$broker->setValue('request_body', $message);
+		$broker->setValue('header', 'message', $_POST["request_body"]);
+		$message = getHandShakeResponse($broker->brokerData['header']['message']);
+		$broker->setValue('header','type', "HANDSHAKE RESPONSE");
+		$broker->setValue('header', 'message', $message);
 		return $broker->returnJSON();
 	}
 }

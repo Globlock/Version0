@@ -60,4 +60,26 @@
         </Folder>
         <File name="X:\Version0\README.md" />
     </Project>
+    <Project name="DNS">
+        <Folder name="DS-Project">
+            <Folder name="Source">
+                <Folder name="Template">
+                    <File name="D:\DNS\DS-Project\Source\Template\ChatClient.java" />
+                    <File name="D:\DNS\DS-Project\Source\Template\Chatroom.idl" />
+                    <File name="D:\DNS\DS-Project\Source\Template\ChatServant.java" />
+                    <File name="D:\DNS\DS-Project\Source\Template\ChatServer.java" />
+                </Folder>
+                <File name="D:\DNS\DS-Project\Source\readme.md" />
+            </Folder>
+            <Folder name="Tasks">
+                <Folder name="WeeklyReports">
+                    <File name="D:\DNS\DS-Project\Tasks\WeeklyReports\WW10.txt" />
+                </Folder>
+                <File name="D:\DNS\DS-Project\Tasks\ProjectInfo.md" />
+                <File name="D:\DNS\DS-Project\Tasks\TaskList.md" />
+            </Folder>
+            <File name="D:\DNS\DS-Project\DS2_Project_2013-2014_v2.doc" />
+            <File name="D:\DNS\DS-Project\readme.md" />
+        </Folder>
+    </Project>
 </NotepadPlus>

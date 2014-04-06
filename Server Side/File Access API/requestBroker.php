@@ -40,7 +40,7 @@ class requestBroker{
 		$this->brokerData['user']['name'] = $session_user;
 	}
 	
-	function setValue($section, $type, $value){
+	public function setValue($section, $type, $value){
 		$value = $this->sanitiseValue($value);
 		$this->brokerData[$section][$type] = $value;
 	}

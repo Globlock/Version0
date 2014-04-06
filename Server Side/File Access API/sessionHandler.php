@@ -88,39 +88,25 @@ $sessionStages = array(
 	"initialise_token" 	=> 0,
 	"session_request" 	=> 1,
 	"globe_validation" 	=> 2,
-	"globe_deallocate" 	=> 3,
-	"globe_assignment"  => 4,
-	"globe_pull_assoc"	=> 5,
-	"globe_push_assoc"	=> 6,	
+	"globe_deallocate" 	=> -1,
+	"globe_assignment"  => -1,
+	"globe_pull_assoc"	=> -1,
+	"globe_push_assoc"	=> -1,	
 	
 );
 				
 /** generateSessionToken */
 function generateSessionToken(){
-	global $sessionStages;
 	writeLogInfo("Generating 'session_token' in [client_sessions]...");
 	createDBPlaceholder();
 	$session_token = generateToken();
 	$session_record = selectToken(0,0);
-	if (!updateToken($session_record, $session_token, $sessionStages['session_request'])) return -1;
+	if (!updateToken($session_record, $session_token, 1)) return -1;
 	writeLogInfo("Created 'session_token' in [client_sessions] Table");
 	disposeExpired();	
 	return $session_token;
 }
-/** */
-function disposeExpired(){
-	global $databaseConnection, $sqlStatements;
-	try{	
-		if ($stmt = $databaseConnection->prepare($sqlStatements['dispose_expired'])) {
-			$stmt->execute();
-			$count = $stmt->affected_rows;
-			if($count > 0) writeLogInfo("Disposed of  ".$count." expired 'session_token' in [client_sessions] Table");
-			$stmt->close();
-		}
-	} catch (Exception $e){
-		writeLogInfo("Exception occurred in [createDBPlaceholder] ! | [". $e ."]", 1) ;
-	}
-}
+
 /** */
 function createDBPlaceholder(){
 	global $databaseConnection, $sqlStatements;
@@ -133,19 +119,7 @@ function createDBPlaceholder(){
 	}
 }
 
-/** */
-function createSessionTable(){
-	global $databaseConnection, $sqlStatements;
-	try{
-		writeLogInfo("Table [client_sessions] not found. Creating...");
-		$result = mysqli_query($databaseConnection, $sqlStatements['create_table']);
-		if ($result) writeLogInfo("Table [client_sessions] created!"); 
-		else throw new Exception("Exception Thrown:".mysqli_error($databaseConnection));	
-	} catch (Exception $e) {
-		writeLogInfo("Create Table [client_sessions] failed!");
-		writeLogInfo("Exception occurred in [createSessionTable] ! | [". $e ."]", 1) ;
-	}
-}
+
 
 /** */
 function insertPlaceholder(){
@@ -255,5 +229,61 @@ function disposeSessions($sessionToken){
 	}
 }
 
+/** Calls on verify Session */
+function validSession(&$broker, $activity){
+	$update = 2;
+	if ($activity == 2) $update = -1;
+	try{
+				
+		if (!(isset($_POST["session_token"]))) 
+			throw new Exception("Exception Thrown (EMPTY POST):");
+		$broker->setValue("header", "type", $_POST["request_header"]);
+		$broker->setValue("session", "token", $_POST["session_token"]);
+		$token = $broker->brokerData['session']['token'];
+		
+		if (!verifySession($token, $activity)) 
+			throw new Exception("Exception Thrown (SESSION NOT FOUND):");
+		
+		// Update Activity or Drop
+		if (!(updateToken(selectToken($token, $activity), $token, $update)))
+			throw new Exception("Exception Thrown (UPDATE SESSION FAILED):");
 
+		return true;
+		
+		} catch (Exception $e){
+		writeLogInfo("Token update error in [validSession]!");
+		writeLogInfo("Exception occurred in [validSession]! | [". $e ."]", 1) ;
+		$broker->handleErrors("UNAUTHORIZED ACCESS: SESSION TOKEN NOT SET, FOUND OR UPDATABLE | [". $e ."]", 401);
+		return false;
+	}
+}
+
+/** */
+function disposeExpired(){
+	global $databaseConnection, $sqlStatements;
+	try{	
+		if ($stmt = $databaseConnection->prepare($sqlStatements['dispose_expired'])) {
+			$stmt->execute();
+			$count = $stmt->affected_rows;
+			if($count > 0) writeLogInfo("Disposed of  ".$count." expired 'session_token' in [client_sessions] Table");
+			$stmt->close();
+		}
+	} catch (Exception $e){
+		writeLogInfo("Exception occurred in [createDBPlaceholder] ! | [". $e ."]", 1) ;
+	}
+}
+
+/** */
+function createSessionTable(){
+	global $databaseConnection, $sqlStatements;
+	try{
+		writeLogInfo("Table [client_sessions] not found. Creating...");
+		$result = mysqli_query($databaseConnection, $sqlStatements['create_table']);
+		if ($result) writeLogInfo("Table [client_sessions] created!"); 
+		else throw new Exception("Exception Thrown:".mysqli_error($databaseConnection));	
+	} catch (Exception $e) {
+		writeLogInfo("Create Table [client_sessions] failed!");
+		writeLogInfo("Exception occurred in [createSessionTable] ! | [". $e ."]", 1) ;
+	}
+}
 ?>

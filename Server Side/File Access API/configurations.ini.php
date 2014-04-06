@@ -19,7 +19,7 @@ directory="LogFiles/"
 filename="security_err.log"
 [logs_system]
 directory="LogFiles/"
-filename="system_error.log"
+filename="system_error.log"session
 
 ;Database Login and Host Information
 [database_info]
@@ -40,7 +40,8 @@ update_session="UPDATE client_sessions SET session_activity =?, session_token=? 
 dispose_session="UPDATE client_sessions SET session_activity =-1 WHERE session_token =?  AND session_activity != -1"
 dispose_expired="UPDATE client_sessions SET session_activity =-1 WHERE DATE_SUB(NOW(),INTERVAL 1 HOUR) > session_create AND session_activity != -1"
 verify_user="SELECT * FROM system_user WHERE user_name = ? AND user_pass = ?"
-verify_globe="SELECT * FROM globe_assets WHERE globe_object = ?"
+search_globe="SELECT * FROM globe_assets_test WHERE globe_object = ?"
+unassigned_globes="SELECT * FROM globes_test WHERE globe_asset = 0"
 
 ;Session stages
 [session_stages]
