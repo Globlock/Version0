@@ -72,7 +72,31 @@ function handleRequest(&$broker){
 				echo $broker->returnJSON();
 				break;
 			case "VALIDATE":
-				reqValidate($broker);
+				handleValidation($broker);
+				echo $broker->returnJSON();
+				break;
+			case "ABORT":
+				abortSession($broker);
+				echo $broker->returnJSON();
+				break;
+			case "SET":
+				assignGlobe($broker);
+				echo $broker->returnJSON();
+				break;
+			case "FORCE":
+				reAssignGlobe($broker);
+				echo $broker->returnJSON();
+				break;
+			case "DROP":
+				unAssignGlobe($broker);
+				echo $broker->returnJSON();
+				break;
+			case "PUSH":
+				pushFiles($broker);
+				echo $broker->returnJSON();
+				break;
+			case "PULL":
+				pullFiles($broker)
 				echo $broker->returnJSON();
 				break;
 		}
@@ -94,20 +118,41 @@ PULL		- in [Session, Globe Project, Globe ID], out [File list]
 
 /** */
 //VALIDATE GLOBE
-function reqVALIDATE(&$broker){
+function handleValidation(&$broker){
 	$broker->setValue('header','type', "VALIDATE RESPONSE");
-	//Pass broker to validSession wityh activity at 1 (gets updated)
-	//if (validSession($broker, 1)){
-		validGlobe($broker);
-	//}
-	
-	
+	//Pass broker to validSession with activity at 1 (gets updated)
+	if (!validSession($broker, 1)) return;
+	//Validate globe and if found return results
+	globeValidation($broker);
 }
 
+/** */
+//ABORT SESSION
+function abortSession(&$broker){
+	$broker->setValue('header', 'type', "ABORT RESPONSE");
+	if(validSession($broker, 2)){
+		$sessionToken = $broker->brokerData['session']['token'];
+		disposeSessions($sessionToken);
+	}
+}
 
+/** */
+//SET GLOBE
+function assignGlobe(&$broker){
+	$broker->setValue('header', 'type', "SET RESPONSE");
+	if (globeAssignable($broker)){
+		assignNewGlobeID($broker);
+	}
+}
 
-
-
+/** */
+//SET GLOBE
+function assignGlobe(&$broker){
+	$broker->setValue('header', 'type', "FORCE RESPONSE");
+	if (globeAssignable($broker)){
+		assignNewGlobeID($broker);
+	}
+}
 
 function returnHandshake(&$broker){
 	if (empty($_POST["request_body"])){ 

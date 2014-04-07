@@ -237,6 +237,7 @@ function validSession(&$broker, $activity){
 				
 		if (!(isset($_POST["session_token"]))) 
 			throw new Exception("Exception Thrown (EMPTY POST):");
+			
 		$broker->setValue("header", "type", $_POST["request_header"]);
 		$broker->setValue("session", "token", $_POST["session_token"]);
 		$token = $broker->brokerData['session']['token'];
@@ -286,4 +287,7 @@ function createSessionTable(){
 		writeLogInfo("Exception occurred in [createSessionTable] ! | [". $e ."]", 1) ;
 	}
 }
+
+/** */
+
 ?>

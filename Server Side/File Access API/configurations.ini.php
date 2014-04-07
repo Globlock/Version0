@@ -40,8 +40,12 @@ update_session="UPDATE client_sessions SET session_activity =?, session_token=? 
 dispose_session="UPDATE client_sessions SET session_activity =-1 WHERE session_token =?  AND session_activity != -1"
 dispose_expired="UPDATE client_sessions SET session_activity =-1 WHERE DATE_SUB(NOW(),INTERVAL 1 HOUR) > session_create AND session_activity != -1"
 verify_user="SELECT * FROM system_user WHERE user_name = ? AND user_pass = ?"
-search_globe="SELECT * FROM globe_assets_test WHERE globe_object = ?"
+search_globe="SELECT * FROM globe_assets_test WHERE object = ?"
+search_project="SELECT * FROM globes_test WHERE globe_name = ?"
+search_project_by_globe="SELECT globes_test.globe_name FROM globes_test, globe_assets_test WHERE globe_assets_test.asset_id = globes_test.globe_asset AND globe_assets_test.object = ?"
 unassigned_globes="SELECT * FROM globes_test WHERE globe_asset = 0"
+ins_new_asset="INSERT INTO globe_assets_test (asset_id, object, Revision_id ) VALUES ( NULL, ?, 0)"
+update_asset=UPDATE globes_test SET globe_asset = ? WHERE globe_name = ?"
 
 ;Session stages
 [session_stages]

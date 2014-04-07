@@ -14,7 +14,10 @@
         </Folder>
         <Folder name="Server Side">
             <Folder name="File Access API">
+                <Folder name="include" />
                 <Folder name="LogFiles">
+                    <File name="X:\Version0\Server Side\File Access API\LogFiles\security_err.log" />
+                    <File name="X:\Version0\Server Side\File Access API\LogFiles\system_error.log" />
                     <File name="X:\Version0\Server Side\File Access API\LogFiles\transactions.log" />
                 </Folder>
                 <File name="X:\Version0\Server Side\File Access API\configurations.ini.php" />
@@ -38,6 +41,7 @@
                 <File name="X:\Version0\Server Side\File Access API\requestBroker_test.php" />
                 <File name="X:\Version0\Server Side\File Access API\sessionHandler.php" />
                 <File name="X:\Version0\Server Side\File Access API\sessionHandler.readme" />
+                <File name="X:\Version0\Server Side\File Access API\userHandler.php" />
             </Folder>
             <Folder name="File Push API">
                 <File name="X:\Version0\Server Side\File Push API\readme.txt" />
@@ -59,27 +63,5 @@
             <File name="workspace.txt" />
         </Folder>
         <File name="X:\Version0\README.md" />
-    </Project>
-    <Project name="DNS">
-        <Folder name="DS-Project">
-            <Folder name="Source">
-                <Folder name="Template">
-                    <File name="D:\DNS\DS-Project\Source\Template\ChatClient.java" />
-                    <File name="D:\DNS\DS-Project\Source\Template\Chatroom.idl" />
-                    <File name="D:\DNS\DS-Project\Source\Template\ChatServant.java" />
-                    <File name="D:\DNS\DS-Project\Source\Template\ChatServer.java" />
-                </Folder>
-                <File name="D:\DNS\DS-Project\Source\readme.md" />
-            </Folder>
-            <Folder name="Tasks">
-                <Folder name="WeeklyReports">
-                    <File name="D:\DNS\DS-Project\Tasks\WeeklyReports\WW10.txt" />
-                </Folder>
-                <File name="D:\DNS\DS-Project\Tasks\ProjectInfo.md" />
-                <File name="D:\DNS\DS-Project\Tasks\TaskList.md" />
-            </Folder>
-            <File name="D:\DNS\DS-Project\DS2_Project_2013-2014_v2.doc" />
-            <File name="D:\DNS\DS-Project\readme.md" />
-        </Folder>
     </Project>
 </NotepadPlus>
