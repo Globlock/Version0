@@ -231,6 +231,7 @@ function disposeSessions($sessionToken){
 
 /** Calls on verify Session */
 function validSession(&$broker, $activity){
+	//TO DO - Return -1 for access denied, 0 for read, 1 for write
 	$update = 2;
 	if ($activity == 2) $update = -1;
 	try{

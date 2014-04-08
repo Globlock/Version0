@@ -30,11 +30,11 @@ TO DO:
 */
 
 /** */
-function pushRequest(){
+function pushRequest(&$broker){
 //TO DO
 }
 
-function pullRequest(){
+function pullRequest(&$broker){
 //TO DO
 }
 
@@ -62,7 +62,6 @@ function createPublishDirectory($directory){
 }
 
 /** */
-
 function publishFile($directoryFrom, $directoryTo){
 	//>>TO DO
 	echo "<br/> in the mix ";
@@ -76,6 +75,7 @@ function publishFile($directoryFrom, $directoryTo){
 	initiateGarbageCollector($directoryTo);
 }
 
+/** */
 function initiateGarbageCollector($directory, $timeout=60){
 
 }

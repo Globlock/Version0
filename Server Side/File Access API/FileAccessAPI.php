@@ -157,6 +157,14 @@ function unAssignGlobe(&$broker){
 	}
 }
 
+/** */
+//PULL FILES
+function pullFiles(&$broker){
+	if(validSession($broker, 2)){
+		$broker->setValue('header', 'type', "PULL RESPONSE");
+		pullRequest($broker);
+	}
+}
 
 /** */
 function returnHandshake(&$broker){
