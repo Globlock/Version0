@@ -21,6 +21,11 @@ filename="security_err.log"
 directory="LogFiles/"
 filename="system_error.log"session
 
+[file_publishing]
+server_address="http://192.168.1.11/globlock/Version0/Server%20Side/File%20Access%20API/"
+root="Publish/"
+
+
 ;Database Login and Host Information
 [database_info]
 db_host="127.0.0.1"
@@ -43,9 +48,10 @@ verify_user="SELECT * FROM system_user WHERE user_name = ? AND user_pass = ?"
 search_globe="SELECT * FROM globe_assets_test WHERE object = ?"
 search_project="SELECT * FROM globes_test WHERE globe_name = ?"
 search_project_by_globe="SELECT globes_test.globe_name FROM globes_test, globe_assets_test WHERE globe_assets_test.asset_id = globes_test.globe_asset AND globe_assets_test.object = ?"
-unassigned_globes="SELECT * FROM globes_test WHERE globe_asset = 0"
+unassigned_globes="SELECT globe_name FROM globes_test WHERE globe_asset = 0"
 ins_new_asset="INSERT INTO globe_assets_test (asset_id, object, Revision_id ) VALUES ( NULL, ?, 0)"
-update_asset=UPDATE globes_test SET globe_asset = ? WHERE globe_name = ?"
+update_asset="UPDATE globes_test SET globe_asset=? WHERE globe_name=?"
+drop_asset="UPDATE globes_test, globe_assets_test SET globes_test.globe_asset = 0, globe_assets_test.object = "DROPPED" WHERE globe_assets_test.asset_id = globes_test.globe_asset AND globe_assets_test.object = ?"
 
 ;Session stages
 [session_stages]
@@ -134,7 +140,7 @@ list[]="-"
 list[]="-"
 list[]="-"
 
-;List of different error codes fro return
+;List of different error codes for return
 [error_codes]
 code[404]="Not Found"
 

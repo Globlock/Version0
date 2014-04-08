@@ -5,7 +5,7 @@ Filename:	FileAccessAPI.php
 Version: 	1.2
 Author: 	Alex Quigley, x10205691
 Created: 	10/02/2014
-Updated: 	01-Apr-14
+Updated: 	07/04/2014
 
 Dependencies:
 	logWrite.php (child)
@@ -68,38 +68,32 @@ function handleRequest(&$broker){
 				echo returnHandshake($broker);
 				break;
 			case "SESSION":
-				if (validUser($broker)) getSessionToken($broker);
-				echo $broker->returnJSON();
+				if (validUser($broker)) 
+					getSessionToken($broker);
 				break;
 			case "VALIDATE":
 				handleValidation($broker);
-				echo $broker->returnJSON();
 				break;
 			case "ABORT":
 				abortSession($broker);
-				echo $broker->returnJSON();
 				break;
 			case "SET":
 				assignGlobe($broker);
-				echo $broker->returnJSON();
 				break;
 			case "FORCE":
 				reAssignGlobe($broker);
-				echo $broker->returnJSON();
 				break;
 			case "DROP":
 				unAssignGlobe($broker);
-				echo $broker->returnJSON();
-				break;
-			case "PUSH":
-				pushFiles($broker);
-				echo $broker->returnJSON();
 				break;
 			case "PULL":
 				pullFiles($broker)
-				echo $broker->returnJSON();
+				break;
+			case "PUSH":
+				pushFiles($broker);
 				break;
 		}
+		echo $broker->returnJSON();
 }
 
 /**
@@ -139,21 +133,32 @@ function abortSession(&$broker){
 /** */
 //SET GLOBE
 function assignGlobe(&$broker){
-	$broker->setValue('header', 'type', "SET RESPONSE");
-	if (globeAssignable($broker)){
-		assignNewGlobeID($broker);
+	if(validSession($broker, 2)){
+		$broker->setValue('header', 'type', "SET RESPONSE");
+		if (globeAssignable($broker)) assignNewGlobeID($broker);
 	}
 }
 
 /** */
-//SET GLOBE
-function assignGlobe(&$broker){
-	$broker->setValue('header', 'type', "FORCE RESPONSE");
-	if (globeAssignable($broker)){
-		assignNewGlobeID($broker);
+//FORCE GLOBE
+function reAssignGlobe(&$broker){
+	if(validSession($broker, 2)){
+		$broker->setValue('header', 'type', "FORCE RESPONSE");
+		globeOverwrite($broker);
 	}
 }
 
+/** */
+//DROP GLOBE
+function unAssignGlobe(&$broker){
+	if(validSession($broker, 2)){
+		$broker->setValue('header', 'type', "DROP RESPONSE");
+		dropAsset($broker);
+	}
+}
+
+
+/** */
 function returnHandshake(&$broker){
 	if (empty($_POST["request_body"])){ 
 		$broker->handleErrors("LENGTH REQUIRED: MESSAGE REQUEST BODY EMPTY",411);	
@@ -168,6 +173,7 @@ function returnHandshake(&$broker){
 	}
 }
 
+/** */
 function getSessionToken(&$broker){
 	$message = generateSessionToken();
 	$broker->setValue('header', 'type', "SESSION TOKEN RESPONSE");

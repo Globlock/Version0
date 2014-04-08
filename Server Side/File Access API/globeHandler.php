@@ -2,10 +2,10 @@
 /*
 Globe Handler for File Access API - Globlock
 Filename:	globeHandler.php
-Version: 	1.0
+Version: 	1.2
 Author: 	Alex Quigley, x10205691
 Created: 	04/03/2014
-Updated: 	04/03/2014
+Updated: 	07/04/2014
 
 Dependencies:
 	FileAccessAPI.php (parent)
@@ -62,6 +62,23 @@ function globeAssignable(&$broker){
 		writeLogInfo("Globe assignment error in [globeAssignable]!");
 		writeLogInfo("Exception occurred in [globeAssignable]! | [". $e ."]", 1) ;
 		$broker->handleErrors("FORBIDDEN: GLOBE ID ALREADY ASSIGNED OR PROJECT NOT FOUND | [". $e ."]", 403);
+		return false;
+	}
+}
+
+function globeOverwrite(&$broker){
+	try{
+		$asset_id = validGlobe($broker);
+		if ($asset_id == -1) return;
+		if (validProject($broker) == -1) return;
+		if (($result == 0) ||  (validProject($broker) == 0)) throw new Exception("Exception Thrown (GLOBE OR PROJECT NOT FOUND):");
+		// TEST GLOBE NOT PREVIOUSLY FOUND AND PROJECT EXISTS
+		if (updateAsset($broker, $asset_id) < 1) return;
+		$broker->setValue('header', 'message', "Successfully Re-Assigned Globe");
+	} catch (Exception $e){
+		writeLogInfo("Globe assignment error in [globeOverwrite]!");
+		writeLogInfo("Exception occurred in [globeOverwrite]! | [". $e ."]", 1) ;
+		$broker->handleErrors("FORBIDDEN: GLOBE OR PROJECT NOT FOUND | [". $e ."]", 403);
 		return false;
 	}
 }
@@ -161,13 +178,14 @@ function listUnassigned(&$broker){
 		$prepSTMT = $databaseConnection->prepare($configs["database_statements"]["unassigned_globes"]);
 		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
 		$prepSTMT->execute();
-		$prepSTMT->bind_result($globe_id, $globe_name, $temp1, $temp2, $temp3, $temp4 );
+		//$prepSTMT->bind_result($globe_id, $globe_name, $temp1, $temp2, $temp3, $temp4 );
+		$prepSTMT->bind_result($globe_name);
 		$prepSTMT->store_result();
 		$numRows = $prepSTMT->num_rows;
 		$broker->setValue('list', "count", $numRows);
 		
 		while ($prepSTMT->fetch()) {
-			echo "|".$globe_id."|".$globe_name."<br/>";
+			//echo "|".$globe_id."|".$globe_name."<br/>";
 			$broker->setValue('list', $count, $globe_name);
 			$count++;
 		}
@@ -194,12 +212,6 @@ function assignNewGlobeID(&$broker){
 	}
 }
 
-/** */
-function assignNewGlobeID(&$broker){
-}
-
-
-
 function insertNewAsset($globe_object){
 	global $databaseConnection;
 	$configuration = new configurations();
@@ -225,15 +237,39 @@ function updateAsset(&$broker, $asset_id){
 	global $databaseConnection;
 	$configuration = new configurations();
 	$configs = $configuration->configs;
-
 	try {
 		$prepSTMT = $databaseConnection->prepare($configs["database_statements"]["update_asset"]);
 		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		$result = $prepSTMT->bind_param('ss', $asset_id, $broker->brokerData['globe']['project']);
+		$result = $prepSTMT->bind_param('is', $asset_id, $broker->brokerData['globe']['project']);
 		$prepSTMT->execute();
-		$updateRow->$prepSTMT->affected_rows;
+		$updatedRows->$prepSTMT->affected_rows;
 		$prepSTMT->close;
-		return $updateRow;
+		return $updatedRows;
+	} catch(Exception $e){
+		writeLogInfo("Update record error in [updateAsset]!");
+		writeLogInfo("Exception occurred in [updateAsset]! | [". $e ."]", 1) ;
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO UPDATE ASSET | [". $e ."]", 500);
+		return -1;
+	}
+}
+
+/** */
+function dropAsset(&$broker){
+	global $databaseConnection;
+	$configuration = new configurations();
+	$configs = $configuration->configs;
+	$asset_id = validGlobe($broker);
+	if ($asset_id == -1) return;
+	try {
+		if (($asset_id == 0) ||  (validProject($broker) == 0)) throw new Exception("Exception Thrown (GLOBE OR PROJECT NOT FOUND):");
+		$prepSTMT = $databaseConnection->prepare($configs["database_statements"]["drop_asset"]);
+		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
+		$result = $prepSTMT->bind_param('s', $asset_id, $broker->brokerData['globe']['id']);
+		$prepSTMT->execute();
+		$updatedRows->$prepSTMT->affected_rows;
+		$prepSTMT->close;
+		if ($updatedRows > 1) $broker->setValue('header', 'message', "Successfully Dropped Globe");
+		return $updatedRows;
 	} catch(Exception $e){
 		writeLogInfo("Update record error in [updateAsset]!");
 		writeLogInfo("Exception occurred in [updateAsset]! | [". $e ."]", 1) ;

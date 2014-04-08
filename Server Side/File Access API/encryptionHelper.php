@@ -39,6 +39,7 @@ TO DO:
 $saltValues = array("handshake" => "HANDSHAKE:abc123_GloblockDevelopmentTest", 
 					"other" => "Other:abc123_GloblockDevelopmentTest",
 					"session" => "Session:laundrytokens",
+					"folder" => "Folder:callorfold",
 					"default" => "Default:abc123_GloblockDevelopmentTest");
 
 /** Testing Only */
@@ -53,6 +54,13 @@ $saltValues = array("handshake" => "HANDSHAKE:abc123_GloblockDevelopmentTest",
 function getHandShakeResponse($message){
 	writeLogInfo("Handshake Request to :". $_SERVER['SERVER_NAME'] ." | From :". $_SERVER['REMOTE_ADDR']);
 	$message = addSalt($message, "handshake");
+	$message = encryptMessage($message);
+	return $message;
+}
+
+function getFolderName($message){
+	writeLogInfo("Folder Name Request for File Publish");
+	$message = addSalt($message, "folder");
 	$message = encryptMessage($message);
 	return $message;
 }
