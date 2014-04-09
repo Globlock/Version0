@@ -162,7 +162,10 @@ function unAssignGlobe(&$broker){
 function pullFiles(&$broker){
 	if(validSession($broker, 2)){
 		$broker->setValue('header', 'type', "PULL RESPONSE");
-		pullRequest($broker);
+		$globe_id = searchGlobeProject($broker);
+		if ($globe_id > 0){
+			pullRequest($broker, $globe_id);
+		}
 	}
 }
 
@@ -170,8 +173,7 @@ function pullFiles(&$broker){
 function returnHandshake(&$broker){
 	if (empty($_POST["request_body"])){ 
 		$broker->handleErrors("LENGTH REQUIRED: MESSAGE REQUEST BODY EMPTY",411);	
-		echo $broker->returnJSON();
-		return false;
+		return $broker->returnJSON();
 	} else {
 		$broker->setValue('header', 'message', $_POST["request_body"]);
 		$message = getHandShakeResponse($broker->brokerData['header']['message']);

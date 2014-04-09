@@ -32,10 +32,19 @@ TO DO:
 /** */
 function pushRequest(&$broker){
 //TO DO
+	
 }
 
-function pullRequest(&$broker){
-//TO DO
+function pullRequest(&$broker, $globe_id){
+	$configuration = new configurations();
+	$configs = $configuration->configs;
+
+	//TO DO
+	$workingDirectory = getWorkingDirectory($globe_id, $configs);
+		// retrieve the record id
+		// get the directory path for the current directory
+		// createPublishDirectory
+		// for each file that is in there, publish 
 }
 
 /** */
@@ -43,18 +52,18 @@ function getPublishDirectory(){
 	$configuration = new configurations();
 	$configs = $configuration->configs;
 	
-	$root_directory = $configs["file_publishing"]["root"];
+	$publish_directory = $configs["file_locations"]["publish_directory"];
 	$subDirectory = strtoupper(encryptMessage(addSalt(date("Ymdhis") . rand(1,1000), "folder")));
 	
-	$fullDirectory = $root_directory . $subDirectory;
+	$fullDirectory = $publish_directory .'/'. $subDirectory;
 	return createPublishDirectory($fullDirectory);
-
 }
 
 /** */
 function createPublishDirectory($directory){
 	if (!file_exists($directory)) {
 		if (!mkdir($directory, 0777, true)){
+			// TO DO (replace with writeLog)
 			die('Failed to create folders...');	
 		}
 	}
@@ -73,6 +82,36 @@ function publishFile($directoryFrom, $directoryTo){
 	} 
 	// Initiate garbage Collector
 	initiateGarbageCollector($directoryTo);
+}
+
+/** */
+function archiveFile($globe_id, $revision, $configs){
+	// TO DO (change to logWrite and exception throw)
+	$working_directory = getWorkingDirectory($globe_id, $configs);
+	$archive_directory = getArchiveDirectory($globe_id, $revision, $configs);
+	if (!file_exists($working_directory)) return false;
+	if (!file_exists($archive_directory)){
+		if (!createDirectory()) return false;
+	}
+	foreach(glob($working_directory .'/*') as $file) {
+		$filename = pathinfo($file)['filename'];
+	}
+}
+
+/** */
+function getWorkingDirectory($globe_id, $configs){
+	$storage_directory = $configs["file_locations"]["storage_directory"];
+	$working_directory = $configs["file_locations"]["working_directory"];
+	$fullWorkingDirectory = $storage_directory .'/'. $globe_id .'/'. $working_directory;
+	return $fullWorkingDirectory;
+}
+
+/** */
+function getArchiveDirectory($globe_id, $revision, $configs){
+	$storage_directory = $configs["file_locations"]["storage_directory"];
+	$archive_directory = $configs["file_locations"]["archive_directory"];
+	$fullArchiveDirectory = $storage_directory .'/'. $globe_id .'/'. $archive_directory .'/'.$revision;
+	return $fullArchiveDirectory;
 }
 
 /** */

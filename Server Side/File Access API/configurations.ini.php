@@ -21,9 +21,12 @@ filename="security_err.log"
 directory="LogFiles/"
 filename="system_error.log"session
 
-[file_publishing]
+[file_locations]
 server_address="http://192.168.1.11/globlock/Version0/Server%20Side/File%20Access%20API/"
-root="Publish/"
+storage_directory="Storage"
+working_directory="Current"
+archive_directory="Archive"
+publish_directory="Publish"
 
 
 ;Database Login and Host Information
@@ -53,7 +56,7 @@ ins_new_asset="INSERT INTO globe_assets_test (asset_id, object, Revision_id ) VA
 update_asset="UPDATE globes_test SET globe_asset=? WHERE globe_name=?"
 drop_asset="UPDATE globes_test, globe_assets_test SET globes_test.globe_asset = 0, globe_assets_test.object = "DROPPED" WHERE globe_assets_test.asset_id = globes_test.globe_asset AND globe_assets_test.object = ?"
 
-;Session stages
+;Session stages //TO DO (update with latest list)
 [session_stages]
 dropped_sessions="-1"
 initialise_token="0"
