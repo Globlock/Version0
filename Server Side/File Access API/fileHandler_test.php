@@ -4,6 +4,7 @@
 include 'configurations.php';
 include 'encryptionHelper.php';
 include 'fileHandler.php';
+include 'functionTimer.php';
 
 testFunction();
 
@@ -11,5 +12,7 @@ testFunction();
 function testFunction(){
 	$folder = getPublishDirectory();
 	echo "<br/> ". $folder;
-	publishFile("LogFiles", $folder);
+	createDirectory($folder);
+	publishFiles("LogFiles", $folder);
 }
+

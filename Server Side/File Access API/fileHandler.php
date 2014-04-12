@@ -26,25 +26,49 @@ TO DO:
 >>createPublishDirectory
 >>moveFilesForPublish
 >>Initiate Garbage Collector
+>>logWrite and error handling
 
 */
 
 /** */
 function pushRequest(&$broker){
-//TO DO
+	//TO DO
 	
 }
 
 function pullRequest(&$broker, $globe_id){
+	$funcTy = new functionTimer();
 	$configuration = new configurations();
 	$configs = $configuration->configs;
 
-	//TO DO
-	$workingDirectory = getWorkingDirectory($globe_id, $configs);
-		// retrieve the record id
-		// get the directory path for the current directory
-		// createPublishDirectory
-		// for each file that is in there, publish 
+	try {
+		$working_Directory = getWorkingDirectory($globe_id, $configs);
+		$publish_Directory = createDirectory(getPublishDirectory());
+		publishFiles($working_Directory, $publish_Directory);
+		$funcTy->getSeconds($time_seconds);
+	} catch (Exception $e){
+		// TO DO
+		echo "<br/>Exception!!<br/>";
+	}
+}
+
+/** */
+function getWorkingDirectory($globe_id, $configs){
+	$storage_directory = $configs["file_locations"]["storage_directory"];
+	$working_directory = $configs["file_locations"]["working_directory"];
+	$full_Working_Directory = $storage_directory .'/'. $globe_id .'/'. $working_directory;
+	return $full_Working_Directory;
+}
+
+/** */
+function createDirectory($directory){
+	if (!file_exists($directory)) {
+		if (!mkdir($directory, 0777, true)){
+			// TO DO (replace with writeLog)
+			die('Failed to create folders...');	
+		}
+	}
+	return true;
 }
 
 /** */
@@ -53,35 +77,25 @@ function getPublishDirectory(){
 	$configs = $configuration->configs;
 	
 	$publish_directory = $configs["file_locations"]["publish_directory"];
-	$subDirectory = strtoupper(encryptMessage(addSalt(date("Ymdhis") . rand(1,1000), "folder")));
+	$sub_Directory = strtoupper(encryptMessage(addSalt(date("Ymdhis") . rand(1,1000), "folder")));
 	
-	$fullDirectory = $publish_directory .'/'. $subDirectory;
-	return createPublishDirectory($fullDirectory);
+	$full_Directory = $publish_directory .'/'. $sub_Directory;
+	return $full_Directory;
 }
 
 /** */
-function createPublishDirectory($directory){
-	if (!file_exists($directory)) {
-		if (!mkdir($directory, 0777, true)){
-			// TO DO (replace with writeLog)
-			die('Failed to create folders...');	
-		}
-	}
-	return $directory;
-}
-
-/** */
-function publishFile($directoryFrom, $directoryTo){
-	//>>TO DO
-	echo "<br/> in the mix ";
+function publishFiles($directoryFrom, $directoryTo){
+	// Calculate the time taken to move files.
+	// If this is outside our limits, it will require further development
 	if (file_exists($directoryFrom)) {
 		foreach(glob($directoryFrom.'/*') as $file) {
 			$filename = pathinfo($file)['filename'];
 			copy($file, $directoryTo.'/'.$filename);
  		}
-	} 
-	// Initiate garbage Collector
-	initiateGarbageCollector($directoryTo);
+	} else {
+		return false;
+	}
+	return true;
 }
 
 /** */
@@ -99,24 +113,17 @@ function archiveFile($globe_id, $revision, $configs){
 }
 
 /** */
-function getWorkingDirectory($globe_id, $configs){
-	$storage_directory = $configs["file_locations"]["storage_directory"];
-	$working_directory = $configs["file_locations"]["working_directory"];
-	$fullWorkingDirectory = $storage_directory .'/'. $globe_id .'/'. $working_directory;
-	return $fullWorkingDirectory;
-}
-
-/** */
 function getArchiveDirectory($globe_id, $revision, $configs){
 	$storage_directory = $configs["file_locations"]["storage_directory"];
 	$archive_directory = $configs["file_locations"]["archive_directory"];
-	$fullArchiveDirectory = $storage_directory .'/'. $globe_id .'/'. $archive_directory .'/'.$revision;
-	return $fullArchiveDirectory;
+	$full_Archive_Directory = $storage_directory .'/'. $globe_id .'/'. $archive_directory .'/'.$revision;
+	return $full_Archive_Directory;
 }
 
 /** */
 function initiateGarbageCollector($directory, $timeout=60){
-
+	// TO DO
+	
 }
 
 
