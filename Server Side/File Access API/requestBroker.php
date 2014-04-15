@@ -51,7 +51,7 @@ class requestBroker{
 		$data = trim($data);
 		$data = stripslashes($data);
 		$data = htmlspecialchars($data);
-		$data = strtoupper($data);
+		//$data = strtoupper($data);
 		return $data;
 	}
 		

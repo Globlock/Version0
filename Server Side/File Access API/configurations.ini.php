@@ -23,6 +23,7 @@ filename="system_error.log"session
 
 [file_locations]
 server_address="http://192.168.1.11/globlock/Version0/Server%20Side/File%20Access%20API/"
+sysroot_directory="http://192.168.1.11/globlock/Version0/Server%20Side/File%20Access%20API/"
 storage_directory="Storage"
 working_directory="Current"
 archive_directory="Archive"
@@ -99,7 +100,8 @@ action["drop"]=false
 action["pull"]=false
 action["push"]=false
 list["count"]=2
-list["size"]=1000
+list["size"]='6.6mb'
+list["root"]='globlock.com/ABCD1234/'
 list[]="file0.txt"
 list[]="file1.txt"
 list[]="file2.txt"
@@ -131,7 +133,8 @@ action["drop"]=false
 action["pull"]=false
 action["push"]=false
 list["count"]=0
-list["size"]=0
+list["size"]='-'
+list["root"]='-'
 list[]="-"
 list[]="-"
 list[]="-"
