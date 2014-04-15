@@ -36,20 +36,14 @@ TO DO:
 */
 
 /** */
-// CALLED ON FROM VALIDATE GLOBE
 function globeValidation(&$broker){
 	$result = validGlobe($broker);
-	if ($result == -1) {
-		return -1;
-	} else if ($result == 0) {
-		listUnassigned($broker);
-	} else {
-		updateAssigned($broker, $result); //globe ID and project
-	}
+	if ($result == -1) return -1;
+	else if ($result == 0) listUnassigned($broker);
+	else updateAssigned($broker, $result); //globe ID and project
 }
 
 /** */
-//Called on from SET (Assign Globe)
 function globeAssignable(&$broker){
 	try{
 		$result = validGlobe($broker);
@@ -207,11 +201,12 @@ function listUnassigned(&$broker){
 function assignNewGlobeID(&$broker){
 	$asset_id = insertNewAsset($broker);
 	if ($asset_id == -1) return;
-	if (updateAsset(&$broker, $asset_id) >= 1){
+	if (updateAsset($broker, $asset_id) >= 1){
 		$broker->setValue('header', 'message', "Successfully Assigned New Globe");
 	}
 }
 
+/** */
 function insertNewAsset($globe_object){
 	global $databaseConnection;
 	$configuration = new configurations();
@@ -233,6 +228,7 @@ function insertNewAsset($globe_object){
 	}
 }
 
+/** */
 function updateAsset(&$broker, $asset_id){
 	global $databaseConnection;
 	$configuration = new configurations();
@@ -242,7 +238,7 @@ function updateAsset(&$broker, $asset_id){
 		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
 		$result = $prepSTMT->bind_param('is', $asset_id, $broker->brokerData['globe']['project']);
 		$prepSTMT->execute();
-		$updatedRows->$prepSTMT->affected_rows;
+		$updatedRows=$prepSTMT->affected_rows;
 		$prepSTMT->close;
 		return $updatedRows;
 	} catch(Exception $e){
@@ -259,14 +255,14 @@ function dropAsset(&$broker){
 	$configuration = new configurations();
 	$configs = $configuration->configs;
 	$asset_id = validGlobe($broker);
-	if ($asset_id == -1) return;
+	if ($asset_id == -1) return -1;
 	try {
 		if (($asset_id == 0) ||  (validProject($broker) == 0)) throw new Exception("Exception Thrown (GLOBE OR PROJECT NOT FOUND):");
 		$prepSTMT = $databaseConnection->prepare($configs["database_statements"]["drop_asset"]);
 		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
 		$result = $prepSTMT->bind_param('s', $asset_id, $broker->brokerData['globe']['id']);
 		$prepSTMT->execute();
-		$updatedRows->$prepSTMT->affected_rows;
+		$updatedRows=$prepSTMT->affected_rows;
 		$prepSTMT->close;
 		if ($updatedRows > 1) $broker->setValue('header', 'message', "Successfully Dropped Globe");
 		return $updatedRows;
@@ -278,12 +274,37 @@ function dropAsset(&$broker){
 	}
 }
 
-function getActions(&$broker){
+/** */
+function incrementRevision(&$broker){
 
+	try {
+		$requestArgs = array(validGlobe($broker));
+		if ($requestArgs[0] == -1) return -1;
+		$result = accessRequest("increment_revision", "rows", null, 1, "i", $requestArgs);
+		if ($result == -1) throw new Exceptin("Exception Thrown while executing Database Access Request:");
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [incrementRevision] !  | [". $e ."]", 1) ;
+		return -1;
+	} finally {
+		return $result;
+	}
 }
-function actionPermitted(&$broker){
 
+/** */
+function getCurrentRevision(&$broker, $globe_id){
+		
+	try {
+		$requestArgs = array($globe_id);
+		$result = accessRequest("search_revision", "id", "Revision_id", 1, "i", $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [getCurrentRevision] !  | [". $e ."]", 1) ;
+		return -1;
+	} finally {
+		return $result;
+	}
 }
+
 
 
 

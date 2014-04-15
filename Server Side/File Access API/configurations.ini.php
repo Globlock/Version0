@@ -55,7 +55,10 @@ search_project_by_globe="SELECT globes_test.globe_name FROM globes_test, globe_a
 unassigned_globes="SELECT globe_name FROM globes_test WHERE globe_asset = 0"
 ins_new_asset="INSERT INTO globe_assets_test (asset_id, object, Revision_id ) VALUES ( NULL, ?, 0)"
 update_asset="UPDATE globes_test SET globe_asset=? WHERE globe_name=?"
+search_revision="SELECT globe_assets_test.Revision_id FROM globe_assets_test INNER JOIN globes_test ON globe_assets_test.asset_id = globes_test.globe_asset WHERE globes_test.globe_id = ?"
+increment_revision="UPDATE globe_assets_test SET Revision_id = Revision_id + 1 WHERE asset_id = ?"
 drop_asset="UPDATE globes_test, globe_assets_test SET globes_test.globe_asset = 0, globe_assets_test.object = "DROPPED" WHERE globe_assets_test.asset_id = globes_test.globe_asset AND globe_assets_test.object = ?"
+
 
 ;Session stages //TO DO (update with latest list)
 [session_stages]

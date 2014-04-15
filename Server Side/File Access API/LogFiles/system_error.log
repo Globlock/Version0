@@ -96,3 +96,27 @@ Stack trace:
 #1 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(75): reqVALIDATE(Object(requestBroker))
 #2 G:\Globlock\Globlock\Version0\Server Side\File Access API\FileAccessAPI.php(45): handleRequest(Object(requestBroker))
 #3 {main}]
+20140415-154521|System|Exception occurred in [validGlobe]! | [exception 'Exception' with message 'Exception Thrown (EMPTY GLOBE):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\globeHandler.php:85
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\fileHandler.php(41): validGlobe(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\fileHandler_test.php(47): pushRequest(Object(requestBroker), 0)
+#2 G:\Globlock\Globlock\Version0\Server Side\File Access API\fileHandler_test.php(16): testPush()
+#3 {main}]
+20140415-154523|System|Exception occurred in [validGlobe]! | [exception 'Exception' with message 'Exception Thrown (EMPTY GLOBE):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\globeHandler.php:85
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\fileHandler.php(41): validGlobe(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\fileHandler_test.php(47): pushRequest(Object(requestBroker), 0)
+#2 G:\Globlock\Globlock\Version0\Server Side\File Access API\fileHandler_test.php(16): testPush()
+#3 {main}]
+20140415-154558|System|Exception occurred in [validGlobe]! | [exception 'Exception' with message 'Exception Thrown (EMPTY GLOBE):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\globeHandler.php:85
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\fileHandler.php(41): validGlobe(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\fileHandler_test.php(47): pushRequest(Object(requestBroker), 0)
+#2 G:\Globlock\Globlock\Version0\Server Side\File Access API\fileHandler_test.php(16): testPush()
+#3 {main}]
+20140415-154754|System|Exception occurred in [validGlobe]! | [exception 'Exception' with message 'Exception Thrown (EMPTY GLOBE):' in G:\Globlock\Globlock\Version0\Server Side\File Access API\globeHandler.php:85
+Stack trace:
+#0 G:\Globlock\Globlock\Version0\Server Side\File Access API\fileHandler.php(41): validGlobe(Object(requestBroker))
+#1 G:\Globlock\Globlock\Version0\Server Side\File Access API\fileHandler_test.php(47): pushRequest(Object(requestBroker), 0)
+#2 G:\Globlock\Globlock\Version0\Server Side\File Access API\fileHandler_test.php(16): testPush()
+#3 {main}]

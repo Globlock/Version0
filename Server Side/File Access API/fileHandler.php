@@ -31,13 +31,39 @@ TO DO:
 */
 
 /** */
-function pushRequest(&$broker){
-	//TO DO
+function pushRequest(&$broker, $globe_id){
+	// TO DO - Error handling and writeLog
+	$funcTy = new functionTimer();
+	$configuration = new configurations();
+	$configs = $configuration->configs;
 	
+	try {
+	
+		$working_Directory = getWorkingDirectory($globe_id, $configs); 					echo "<br/>Work Dir: ". $working_Directory ."<br/>";// remove	
+		
+		$revision = getCurrentRevision($broker, $globe_id); 							echo "<br/>Revision: ". $revision ."<br/>";// remove
+	
+		$archive_Directory = getArchiveDirectory($globe_id, $revision, $configs);		echo "<br/>Arch Dir: ". $archive_Directory ."<br/>";// remove
+		
+		archiveFiles($globe_id, $revision, $configs);
+		
+		$success = incrementRevision($broker);											echo "<br/>Success?: ". $success ."<br/>";// remove
+		//if (updateRevision($broker, $asset_id, $revision) == -1) 
+		//	throw new Exception("Exception Thrown (Resultset):");
+		
+		if(isset($_FILES['userfile']['tmp_name'])){
+			echo "<br/>Files set! <br/>";
+			echo "<br/>". count($_FILES['userfile']['tmp_name']) ."<br/>";
+		}
+	} catch (Exception $e){
+		// TO DO - Error handling and writeLog
+		echo "<br/>Exception! :<br/>".$e;
+		
+	}
 }
 
 function pullRequest(&$broker, $globe_id){
-	// TODO - Error handling and writeLog
+	// TO DO - Error handling and writeLog
 	$funcTy = new functionTimer();
 	$configuration = new configurations();
 	$configs = $configuration->configs;
@@ -65,6 +91,14 @@ function getWorkingDirectory($globe_id, $configs){
 	$working_directory = $configs["file_locations"]["working_directory"];
 	$full_Working_Directory = $storage_directory .'/'. $globe_id .'/'. $working_directory;
 	return $full_Working_Directory;
+}
+
+/** */
+function getArchiveDirectory($globe_id, $revision, $configs){
+	$storage_directory = $configs["file_locations"]["storage_directory"];
+	$archive_directory = $configs["file_locations"]["archive_directory"];
+	$full_Archive_Directory = $storage_directory .'/'. $globe_id .'/'. $archive_directory .'/'.$revision;
+	return $full_Archive_Directory;
 }
 
 /** */
@@ -166,25 +200,23 @@ function listFiles($directoryFrom, &$broker, &$configs){
 }
 
 /** */
-function archiveFile($globe_id, $revision, $configs){
+function archiveFiles($globe_id, $revision, $configs){
 	// TO DO (change to logWrite and exception throw)
-	$working_directory = getWorkingDirectory($globe_id, $configs);
-	$archive_directory = getArchiveDirectory($globe_id, $revision, $configs);
-	if (!file_exists($working_directory)) return false;
-	if (!file_exists($archive_directory)){
-		if (!createDirectory()) return false;
+	try {
+		$working_directory = getWorkingDirectory($globe_id, $configs);
+		$archive_directory = getArchiveDirectory($globe_id, $revision, $configs);
+		if (!file_exists($working_directory)) return false;
+		if (!file_exists($archive_directory)){
+			createDirectory($archive_directory);
+			writeAccessFile("root", $archive_directory);
+		}
+		foreach(glob($working_directory .'/*') as $file) {
+			$filename = pathinfo($file)['basename'];
+			rename($file, $archive_directory.'/'.$filename);
+		}
+	}catch(Exception $e){
+		echo "<br/>Exception! <br/> ";
 	}
-	foreach(glob($working_directory .'/*') as $file) {
-		$filename = pathinfo($file)['filename'];
-	}
-}
-
-/** */
-function getArchiveDirectory($globe_id, $revision, $configs){
-	$storage_directory = $configs["file_locations"]["storage_directory"];
-	$archive_directory = $configs["file_locations"]["archive_directory"];
-	$full_Archive_Directory = $storage_directory .'/'. $globe_id .'/'. $archive_directory .'/'.$revision;
-	return $full_Archive_Directory;
 }
 
 /** */

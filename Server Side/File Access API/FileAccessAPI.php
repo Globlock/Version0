@@ -170,6 +170,19 @@ function pullFiles(&$broker){
 }
 
 /** */
+//PUSH FILES
+function pullFiles(&$broker){
+	// TO DO - Handle validGlobe & project from here
+	if(validSession($broker, 2)){
+		$broker->setValue('header', 'type', "PUSH RESPONSE");
+		$globe_id = searchGlobeProject($broker);
+		if ($globe_id > 0){
+			pushRequest($broker, $globe_id);
+		}
+	}
+}
+
+/** */
 function returnHandshake(&$broker){
 	if (empty($_POST["request_body"])){ 
 		$broker->handleErrors("LENGTH REQUIRED: MESSAGE REQUEST BODY EMPTY",411);	
