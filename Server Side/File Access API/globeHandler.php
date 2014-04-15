@@ -162,39 +162,36 @@ function searchGlobeProject(&$broker){
 	}
 }
 
+/** */
 function listUnassigned(&$broker){
-	global $databaseConnection;
-	$configuration = new configurations();
-	$configs = $configuration->configs;
-	$count = 0;
-
 	try {
-		$prepSTMT = $databaseConnection->prepare($configs["database_statements"]["unassigned_globes"]);
-		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		$prepSTMT->execute();
-		//$prepSTMT->bind_result($globe_id, $globe_name, $temp1, $temp2, $temp3, $temp4 );
-		$prepSTMT->bind_result($globe_name);
-		$prepSTMT->store_result();
-		$numRows = $prepSTMT->num_rows;
-		$broker->setValue('list', "count", $numRows);
-		
-		while ($prepSTMT->fetch()) {
-			//echo "|".$globe_id."|".$globe_name."<br/>";
-			$broker->setValue('list', $count, $globe_name);
-			$count++;
-		}
-		$prepSTMT->close;
-	} catch(Exception $e){
-		writeLogInfo("DB read error in [listUnassigned]!");
-		writeLogInfo("Exception occurred in [listUnassigned]! | [". $e ."]", 1) ;
+		$requestArgs = array();
+		$result = accessRequest("unassigned_globes", "list1", null, 0, null, $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+		listToBroker($broker, $requestArgs);
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [listUnassigned]! | [". $e ."]", 1);
 		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE LIST | [". $e ."]", 500);
 		return -1;
-	}
-	
+	} finally { return $result; }
+}
+
+/** */
+function listToBroker(&$broker, $list){
+
 	$broker->setValue('status', "assigned", "False");
 	$broker->setValue('action', "set", "True");
 	$broker->setValue('action', "abort", "True");
-	return $count;	
+	
+	$count = $list[0];
+	$index = 0;
+	$broker->setValue('list', "count", $count);
+	
+	while ($index < $count){
+		$broker->setValue('list', $index, $list[$index+1]);
+		$index++;
+	}
+	
 }
 
 /** */
@@ -207,102 +204,74 @@ function assignNewGlobeID(&$broker){
 }
 
 /** */
-function insertNewAsset($globe_object){
-	global $databaseConnection;
-	$configuration = new configurations();
-	$configs = $configuration->configs;
-
+function insertNewAsset($broker){
 	try {
-		$prepSTMT = $databaseConnection->prepare($configs["database_statements"]["ins_new_asset"]);
-		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		$result = $prepSTMT->bind_param('s', $broker->brokerData['globe']['id']);
-		$prepSTMT->execute();
-		$updateRow->$prepSTMT->insert_id;
-		$prepSTMT->close;
-		return $updateRow;
-	} catch(Exception $e){
-		writeLogInfo("Insert new record error in [insertNewAsset]!");
+		$requestArgs = array($broker->brokerData['globe']['id']);
+		$result = accessRequest("ins_new_asset", "rows", null, 1, "s", $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [insertNewAsset]! | [". $e ."]", 1) ;
 		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO INSERT NEW ASSET | [". $e ."]", 500);
 		return -1;
-	}
+	} finally { return $result; }
 }
 
 /** */
 function updateAsset(&$broker, $asset_id){
-	global $databaseConnection;
-	$configuration = new configurations();
-	$configs = $configuration->configs;
 	try {
-		$prepSTMT = $databaseConnection->prepare($configs["database_statements"]["update_asset"]);
-		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		$result = $prepSTMT->bind_param('is', $asset_id, $broker->brokerData['globe']['project']);
-		$prepSTMT->execute();
-		$updatedRows=$prepSTMT->affected_rows;
-		$prepSTMT->close;
-		return $updatedRows;
-	} catch(Exception $e){
-		writeLogInfo("Update record error in [updateAsset]!");
+		$requestArgs = array($asset_id, $broker->brokerData['globe']['project']);
+		if ($requestArgs[0] == -1) return -1;
+		$result = accessRequest("update_asset", "rows", null, 2, "is", $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [updateAsset]! | [". $e ."]", 1) ;
 		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO UPDATE ASSET | [". $e ."]", 500);
 		return -1;
-	}
+	} finally { return $result; }
 }
 
 /** */
 function dropAsset(&$broker){
-	global $databaseConnection;
-	$configuration = new configurations();
-	$configs = $configuration->configs;
-	$asset_id = validGlobe($broker);
-	if ($asset_id == -1) return -1;
 	try {
-		if (($asset_id == 0) ||  (validProject($broker) == 0)) throw new Exception("Exception Thrown (GLOBE OR PROJECT NOT FOUND):");
-		$prepSTMT = $databaseConnection->prepare($configs["database_statements"]["drop_asset"]);
-		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		$result = $prepSTMT->bind_param('s', $asset_id, $broker->brokerData['globe']['id']);
-		$prepSTMT->execute();
-		$updatedRows=$prepSTMT->affected_rows;
-		$prepSTMT->close;
-		if ($updatedRows > 1) $broker->setValue('header', 'message', "Successfully Dropped Globe");
-		return $updatedRows;
-	} catch(Exception $e){
-		writeLogInfo("Update record error in [updateAsset]!");
-		writeLogInfo("Exception occurred in [updateAsset]! | [". $e ."]", 1) ;
+		$requestArgs = array(validGlobe($broker));
+		if ($requestArgs[0] == -1) throw new Exception("Exception Thrown (GLOBE OR PROJECT INVALID):");
+		if ((validProject($broker) == 0)) throw new Exception("Exception Thrown (GLOBE OR PROJECT NOT FOUND):");
+		$requestArgs = array($broker->brokerData['globe']['id']);
+		$result = accessRequest("drop_asset", "rows", null, 1, "s", $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+		$broker->setValue('header', 'message', "Successfully Dropped Globe");
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [incrementRevision] !  | [". $e ."]", 1) ;
 		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO UPDATE ASSET | [". $e ."]", 500);
 		return -1;
-	}
+	} finally { return $result; }
 }
 
 /** */
 function incrementRevision(&$broker){
-
 	try {
 		$requestArgs = array(validGlobe($broker));
 		if ($requestArgs[0] == -1) return -1;
 		$result = accessRequest("increment_revision", "rows", null, 1, "i", $requestArgs);
-		if ($result == -1) throw new Exceptin("Exception Thrown while executing Database Access Request:");
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
 	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [incrementRevision] !  | [". $e ."]", 1) ;
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO INCREMENT REVISION | [". $e ."]", 500);
 		return -1;
-	} finally {
-		return $result;
-	}
+	} finally { return $result; }
 }
 
 /** */
 function getCurrentRevision(&$broker, $globe_id){
-		
 	try {
 		$requestArgs = array($globe_id);
 		$result = accessRequest("search_revision", "id", "Revision_id", 1, "i", $requestArgs);
 		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
 	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [getCurrentRevision] !  | [". $e ."]", 1) ;
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE REVISION INFO | [". $e ."]", 500);
 		return -1;
-	} finally {
-		return $result;
-	}
+	} finally { return $result; }
 }
 
 

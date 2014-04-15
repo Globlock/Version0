@@ -38,22 +38,30 @@ function pushRequest(&$broker, $globe_id){
 	$configs = $configuration->configs;
 	
 	try {
-	
+	/* 
 		$working_Directory = getWorkingDirectory($globe_id, $configs); 					echo "<br/>Work Dir: ". $working_Directory ."<br/>";// remove	
-		
 		$revision = getCurrentRevision($broker, $globe_id); 							echo "<br/>Revision: ". $revision ."<br/>";// remove
 	
 		$archive_Directory = getArchiveDirectory($globe_id, $revision, $configs);		echo "<br/>Arch Dir: ". $archive_Directory ."<br/>";// remove
-		
 		archiveFiles($globe_id, $revision, $configs);
 		
-		$success = incrementRevision($broker);											echo "<br/>Success?: ". $success ."<br/>";// remove
-		//if (updateRevision($broker, $asset_id, $revision) == -1) 
-		//	throw new Exception("Exception Thrown (Resultset):");
+		$success = incrementRevision($broker);											echo "<br/>Success1: ". $success ."<br/>";// remove
+		 */
 		
-		if(isset($_FILES['userfile']['tmp_name'])){
-			echo "<br/>Files set! <br/>";
-			echo "<br/>". count($_FILES['userfile']['tmp_name']) ."<br/>";
+		if (empty($_FILES)) throw new Exception("Exception Thrown while Pushing files (Files Empty!):");
+			//move_uploaded_file($_FILES['ufile']['tmp_name'][0], "small-image/" . $_FILES['ufile']['name'][0]);
+		
+		$keyName = array_keys($_FILES)[0];												//ALT: foreach($_FILES as $key=>$file) { $keyName = $key; }
+		$file_Array =  rearrangeFileArray($_FILES[$keyName]);
+		
+		foreach ($file_Array as $file) {
+			if (strlen($file['name']) > 1){
+				// TO DO - Move files to the Current Directory
+				$count++;
+				echo 'File Name: '. $file['name'] ."<br/>";
+				echo 'File Type: '. $file['type'] ."<br/>";
+				echo 'File Size: '. $file['size'] ."<br/>";
+			}
 		}
 	} catch (Exception $e){
 		// TO DO - Error handling and writeLog
@@ -62,6 +70,26 @@ function pushRequest(&$broker, $globe_id){
 	}
 }
 
+/** */
+function rearrangeFileArray($file_post){
+	$file_Array = array();
+	$file_Count = count($file_post['name']);
+	$file_Keys  = array_keys($file_post);
+	
+	    $file_count = count($file_post['name']);
+    $file_keys = array_keys($file_post);
+
+    for ($i=0; $i<$file_count; $i++) {
+        foreach ($file_keys as $key) {
+            $file_ary[$i][$key] = $file_post[$key][$i];
+        }
+    }
+
+    return $file_ary;
+}
+
+
+/** */
 function pullRequest(&$broker, $globe_id){
 	// TO DO - Error handling and writeLog
 	$funcTy = new functionTimer();
@@ -142,6 +170,7 @@ function prepareSub($publish_Sub_Directory){
 /** */
 function writeAccessFile($type, $directoryTo){
 	// TODO Error handling as this step is critical for security of the files
+	// http://stackoverflow.com/questions/7649794/htaccess-deny-root-allow-specific-subfolder-possible Author: nachito
 	$filename = ".htaccess";
 	$fullname = $directoryTo .'/'. $filename;
 	if (file_exists($fullname)) return true;

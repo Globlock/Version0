@@ -1,11 +1,11 @@
 <?php
 /*
-<<Simple File Desc>> - <<Project>>
-Filename:	<<filename>>.<<ext>>
-Version: 	x.x
+Database Broker - Globlock
+Filename:	databaseBroker.php
+Version: 	1.0
 Author: 	Alex Quigley, x10205691
-Created: 	<<date>>
-Updated: 	<<date>>
+Created: 	15/04/2014
+Updated: 	15/04/2014
 
 Dependencies:
 	<<filename>>.<<ext>> (parent) *[optional]
@@ -25,7 +25,7 @@ TO DO:
 */
 
 
-function accessRequest($query, $type, $idname, $count, $params, $requestArgs){
+function accessRequest($query, $type, $idname, $count, $params, &$requestArgs){
 	/** Declarations */
 	global $databaseConnection;
 	$configuration = new configurations();
@@ -52,6 +52,9 @@ function accessRequest($query, $type, $idname, $count, $params, $requestArgs){
 				$result = $prepSTMT->bind_param($params, $requestArgs[0], $requestArgs[1], $requestArgs[1]);
 				if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
 				break; 
+			case 10:
+				$prepSTMT->bind_result($globe_name);
+				break;
 		}
 		
 		// Execute the statement
@@ -67,13 +70,22 @@ function accessRequest($query, $type, $idname, $count, $params, $requestArgs){
 				$updatedRows = $prepSTMT->affected_rows;
 				$prepSTMT->close();
 				return $updatedRows;
-			case 2:
-				$result = $prepSTMT->bind_param($params, $args[0], $args[1]);
-				if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
+			case "insert":
+				$insert_id->$prepSTMT->insert_id;
+				$prepSTMT->close;
+				return $insert_id;
 				break;
-			case 3: 
-				$result = $prepSTMT->bind_param($params, $args[0], $args[1], $args[1]);
-				if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
+			case "list1": 
+				$count = 0;
+				$prepSTMT->bind_result($value);
+				$prepSTMT->store_result();
+				$numRows = $prepSTMT->num_rows;
+				array_push($requestArgs, strval($numRows));
+				while ($prepSTMT->fetch()) {
+					array_push($requestArgs, $value);
+					$count++;
+				}
+				$prepSTMT->close();
 				break;
 		}
 	} catch(Exception $e){
