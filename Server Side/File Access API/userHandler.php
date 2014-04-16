@@ -2,10 +2,10 @@
 /*
 User Handler - Globlock
 Filename:	userHandler.php
-Version: 	1.0
+Version: 	1.1
 Author: 	Alex Quigley, x10205691
 Created: 	31-Mar-14
-Updated: 	01-Apr-14
+Updated: 	16-Apr-14
 
 Dependencies:
 	FileAccessAPI.php (parent) 
@@ -34,25 +34,16 @@ TO DO:
 */
 	
 function searchUser(&$broker){
-	global $databaseConnection;
-	$configuration = new configurations();
-	$configs = $configuration->configs;
-	try {	
-		$prepSTMT =  $databaseConnection->prepare($configs["database_statements"]["verify_user"]);
-		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		$result = $prepSTMT->bind_param('ss', $broker->brokerData['user']['name'],  $broker->brokerData['user']['pass']);
-		if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
-		$prepSTMT->execute();
-		$result = $prepSTMT->get_result();
-		$prepSTMT->close();
-		if ( $myrow = $result->fetch_assoc()) return $myrow["user_id"];
-		return 0;
-	} catch(Exception $e) { 
-		writeLogInfo("User select error in [searchUser]!");
-		writeLogInfo("Exception occurred in [searchUser] !  | [". $e ."]", 1) ;
-		writeLogInfo("Exception occurred in [searchUser] !  | [". $e ."]", -1) ;
+	try {
+		$requestArgs = array($broker->brokerData['user']['name'], $broker->brokerData['user']['pass']);
+		$result = accessRequest("update_asset", "id", "user_id", 2, "ss", $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [searchUser] ! | [". $e ."]", 1) ;
+		writeLogInfo("Exception occurred in [searchUser] !  | [". $e ."]", -1) 
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO UPDATE ASSET | [". $e ."]", 500);
 		return -1;
-	}
+	} finally { return $result; }
 }
 
 function validUser(&$broker){
@@ -63,17 +54,15 @@ function validUser(&$broker){
 		$broker->setValue('user', "name", $_POST["user_name"]);
 		$broker->setValue('user', "pass", $_POST["user_pass"]);
 		//Validate in database
-		if (searchUser($broker) <1) {
-			throw new Exception("Exception Thrown (Resultset):");
-		} else {
-			$broker->setValue('user', "pass", "*validated*");
-			return true;
-		}
+		if (searchUser($broker) <1) throw new Exception("Exception Thrown (Resultset):");
+		$broker->setValue('user', "pass", "*validated*");
+		$result = true;
 	} catch (Exception $e){
-		writeLogInfo("Token update error in [validateUser]!");
 		writeLogInfo("Exception occurred in [validateUser]! | [". $e ."]", 1) ;
 		$broker->handleErrors("UNAUTHORIZED ACCESS: USER NOT FOUND OR USERNAME AND PASSWORD MISMATCH | [". $e ."]", 401);
-		return false;
+		$result = false;
+	} finally {
+		return $result;
 	}
 }
 

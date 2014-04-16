@@ -79,87 +79,60 @@ function globeOverwrite(&$broker){
 
 function validGlobe(&$broker){
 	try {
-		//Test values are set
-		if (!(isset($_POST["globe_id"]))) 
-			throw new Exception("Exception Thrown (EMPTY GLOBE):");
-		//Assign globe ID to broker
+		//Test values are set, then assign to broker
+		if (!(isset($_POST["globe_id"]))) throw new Exception("Exception Thrown (EMPTY GLOBE):");
 		$broker->setValue('globe', "id", $_POST["globe_id"]);
-		//Search for ID in DB (-1:error, 0:not found, else, found)
-		$result = searchGlobeID($broker);
-		if ($result == -1)
-			throw new Exception("Exception Thrown (Resultset):");
-		return $result;
-		
+		$result = searchGlobeID($broker);	//Search for ID in DB (-1:error, 0:not found, else, found)
+		if ($result == -1) throw new Exception("Exception Thrown (Resultset):");
 	} catch (Exception $e){
-		writeLogInfo("Globe validate error in [validGlobe]!");
 		writeLogInfo("Exception occurred in [validGlobe]! | [". $e ."]", 1) ;
 		$broker->handleErrors("INTERNAL SERVER ERROR: GLOBE ID NOT HANDLED OR EMPTY | [". $e ."]", 500);
 		return -1;
+	} finally {
+		return $result;
 	}
 }
 
+/** */
 function validProject(&$broker){
 	try {
-		//Test values are set
-		if (!(isset($_POST["globe_project"]))) 
-			throw new Exception("Exception Thrown (EMPTY GLOBE):");
-		//Assign globe ID to broker
+		//Test values are set, then assign to broker
+		if (!(isset($_POST["globe_project"]))) throw new Exception("Exception Thrown (EMPTY GLOBE):");
 		$broker->setValue('globe', "project", $_POST["globe_project"]);
-		//Search for ID in DB (-1:error, 0:not found, else, found)
-		$result = searchGlobeProject($broker);
-		if ($result == -1)
-			throw new Exception("Exception Thrown (Resultset):");
-		return $result;
-		
+		$result = searchGlobeProject($broker);	//Search for ID in DB (-1:error, 0:not found, else, found)
+		if ($result == -1) throw new Exception("Exception Thrown (Resultset):");
 	} catch (Exception $e){
-		writeLogInfo("Globe validate error in [validGlobe]!");
 		writeLogInfo("Exception occurred in [validGlobe]! | [". $e ."]", 1) ;
-		$broker->handleErrors("INTERNAL SERVER ERROR: GLOBE ID NOT HANDLED OR EMPTY | [". $e ."]", 500);
+		$broker->handleErrors("INTERNAL SERVER ERROR: GLOBE PROJECT NOT HANDLED OR EMPTY | [". $e ."]", 500);
 		return -1;
+	} finally {
+		return $result;
 	}
 }
 
+/** */
 function searchGlobeID(&$broker){
-//TO DO
-	global $databaseConnection;
-	$configuration = new configurations();
-	$configs = $configuration->configs;
-	try {	
-		$prepSTMT = $databaseConnection->prepare($configs["database_statements"]["search_globe"]);
-		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		$result = $prepSTMT->bind_param('s', $broker->brokerData['globe']['id']);
-		if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
-		$prepSTMT->execute();
-		$result = $prepSTMT->get_result();
-		$prepSTMT->close();
-		if ( $myrow = $result->fetch_assoc()) return $myrow["asset_id"];
-		return 0;
-	} catch(Exception $e) { 
-		writeLogInfo("Globe ID select error in [searchGlobeID]!");
-		writeLogInfo("Exception occurred in [searchGlobeID] !  | [". $e ."]", 1) ;
+	try {
+		$requestArgs = array($broker->brokerData['globe']['id']);
+		$result = accessRequest("search_globe", "id", "asset_id", 1, "s", $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [searchGlobeID]! | [". $e ."]", 1) ;
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE | [". $e ."]", 500);
 		return -1;
-	}
+	} finally { return $result; }
 }
 
 function searchGlobeProject(&$broker){
-	global $databaseConnection;
-	$configuration = new configurations();
-	$configs = $configuration->configs;
-	try {	
-		$prepSTMT = $databaseConnection->prepare($configs["database_statements"]["search_project"]);
-		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		$result = $prepSTMT->bind_param('s', $broker->brokerData['globe']['project']);
-		if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
-		$prepSTMT->execute();
-		$result = $prepSTMT->get_result();
-		$prepSTMT->close();
-		if ( $myrow = $result->fetch_assoc()) return $myrow["globe_id"];
-		return 0;
-	} catch(Exception $e) { 
-		writeLogInfo("Globe ID select error in [searchGlobeProject]!");
-		writeLogInfo("Exception occurred in [searchGlobeProject] !  | [". $e ."]", 1) ;
+	try {
+		$requestArgs = array($broker->brokerData['globe']['project']);
+		$result = accessRequest("search_project", "id", "globe_id", 1, "s", $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [searchGlobeProject]! | [". $e ."]", 1) ;
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE GLOBE PROJECT| [". $e ."]", 500);
 		return -1;
-	}
+	} finally { return $result; }
 }
 
 /** */
@@ -178,7 +151,7 @@ function listUnassigned(&$broker){
 
 /** */
 function listToBroker(&$broker, $list){
-
+	
 	$broker->setValue('status', "assigned", "False");
 	$broker->setValue('action', "set", "True");
 	$broker->setValue('action', "abort", "True");

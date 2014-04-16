@@ -63,6 +63,7 @@ function accessRequest($query, $type, $idname, $count, $params, &$requestArgs){
 		switch ($type){
 			case "id":	// Return an ID if found, otherwise 0
 				$result = $prepSTMT->get_result();
+				$prepSTMT->close();
 				if ( $myrow = $result->fetch_assoc()) return $myrow[$idname];
 				return 0;
 				break;
