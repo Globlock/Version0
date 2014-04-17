@@ -61,6 +61,10 @@ function accessRequest($query, $type, $idname, $count, $params, &$requestArgs){
 		$prepSTMT->execute();
 		
 		switch ($type){
+			case "create":
+				$result = $prepSTMT->get_result();
+				$prepSTMT->close();
+				return $result;
 			case "id":	// Return an ID if found, otherwise 0
 				$result = $prepSTMT->get_result();
 				$prepSTMT->close();

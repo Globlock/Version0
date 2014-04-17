@@ -102,91 +102,79 @@ function generateSessionToken(){
 	$session_token = generateToken();
 	$session_record = selectToken(0,0);
 	if (!updateToken($session_record, $session_token, 1)) return -1;
-	writeLogInfo("Created 'session_token' in [client_sessions] Table");
 	disposeExpired();	
 	return $session_token;
 }
 
 /** */
 function createDBPlaceholder(){
-	global $databaseConnection, $sqlStatements;
-	try{	
-		$result = mysqli_query($databaseConnection, $sqlStatements['test_table']);
+	try {
+		$result = accessRequest("test_table", "rows", null, 0, null, null);
 		if($result == FALSE) createSessionTable();
-		insertPlaceholder();
-	} catch (Exception $e){
+		$result = insertPlaceholder();
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+		writeLogInfo("Successfully Inserted Placeholder in [client_sessions]! | ", -1) ;
+	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [createDBPlaceholder] ! | [". $e ."]", 1) ;
-	}
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE TOKEN | [". $e ."]", 500);
+		return -1;
+	} finally { return $result; }
 }
-
-
 
 /** */
 function insertPlaceholder(){
-	global $databaseConnection, $sqlStatements;
-	try {	
-		if (!mysqli_query($databaseConnection, $sqlStatements['insert_placeholder'])) 
-		throw new Exception("Exception Thrown:".mysqli_error($databaseConnection));		
-	} catch (Exception $e){
-		writeLogInfo("Create Placeholder in [client_sessions] failed!");
+	try {
+		$result = accessRequest("insert_placeholder", "rows", null, 0, null, null);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+		writeLogInfo("Successfully Inserted Placeholder in [client_sessions]! | ", -1) ;
+	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [insertPlaceholder] ! | [". $e ."]", 1) ;
-	}
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE TOKEN | [". $e ."]", 500);
+		return -1;
+	} finally { return $result; }
 }
 
 /** */
 function selectToken($session_token, $session_activity=0){
-	global $databaseConnection, $sqlStatements;
-	try {	
-		$prepSTMT =  $databaseConnection->prepare($sqlStatements['select_session']);
-		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		$result = $prepSTMT->bind_param('is', $session_activity, $session_token);
-		if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
-		$prepSTMT->execute();
-		$result = $prepSTMT->get_result();
-		if ( $myrow = $result->fetch_assoc()) return $myrow["session_id"];
-		else throw new Exception("Exception Thrown (Resultset):".mysqli_error($databaseConnection));
-		$prepSTMT->close();
-	} catch(Exception $e) { 
-		writeLogInfo("Token select error in [selectToken]!");
-		writeLogInfo("Exception occurred in [selectToken] !  | [". $e ."]", 1) ;
+	try {
+		$requestArgs = array($session_activity, $session_token);
+		$result = accessRequest("select_session", "id", "session_id", 2, "is", $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+		writeLogInfo("Successfully Retrieved Session Token in [disposeSessions]! | Session Record [". $result ."], Session Token [". $session_token ."]", -1) ;
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [selectToken] ! | [". $e ."]", 1) ;
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE TOKEN | [". $e ."]", 500);
 		return -1;
-	}
+	} finally { return $result; }
 }
 
 /** */
 function updateToken($session_record, $session_token, $session_activity){
-	global $databaseConnection, $sqlStatements;
-	try{
-		$prepSTMT =  $databaseConnection->prepare($sqlStatements['update_token']);
-		if(!$prepSTMT)throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		$result = $prepSTMT->bind_param('isi', $session_activity, $session_token, $session_record);
-		if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
-		$prepSTMT->execute();
-		$result = $prepSTMT->affected_rows;
-		$prepSTMT->close();
-		return ($result >= 1);
-	} catch (Exception $e){
-		writeLogInfo("Token update error in [updateToken]!");
-		writeLogInfo("Exception occurred in [updateToken]! | [". $e ."]", 1) ;
-	}
+	try {
+		$requestArgs = array($session_activity, $session_token, $session_record);
+		$result = accessRequest("update_token", "rows", null, 3, "isi", $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+		writeLogInfo("Successfully Updated Session Token in [disposeSessions]! | [". $sessionToken ."]", -1) ;
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [updateToken] ! | [". $e ."]", 1) ;
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO UPDATE TOKEN | [". $e ."]", 500);
+		return -1;
+	} finally { return $result; }
 }
+
 
 /** */
 function updateSession($session_record, $session_activity){
-	global $databaseConnection, $sqlStatements;
-	try{
-		$prepSTMT =  $databaseConnection->prepare($sqlStatements['update_session']);
-		if(!$prepSTMT)throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		$result = $prepSTMT->bind_param('ii', $session_activity, $session_record);
-		if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
-		$prepSTMT->execute();
-		$result = $prepSTMT->affected_rows;
-		$prepSTMT->close();
-		return ($result >= 1);
-	} catch (Exception $e){
-		writeLogInfo("Token update error in [updateToken]!");
-		writeLogInfo("Exception occurred in [updateToken]! | [". $e ."]", 1) ;
-	}
+	try {
+		$requestArgs = array($session_record, $session_activity);
+		$result = accessRequest("update_session", "rows", null, 2, "ii", $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+		writeLogInfo("Successfully Updated Session in [updateSession]! | Session Record [". $session_record ."]", -1) ;
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [updateToken] ! | [". $e ."]", 1) ;
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO UPDATE TOKEN | [". $e ."]", 500);
+		return -1;
+	} finally { return $result; }
 }
 
 /** */
@@ -208,25 +196,19 @@ function verifySession($sessionToken, $session_activity){
 		disposeSessions($sessionToken);
 		return false;
 	}
-	
 }
 
 function disposeSessions($sessionToken){
-	global $databaseConnection, $sqlStatements;
-	try{
-		$prepSTMT =  $databaseConnection->prepare($sqlStatements['dispose_session']);
-		if(!$prepSTMT)throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		$result = $prepSTMT->bind_param('s', $sessionToken);
-		if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
-		$prepSTMT->execute();
-		$result = $prepSTMT->affected_rows;
-		$prepSTMT->close();
-		writeLogInfo("Dropping session [disposeSessions]! | [". $sessionToken ."]", -1) ;
-		return ($result >= 1);
-	} catch (Exception $e){
-		writeLogInfo("Token update error in [sessionDispose]!");
-		writeLogInfo("Exception occurred in [sessionDispose]! | [". $e ."]", 1) ;
-	}
+	try {
+		$requestArgs = array($sessionToken);
+		$result = accessRequest("dispose_session", "rows", null, 1, "s", $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+		writeLogInfo("Successfully Dropped Session in [disposeSessions]! | [". $sessionToken ."]", -1) ;
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [sessionDispose] ! | [". $e ."]", 1) ;
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO DISPOSE SESSION | [". $e ."]", 500);
+		return -1;
+	} finally { return $result; }
 }
 
 /** Calls on verify Session */
@@ -253,40 +235,43 @@ function validSession(&$broker, $activity){
 		return true;
 		
 		} catch (Exception $e){
-		writeLogInfo("Token update error in [validSession]!");
 		writeLogInfo("Exception occurred in [validSession]! | [". $e ."]", 1) ;
 		$broker->handleErrors("UNAUTHORIZED ACCESS: SESSION TOKEN NOT SET, FOUND OR UPDATABLE | [". $e ."]", 401);
 		return false;
 	}
 }
 
+function sessionToBroker(&$broker){
+	$broker->setValue("header", "type", $_POST["request_header"]);
+	$broker->setValue("session", "token", $_POST["session_token"]);
+	$token = $broker->brokerData['session']['token'];
+}
+
 /** */
 function disposeExpired(){
-	global $databaseConnection, $sqlStatements;
-	try{	
-		if ($stmt = $databaseConnection->prepare($sqlStatements['dispose_expired'])) {
-			$stmt->execute();
-			$count = $stmt->affected_rows;
-			if($count > 0) writeLogInfo("Disposed of  ".$count." expired 'session_token' in [client_sessions] Table");
-			$stmt->close();
-		}
-	} catch (Exception $e){
+	try {
+		$result = accessRequest("dispose_expired", "rows", null, 0, null, null);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+		writeLogInfo("Disposed of  ".$count." expired 'session_token' in [client_sessions] Table");
+	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [createDBPlaceholder] ! | [". $e ."]", 1) ;
-	}
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO DISPOSE EXPIRED SESSIONS | [". $e ."]", 500);
+		return -1;
+	} finally { return $result; }
 }
 
 /** */
 function createSessionTable(){
-	global $databaseConnection, $sqlStatements;
-	try{
-		writeLogInfo("Table [client_sessions] not found. Creating...");
-		$result = mysqli_query($databaseConnection, $sqlStatements['create_table']);
-		if ($result) writeLogInfo("Table [client_sessions] created!"); 
-		else throw new Exception("Exception Thrown:".mysqli_error($databaseConnection));	
+	try {
+		$result = accessRequest("create_table", "create", null, 0, null, null);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+		writeLogInfo("Table [client_sessions] created!"); 
 	} catch (Exception $e) {
-		writeLogInfo("Create Table [client_sessions] failed!");
-		writeLogInfo("Exception occurred in [createSessionTable] ! | [". $e ."]", 1) ;
-	}
+		writeLogInfo("Exception occurred in [searchUser] ! | [". $e ."]", 1) ;
+		writeLogInfo("Exception occurred in [searchUser] !  | [". $e ."]", -1) 
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO CREATE SESSION TABLE | [". $e ."]", 500);
+		return -1;
+	} finally { return $result; }
 }
 
 /** */
