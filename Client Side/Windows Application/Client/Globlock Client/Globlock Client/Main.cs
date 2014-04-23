@@ -22,12 +22,12 @@ namespace Globlock_Client {
         }
 
         private void initializeSettings() {
-            INIAccess local = new INIAccess("C:\\Globlock\\settings.ini");
-            if (local.captured()) { 
-                dbLocation = local.IniReadValue("Database","location");
-                dbFilename = local.IniReadValue("Database", "filename");
-            }
-            DatabaseBroker dbBroker = new DatabaseBroker(dbLocation, dbFilename);
+            //INIAccess local = new INIAccess();
+            //local
+            //   dbLocation = local.IniReadValue("Database","location");
+            //    dbFilename = local.IniReadValue("Database", "filename");
+            //}
+            //DatabaseBroker dbBroker = new DatabaseBroker(dbLocation, dbFilename);
         }
     }
 }

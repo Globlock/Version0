@@ -33,9 +33,10 @@ namespace Globlock_Client {
 
         private void testFilePaths(string path, string filename) {
             dbPath = path;
-            dbFilename = dbPath + "\\" + filename;
+            dbFilename = System.IO.Path.Combine(dbPath, filename);
             connectionData = "Data Source=" + dbFilename + ";version=" + sqlLiteVersion + ";New=True;Compress=True;";
             if (!File.Exists(this.dbFilename)) {
+                System.IO.Directory.CreateDirectory(dbPath);
                 sqlite_conn = new SQLiteConnection(connectionData);
                 createSchema();
             } else {

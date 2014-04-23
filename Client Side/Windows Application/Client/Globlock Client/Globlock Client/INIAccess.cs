@@ -10,8 +10,10 @@ namespace Globlock_Client {
 
     class INIAccess {
 
-        public string path;
-        private string[] sections = {"Project", "Database", "Server", "Port", "sample4"};
+        // Local File
+        private string path, filename, absolute;
+        private const string DEFAULT_INI = "settings.ini";
+        private string[] sections = { "PROJECT", "WORKING DIRECTORY", "DATABASE", "SERVER", "PORT", "SALT" };
         private string defaultKey = "default";
 
         [DllImport("kernel32")]
@@ -20,8 +22,49 @@ namespace Globlock_Client {
         private static extern int GetPrivateProfileString(string section, string key,string def, StringBuilder retVal, int size,string filePath);
 
         // Constructor
-        public INIAccess(string path) {
+        public INIAccess(string path, string filename) {
             this.path = path;
+            this.filename = filename;
+            this.absolute = System.IO.Path.Combine(path, filename);
+        }
+
+        public INIAccess() {
+            this.filename = DEFAULT_INI;
+            this.path = System.IO.Directory.GetCurrentDirectory();
+            this.absolute = System.IO.Path.Combine(path, filename);
+        }
+
+        public void inspectFile() {
+            System.Diagnostics.Debug.WriteLine("Path: " + path);
+            System.Diagnostics.Debug.WriteLine("File: " + filename);
+            System.Diagnostics.Debug.WriteLine("Absolute: " + absolute);
+
+            if (!Directory.Exists(path)) System.IO.Directory.CreateDirectory(path);
+            if (!File.Exists(absolute)) {
+                createDefaultSettingsFile();
+            } else {
+                path = IniReadValue("WORKINGDIRECTORY", "directory");
+                filename = IniReadValue("WORKINGDIRECTORY", "settings");
+                absolute = System.IO.Path.Combine(path, filename);
+            }
+        }
+
+        private void createDefaultSettingsFile() {
+            // Skeleton Settings structure 
+            string[] defaultSettings = {    "[PROJECT]", "title=Globlock","version=1.0","default=empty",
+                                            "[WORKING DIRECTORY]","directory="+ path,"settings="+ filename,"source=", "default=empty",
+                                            "[DATABASE]","location=Database","filename=GloblockLocal.db","default=empty",
+                                            "[SERVER]","location=http://localhost/Globlock", "API=FileAccessAPI", "default=empty",
+                                            "[PORT]","port_num=","default=empty",
+                                            "[SALT]","handshake=","default=empty" };
+            // For each String in Array, write to file (Add extra line space for sections)
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@absolute)) {
+                foreach (string entry in defaultSettings) {
+                    if (entry.Contains("[")) file.WriteLine(); 
+                    file.WriteLine(entry);
+                }
+            }
+            System.Diagnostics.Debug.WriteLine("Created New File: " + absolute);
         }
 
         // Write to the INIfile
@@ -32,17 +75,13 @@ namespace Globlock_Client {
         // Read from the INI file
         public string IniReadValue(string Section, string Key) {
             StringBuilder temp = new StringBuilder(255);
-            int i = GetPrivateProfileString(Section, Key, "", temp, 255, this.path);
+            int i = GetPrivateProfileString(Section, Key, "", temp, 255, this.absolute);
             return temp.ToString();
         }
 
-        public bool captured() {
-            //string curFile = @"c:\Globlock\settings.ini";
-            Console.WriteLine(File.Exists(path) ? "File exists." : "File does not exist.");
-            if (File.Exists(@path)) return testReadable(); 
-            return true;
-        }
 
+
+        // Test all the sections exist
         private bool testReadable(){
             string value = "";
             try{
