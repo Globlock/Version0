@@ -1,0 +1,21 @@
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Globlock Client.exe.config
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Globlock Client.exe
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Globlock Client.pdb
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock Client.csprojResolveAssemblyReference.cache
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock_Client.Login.resources
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock_Client.Properties.Resources.resources
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock Client.csproj.GenerateResource.Cache
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock Client.exe
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock Client.pdb
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock_Client.Main.resources
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock_Client.Toast.resources
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\x64\SQLite.Interop.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\x86\SQLite.Interop.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\EntityFramework.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\EntityFramework.SqlServer.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Data.SQLite.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Data.SQLite.EF6.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Data.SQLite.Linq.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\EntityFramework.xml
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\EntityFramework.SqlServer.xml
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Data.SQLite.xml

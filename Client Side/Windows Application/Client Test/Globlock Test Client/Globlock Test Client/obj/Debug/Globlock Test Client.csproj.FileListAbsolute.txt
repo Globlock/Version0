@@ -1,0 +1,8 @@
+A:\_Globlock\Version0\Client Side\Windows Application\Client Test\Globlock Test Client\Globlock Test Client\bin\Debug\Globlock Test Client.exe.config
+A:\_Globlock\Version0\Client Side\Windows Application\Client Test\Globlock Test Client\Globlock Test Client\obj\Debug\Globlock Test Client.csprojResolveAssemblyReference.cache
+A:\_Globlock\Version0\Client Side\Windows Application\Client Test\Globlock Test Client\Globlock Test Client\bin\Debug\Globlock Test Client.exe
+A:\_Globlock\Version0\Client Side\Windows Application\Client Test\Globlock Test Client\Globlock Test Client\bin\Debug\Globlock Test Client.pdb
+A:\_Globlock\Version0\Client Side\Windows Application\Client Test\Globlock Test Client\Globlock Test Client\obj\Debug\Globlock Test Client.exe
+A:\_Globlock\Version0\Client Side\Windows Application\Client Test\Globlock Test Client\Globlock Test Client\obj\Debug\Globlock Test Client.pdb
+A:\_Globlock\Version0\Client Side\Windows Application\Client Test\Globlock Test Client\Globlock Test Client\bin\Debug\Newtonsoft.Json.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client Test\Globlock Test Client\Globlock Test Client\bin\Debug\Newtonsoft.Json.xml
