@@ -138,16 +138,16 @@ action["push"]=false
 list["count"]=0
 list["size"]='-'
 list["root"]='-'
-list[]="-"
-list[]="-"
-list[]="-"
-list[]="-"
-list[]="-"
-list[]="-"
-list[]="-"
-list[]="-"
-list[]="-"
-list[]="-"
+listitem[]="-"
+listitem[]="-"
+listitem[]="-"
+listitem[]="-"
+listitem[]="-"
+listitem[]="-"
+listitem[]="-"
+listitem[]="-"
+listitem[]="-"
+listitem[]="-"
 
 ;List of different error codes for return
 [error_codes]

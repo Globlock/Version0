@@ -171,7 +171,7 @@ function pullFiles(&$broker){
 
 /** */
 //PUSH FILES
-function pullFiles(&$broker){
+function pushFiles(&$broker){
 	// TO DO - Handle validGlobe & project from here
 	if(validSession($broker, 2)){
 		$broker->setValue('header', 'type', "PUSH RESPONSE");

@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
+// using Newtonsoft.Json; // ADD Reference
+using System.Net;
+using System.Text;
 
 namespace Globlock_Client {
     static class Program {
@@ -14,15 +19,17 @@ namespace Globlock_Client {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            testINI();
-            //setupApplicationSettings();
-            //Application.Run(new Main());
+            // Create INI Access and broker Objects
+            Application.Run(new Main());
+            setupApplicationSettings();
+            
         }
 
         static void setupApplicationSettings() { 
             // Load Initialisation File
             INIAccess iniAccess = new INIAccess();
             iniAccess.inspectFile();
+
             // Load Database File
             string dbfile = iniAccess.IniReadValue("DATABASE", "location");
             //Debug.WriteLine(iniAccess.IniReadValue("DATABASE", "location"));
@@ -31,11 +38,10 @@ namespace Globlock_Client {
             Debug.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             Debug.WriteLine("File: "+ dbfile);
             Debug.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        }
 
-        static void testINI() {
-            INIAccess iniAccess = new INIAccess();
-            iniAccess.inspectFile();
+            BrokerManager broker = new BrokerManager("API path", "API filename"); //TESTING ONLY
+            broker.requestResponse(BrokerManager.REQUEST_TYPE_HAND);
+
         }
         
     }

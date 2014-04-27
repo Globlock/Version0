@@ -2,10 +2,10 @@
 /*
 File Handler - Globlock
 Filename:	fileHandler.php
-Version: 	1.0
+Version: 	1.2
 Author: 	Alex Quigley, x10205691
 Created: 	07/04/2014
-Updated: 	07/04/2014
+Updated: 	23/04/2014
 
 Dependencies:
 	FileAccessAPI.php (parent)
@@ -216,7 +216,7 @@ function listFiles($directoryFrom, &$broker, &$configs){
 	// for each file published, add to the list
 	foreach(glob($directoryFrom.'/*') as $file) {
 		$filename = pathinfo($file)['basename'];
-		$broker->setValue('list', $count, $filename);
+		$broker->setValue('listitem', $count, $filename);
 		$fileSize += filesize($file);
 		$count++;			
  	}

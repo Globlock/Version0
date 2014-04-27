@@ -8,7 +8,7 @@ using System.Data.SQLite;
 
 namespace Globlock_Client {
     
-    class DatabaseBroker {
+    class BrokerDatabase {
         // Database Declarations
         SQLiteConnection sqlite_conn;
         SQLiteCommand sqlite_cmd;
@@ -25,7 +25,7 @@ namespace Globlock_Client {
         SQLiteConnection connection;
         SQLiteCommand cmd;
         
-        public DatabaseBroker(string dbPath, string dbFilename) {
+        public BrokerDatabase(string dbPath, string dbFilename) {
             testFilePaths(dbPath, dbFilename);
             //transact("Created DatabaseBroker Object");
 

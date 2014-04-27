@@ -35,11 +35,13 @@ namespace Globlock_Client {
         }
 
         public void inspectFile() {
+            // Output Values to Debug
             System.Diagnostics.Debug.WriteLine("Path: " + path);
             System.Diagnostics.Debug.WriteLine("File: " + filename);
             System.Diagnostics.Debug.WriteLine("Absolute: " + absolute);
-
+            // Create Directory if it doesn't exist
             if (!Directory.Exists(path)) System.IO.Directory.CreateDirectory(path);
+            // Create Default Settings File if it doesn't exist
             if (!File.Exists(absolute)) {
                 createDefaultSettingsFile();
             } else {
@@ -78,8 +80,6 @@ namespace Globlock_Client {
             int i = GetPrivateProfileString(Section, Key, "", temp, 255, this.absolute);
             return temp.ToString();
         }
-
-
 
         // Test all the sections exist
         private bool testReadable(){
