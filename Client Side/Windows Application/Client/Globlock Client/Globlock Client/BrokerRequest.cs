@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Globlock_Client {
 
-    class BrokerRequest {
+    public class BrokerRequest {
         public Header header { get; set; }
         public Error error { get; set; }
         public User user { get; set; }
@@ -16,6 +16,12 @@ namespace Globlock_Client {
         public Action action { get; set; }
         public List list { get; set; }
         public List<string> listitem { get; set; }
+
+        public void updateError(string code, string message) {
+            this.error = new Error();
+            this.error.code = code;
+            this.error.message = message;
+        }
     }
 
     public class Header {

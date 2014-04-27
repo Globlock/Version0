@@ -21,3 +21,4 @@ A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Glo
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Data.SQLite.xml
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Newtonsoft.Json.dll
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Newtonsoft.Json.xml
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Management.Automation.dll

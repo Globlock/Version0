@@ -17,7 +17,7 @@ namespace Globlock_Client {
     class BrokerManager {
         // Test
         private bool testMode;
-
+        private bool irrecoverableError;
         // Broker and Web Objects
         public BrokerRequest req_broker { get; set; }
         public BrokerDatabase db_broker { get; set; }
@@ -45,10 +45,17 @@ namespace Globlock_Client {
         public const string REQUEST_ERROR_400 = "SERVER ERROR 400";
         
         // Constructor
-        public BrokerManager(string path, string filename) {
+        public BrokerManager(string path, string filename, string workingDir, string dbName) {
             testMode = true;                                                                    //Testing only  
+            prepareBrokers(workingDir, dbName);
             setupAddress(path, filename);
             prepareWebClient();
+        }
+
+        private void prepareBrokers(string workingDir, string dbName) {
+            irrecoverableError = false;
+            req_broker = new BrokerRequest();
+            //db_broker = new BrokerDatabase(workingDir, dbName);
         }
         
         public string getSessionToken() {
@@ -134,10 +141,11 @@ namespace Globlock_Client {
                 req_broker = JsonConvert.DeserializeObject<BrokerRequest>(decodedString);
             }catch(Exception e){
                 Debug.WriteLine("Exception occured {0}", e);
+                req_broker = new BrokerRequest();
+                req_broker.updateError("9999", e.Source + ": " + e.Message);
+                irrecoverableError = true;
             }finally{
                 Debug.WriteLine("Request broker Error [{0}]:[{1}]", req_broker.error.code, req_broker.error.message);
-                req_broker.error.code = "0001";
-                req_broker.error.message = "Test Message";
             }
 
         }
