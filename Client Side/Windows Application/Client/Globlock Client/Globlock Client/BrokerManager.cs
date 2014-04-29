@@ -19,9 +19,12 @@ namespace Globlock_Client {
         private bool testMode;
         private bool irrecoverableError;
         // Broker and Web Objects
-        public BrokerRequest req_broker { get; set; }
-        public BrokerDatabase db_broker { get; set; }
+        public BrokerRequest brokerRequest { get; set; }
+        public BrokerDatabase brokerDatabase { get; set; }
         private WebClient webClient;
+        private INIAccess iniAccess;
+        private PathObject drivePaths;
+
         
         // Web Interaction variables
         private NameValueCollection dataPOST;
@@ -31,6 +34,8 @@ namespace Globlock_Client {
         private byte[] serverResponse;
         private string decodedString;
 
+        /// <summary>
+        /// Request Types
         public const string REQUEST_TYPE_HAND = "Handshake Request";                         // 00 "HANDSHAKE"
         public const string REQUEST_TYPE_SESH = "Session Token Request";                     // 01 "SESSION"
         public const string REQUEST_TYPE_VALD = "Validate a Globe Object";                   // 02 "VALIDATE"
@@ -40,26 +45,34 @@ namespace Globlock_Client {
         public const string REQUEST_TYPE_DROP = "Drop a Globe association";                  // 06 "DROP"
         public const string REQUEST_TYPE_PULL = "Pull down Globe Files from Server";         // 07 "PUSH"
         public const string REQUEST_TYPE_PUSH = "Push files to the Server";                  // 08 "PULL"
+        /// </summary>
         
+
         public const string HTTP_POST = "POST";
         public const string REQUEST_ERROR_400 = "SERVER ERROR 400";
         
         // Constructor
-        public BrokerManager(string path, string filename, string workingDir, string dbName) {
+        public BrokerManager() {
             testMode = true;                                                                    //Testing only  
-            prepareBrokers(workingDir, dbName);
-            setupAddress(path, filename);
+            prepareINIFile();
+            prepareBrokers();
             prepareWebClient();
         }
 
-        private void prepareBrokers(string workingDir, string dbName) {
-            irrecoverableError = false;
-            req_broker = new BrokerRequest();
-            //db_broker = new BrokerDatabase(workingDir, dbName);
+        private void prepareINIFile(){
+            iniAccess = new INIAccess();
+            iniAccess.inspectFile();
+            drivePaths = new PathObject(iniAccess, testMode);
+            Debug.WriteLine("INI & Drive Paths Created - Working Directory: " + drivePaths.dPath_Working_Directory);
         }
-        
-        public string getSessionToken() {
-            return req_broker.session.token;
+
+        private void prepareBrokers() {
+            irrecoverableError = false;
+            brokerRequest = new BrokerRequest();
+            Debug.WriteLine("Request Broker Created");
+            brokerDatabase = new BrokerDatabase(drivePaths.dPath_Database_FullPath, drivePaths.dPath_Database_Filename);
+            Debug.WriteLine("Database Broker Created");
+            brokerDatabase.testInsert("Transactions");
         }
 
         private void prepareWebClient() {
@@ -69,19 +82,9 @@ namespace Globlock_Client {
             webClient = new WebClient();  
         }
 
-        private void setupAddress(string path, string filename) {
-          
-            if (testMode) {                                                                     //Testing only
-                HTTP_ADDR = new System.Uri("http://localhost/26042014/requestBroker_test.php"); //Testing only
-                API_FILENAME = "requestBroker_test.php";                                        //Testing only
-                API_ADDRESS = "http://localhost/26042014/";                                     //Testing only
-            } else {
-                API_FILENAME = filename; 
-                API_ADDRESS = path;
-                HTTP_ADDR = new System.Uri(System.IO.Path.Combine(path, filename)); 
-            }
+        public string getSessionToken() {
+            return brokerRequest.session.token;
         }
-
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -126,7 +129,7 @@ namespace Globlock_Client {
                     serverRequest("PULL");
                     break;
             }
-            if (int.Parse(req_broker.error.code) > 0) new Toast("Server Error occured :" + req_broker.error.code + " - " + req_broker.error.message).Show();
+            if (int.Parse(brokerRequest.error.code) > 0) new Toast("Server Error occured :" + brokerRequest.error.code + " - " + brokerRequest.error.message).Show();
             else { 
                 
             } 
@@ -138,14 +141,14 @@ namespace Globlock_Client {
             try {
                 serverResponse = webClient.UploadValues(HTTP_ADDR, HTTP_POST, dataPOST);
                 decodedString = System.Text.Encoding.Default.GetString(serverResponse);
-                req_broker = JsonConvert.DeserializeObject<BrokerRequest>(decodedString);
+                brokerRequest = JsonConvert.DeserializeObject<BrokerRequest>(decodedString);
             }catch(Exception e){
                 Debug.WriteLine("Exception occured {0}", e);
-                req_broker = new BrokerRequest();
-                req_broker.updateError("9999", e.Source + ": " + e.Message);
+                brokerRequest = new BrokerRequest();
+                brokerRequest.updateError("9999", e.Source + ": " + e.Message);
                 irrecoverableError = true;
             }finally{
-                Debug.WriteLine("Request broker Error [{0}]:[{1}]", req_broker.error.code, req_broker.error.message);
+                Debug.WriteLine("Request broker Error [{0}]:[{1}]", brokerRequest.error.code, brokerRequest.error.message);
             }
 
         }
@@ -211,6 +214,47 @@ namespace Globlock_Client {
         
         private void validateHANDSHAKE() { 
             
+        }
+
+        public class PathObject {
+            private bool testMode;
+            public string dPath_Working_Directory { get; set; }
+            public string dPath_Database_Location { get; set; }
+            public string dPath_Database_Filename { get; set; }
+            public string dPath_Database_FullPath { get; set; }
+            public string dPath_Database_Absolute { get; set; }
+            public string server_API_Address { get; set; }
+            public string server_API_Filename { get; set; }
+            public System.Uri server_API_URI { get; set; }
+
+            public PathObject() { 
+            }
+
+            public PathObject(INIAccess iniAccess, bool testMode) {
+                this.testMode = testMode;
+                this.buildFromINI(iniAccess);
+            }
+
+            internal void buildFromINI(INIAccess iniAccess) {
+                dPath_Working_Directory = iniAccess.IniReadValue("WORKINGDIRECTORY", "directory");
+                dPath_Database_Location = iniAccess.IniReadValue("DATABASE", "location");
+                dPath_Database_Filename = iniAccess.IniReadValue("DATABASE", "filename");
+                dPath_Database_FullPath = System.IO.Path.Combine(dPath_Working_Directory, dPath_Database_Location);
+                dPath_Database_Absolute = System.IO.Path.Combine(dPath_Working_Directory, dPath_Database_Location, dPath_Database_Filename);
+                
+                if (testMode) {                                                                             //Testing only
+                    server_API_URI = new System.Uri("http://localhost/26042014/requestBroker_test.php");    //Testing only
+                    server_API_Filename = "requestBroker_test.php";                                         //Testing only
+                    server_API_Address = "http://localhost/26042014/";                                      //Testing only
+                    return;
+                }
+                server_API_Address = iniAccess.IniReadValue("SERVER", "location");
+                server_API_Filename = iniAccess.IniReadValue("SERVER", "filename");
+                server_API_URI = new System.Uri(System.IO.Path.Combine(server_API_Address, server_API_Filename));    //Testing only
+            }
+          
+                                
+
         }
     }
 }

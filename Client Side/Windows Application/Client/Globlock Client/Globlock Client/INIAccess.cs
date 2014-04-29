@@ -13,7 +13,7 @@ namespace Globlock_Client {
         // Local File
         private string path, filename, absolute;
         private const string DEFAULT_INI = "settings.ini";
-        private string[] sections = { "PROJECT", "WORKING DIRECTORY", "DATABASE", "SERVER", "PORT", "SALT" };
+        private string[] sections = { "PROJECT", "WORKINGDIRECTORY", "DATABASE", "SERVER", "PORT", "SALT" };
         private string defaultKey = "default";
 
         [DllImport("kernel32")]
@@ -29,8 +29,13 @@ namespace Globlock_Client {
         }
 
         public INIAccess() {
-            this.filename = DEFAULT_INI;
-            this.path = System.IO.Directory.GetCurrentDirectory();
+            if (!File.Exists(absolute)) {
+                this.filename = DEFAULT_INI;
+                this.path = System.IO.Directory.GetCurrentDirectory();
+            }else {
+                this.path = IniReadValue("WORKINGDIRECTORY", "directory");
+                this.filename = IniReadValue("WORKINGDIRECTORY", "settings");
+            }
             this.absolute = System.IO.Path.Combine(path, filename);
         }
 
@@ -54,9 +59,9 @@ namespace Globlock_Client {
         private void createDefaultSettingsFile() {
             // Skeleton Settings structure 
             string[] defaultSettings = {    "[PROJECT]", "title=Globlock","version=1.0","default=empty",
-                                            "[WORKING DIRECTORY]","directory="+ path,"settings="+ filename,"source=", "default=empty",
+                                            "[WORKINGDIRECTORY]","directory="+ path,"settings="+ filename,"source=", "default=empty",
                                             "[DATABASE]","location=Database","filename=GloblockLocal.db","default=empty",
-                                            "[SERVER]","location=http://localhost/Globlock", "API=FileAccessAPI", "default=empty",
+                                            "[SERVER]","location=http://localhost/Globlock", "filename=FileAccessAPI.php", "default=empty",
                                             "[PORT]","port_num=","default=empty",
                                             "[SALT]","handshake=","default=empty" };
             // For each String in Array, write to file (Add extra line space for sections)
@@ -75,10 +80,17 @@ namespace Globlock_Client {
         }
 
         // Read from the INI file
-        public string IniReadValue(string Section, string Key) {
-            StringBuilder temp = new StringBuilder(255);
-            int i = GetPrivateProfileString(Section, Key, "", temp, 255, this.absolute);
-            return temp.ToString();
+        public string IniReadValue(string section, string key) {
+            try {
+                StringBuilder reader = new StringBuilder();
+                int i = GetPrivateProfileString(section, key, "", reader, 255, this.absolute);
+                System.Diagnostics.Debug.WriteLine("Result :" + i);
+                if (i == 0) System.Diagnostics.Debug.WriteLine("Section[{0}] Key[{1}] not found in {2}", section, key, absolute);
+                return reader.ToString();
+            } catch (Exception e) {
+                System.Diagnostics.Debug.WriteLine("Error :" + e);
+            }
+            return null;
         }
 
         // Test all the sections exist

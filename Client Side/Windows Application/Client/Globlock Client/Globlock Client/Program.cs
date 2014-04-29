@@ -13,6 +13,7 @@ using System.IO;
 
 namespace Globlock_Client {
     static class Program {
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -21,27 +22,38 @@ namespace Globlock_Client {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             // Create INI Access and broker Objects
-            Application.Run(new Main());
+            //Application.Run(new Main());
             setupApplicationSettings();
         }
 
-        static void setupApplicationSettings() { 
-            // Load Initialisation File
-            INIAccess iniAccess = new INIAccess();
-            iniAccess.inspectFile();
-
-            // Load Database File
-            string dbfile = iniAccess.IniReadValue("DATABASE", "location");
-            //DatabaseBroker dbBroker = new DatabaseBroker(iniAccess.IniReadValue("DATABASE", "location"), iniAccess.IniReadValue("DATABASE", "filename"));
-            Debug.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            Debug.WriteLine("File: "+ dbfile);
-            Debug.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
-            BrokerManager brokerM = new BrokerManager("API path", "API filename", Directory.GetCurrentDirectory(), "database.db"); //TESTING ONLY
-            brokerM.requestResponse(BrokerManager.REQUEST_TYPE_HAND);
-
-            string[] s = BrokerDevice.getPorts();
+        static void setupApplicationSettings() {
+            BrokerManager brokerM = new BrokerManager(); //TESTING ONLY\
+            //brokerM.
+            //brokerM.requestResponse(BrokerManager.REQUEST_TYPE_HAND);
+            //string[] s = BrokerDevice.getPorts();
         }
+
+        //private static BrokerDatabase setupDatabaseBroker(INIAccess iniAccess) {
+        //    string workingDir = iniAccess.IniReadValue("WORKINGDIRECTORY", "directory");
+        //    string dbLocation = iniAccess.IniReadValue("DATABASE", "location");
+        //    string dbFilename = iniAccess.IniReadValue("DATABASE", "filename");
+        //    string dbFullPath = System.IO.Path.Combine(workingDir, dbLocation);
+        //    string dbAbsolute = System.IO.Path.Combine(workingDir, dbLocation, dbFilename);
+
+        //    BrokerDatabase dbBroker = new BrokerDatabase(dbFullPath, dbFilename);
+        //    return dbBroker;
+        //}
+
+
+        //private static INIAccess setupINI() {
+        //    // Load Initialisation File
+        //    INIAccess iniAccess = new INIAccess();
+        //    iniAccess.inspectFile();
+        //    Debug.WriteLine("Working Directory: " + iniAccess.IniReadValue("WORKINGDIRECTORY", "directory"));
+        //    return iniAccess;
+        //}
+
+        
         
     }
 }
