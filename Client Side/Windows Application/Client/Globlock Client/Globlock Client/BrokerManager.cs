@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Forms;
 using System.Net;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace Globlock_Client {
@@ -18,14 +15,16 @@ namespace Globlock_Client {
         // Test
         private bool testMode;
         private bool irrecoverableError;
+        
         // Broker and Web Objects
         public BrokerRequest brokerRequest { get; set; }
         public BrokerDatabase brokerDatabase { get; set; }
         private WebClient webClient;
         private INIAccess iniAccess;
         private PathObject drivePaths;
+        private UserObject currentUser;
+        private string saltValue;
 
-        
         // Web Interaction variables
         private NameValueCollection dataPOST;
         public string API_FILENAME { get; set; }
@@ -33,7 +32,7 @@ namespace Globlock_Client {
         public System.Uri HTTP_ADDR { get; set; }
         private byte[] serverResponse;
         private string decodedString;
-
+        
         /// <summary>
         /// Request Types
         public const string REQUEST_TYPE_HAND = "Handshake Request";                         // 00 "HANDSHAKE"
@@ -47,7 +46,6 @@ namespace Globlock_Client {
         public const string REQUEST_TYPE_PUSH = "Push files to the Server";                  // 08 "PULL"
         /// </summary>
         
-
         public const string HTTP_POST = "POST";
         public const string REQUEST_ERROR_400 = "SERVER ERROR 400";
         
@@ -57,6 +55,17 @@ namespace Globlock_Client {
             prepareINIFile();
             prepareBrokers();
             prepareWebClient();
+            validateUser();
+        }
+
+        private void validateUser() {
+            // Get User Info here
+            currentUser = new UserObject("test user", "ABCD1234");
+            Debug.WriteLine(currentUser.encryptPassword());
+            
+            // See if user exists in local DB
+            //DataTable users = brokerDatabase.getDataTable("");
+
         }
 
         private void prepareINIFile(){
@@ -72,7 +81,7 @@ namespace Globlock_Client {
             Debug.WriteLine("Request Broker Created");
             brokerDatabase = new BrokerDatabase(drivePaths.dPath_Database_FullPath, drivePaths.dPath_Database_Filename);
             Debug.WriteLine("Database Broker Created");
-            brokerDatabase.testInsert("Transactions");
+            brokerDatabase.databaseTransaction("Application Initialized!");
         }
 
         private void prepareWebClient() {
@@ -216,6 +225,38 @@ namespace Globlock_Client {
             
         }
 
+        public class UserObject {
+            private string username;
+            private string password;
+            private string encryptedPassword;
+            private bool superUser;
+            private StringBuilder returnValue;
+            public UserObject(string username, string password) {
+                this.username = username;
+                this.password = password;
+            }
+            public string encryptPassword() {
+                return SHA1HashStringForUTF8String(password);
+            }
+
+            private static string SHA1HashStringForUTF8String(string s) {
+                byte[] bytes = Encoding.UTF8.GetBytes(s);
+                var sha1 = System.Security.Cryptography.SHA1.Create();
+                byte[] hashBytes = sha1.ComputeHash(bytes);
+                return HexStringFromBytes(hashBytes);
+            }
+ 
+            private static string HexStringFromBytes(byte[] bytes) {
+                var sb = new StringBuilder();
+                foreach (byte b in bytes) {
+                    var hex = b.ToString("x2");
+                    sb.Append(hex);
+                }
+                return sb.ToString();
+            }
+
+        }
+
         public class PathObject {
             private bool testMode;
             public string dPath_Working_Directory { get; set; }
@@ -252,9 +293,6 @@ namespace Globlock_Client {
                 server_API_Filename = iniAccess.IniReadValue("SERVER", "filename");
                 server_API_URI = new System.Uri(System.IO.Path.Combine(server_API_Address, server_API_Filename));    //Testing only
             }
-          
-                                
-
         }
     }
 }

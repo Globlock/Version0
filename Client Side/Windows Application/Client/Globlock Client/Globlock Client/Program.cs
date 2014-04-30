@@ -27,8 +27,10 @@ namespace Globlock_Client {
         }
 
         static void setupApplicationSettings() {
-            BrokerManager brokerM = new BrokerManager(); //TESTING ONLY\
-            //brokerM.
+            BrokerManager brokerM = new BrokerManager();
+
+            //brokerM.brokerDatabase.queryTable("Transactions", new string[] { "desc", "datemodified" }, "id = 1");
+            //brokerM.brokerDatabase.testQuery();
             //brokerM.requestResponse(BrokerManager.REQUEST_TYPE_HAND);
             //string[] s = BrokerDevice.getPorts();
         }
