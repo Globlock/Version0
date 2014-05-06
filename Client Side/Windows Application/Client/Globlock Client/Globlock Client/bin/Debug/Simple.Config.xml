@@ -1,0 +1,643 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Simple.Config</name>
+    </assembly>
+    <members>
+        <member name="T:Simple.Config.Domain.ConfigFile">
+            <summary>
+                This class represents a configuration file.
+            </summary>
+        </member>
+        <member name="T:Simple.Config.Domain.IConfigFile">
+            <summary>
+                This interface represents abstraction for a configuration file.
+            </summary>
+        </member>
+        <member name="P:Simple.Config.Domain.IConfigFile.Namespaces">
+            <summary>
+                The Namespaces value.
+            </summary>
+            <value>
+                The list of Namespace objects in the configuration file.
+            </value>
+        </member>
+        <member name="F:Simple.Config.Domain.ConfigFile.ConfigHandlers">
+            <summary>
+                The currently implemented configuration file handlers are
+                listed here. When an additional handler is implemented it
+                should be added here.
+            </summary>
+        </member>
+        <member name="F:Simple.Config.Domain.ConfigFile._namespaces">
+            <summary>
+                The contained namespaces.
+            </summary>
+        </member>
+        <member name="M:Simple.Config.Domain.ConfigFile.#ctor(System.String)">
+            <summary>
+                Internal constructor.
+                It tries to find an appropriate handler for the file by
+                iterating through a list of implemented handlers and then
+                loads the file using the handler.
+            </summary>
+            <param name="filename">The filename to process.</param>
+        </member>
+        <member name="P:Simple.Config.Domain.ConfigFile.Namespaces">
+            <summary>
+                The Namespaces value.
+            </summary>
+            <value>
+                The list of Namespace objects in the configuration file.
+            </value>
+        </member>
+        <member name="T:Simple.Config.ConfigManager">
+            <summary>
+                This is the main class which provides the interaction with the
+                user (a singleton). The class exposes methods for loading new
+                configuration files and getting information about loaded namespaces,
+                properties and their values.
+            </summary>
+        </member>
+        <member name="F:Simple.Config.ConfigManager.PreloadFile">
+            <summary>
+                The name of the file with the names of the configuration files to
+                be preloaded.
+            </summary>
+        </member>
+        <member name="F:Simple.Config.ConfigManager._instance">
+            <summary>
+                The one instance of the class.
+            </summary>
+        </member>
+        <member name="F:Simple.Config.ConfigManager._namespaceLookup">
+            <summary>
+                Maps namespace names to Namespace objects.
+            </summary>
+        </member>
+        <member name="F:Simple.Config.ConfigManager._configFileLookup">
+            <summary>
+                Maps config file names to ConfigFile objects.
+            </summary>
+        </member>
+        <member name="M:Simple.Config.ConfigManager.#cctor">
+            <summary>
+                Initializes the preload file location from the application configuration file, using the
+                key "Simple.Config.ConfigurationManager.Preload". If this setting is not found, the default
+                value is just the "preload.xml".
+            </summary>
+        </member>
+        <member name="M:Simple.Config.ConfigManager.#ctor">
+            <summary>
+                Private constructor. Prevents instantiation from outside the class.
+                Its task is to load the preloadFile and extract from there all
+                the names of the configuration files that need to be preloaded.
+                Then each file will be loaded.
+            </summary>
+            
+            <exception cref="T:Simple.Config.Errors.NamespaceClashException">
+                If a namespace clash occurs.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.PropertyClashException">
+                If a property clash occurs.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.InvalidConfigFileException">
+                If the configuration file is invalid.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.UnknownFormatException">
+                If the format of the configuration file is unkown.
+            </exception>
+            
+            <exception cref="T:System.IO.IOException">
+                If an I/O error occurs.
+            </exception>
+            
+            <exception cref="T:System.NullReferenceException">
+                If the argument is null.
+            </exception>
+        </member>
+        <member name="M:Simple.Config.ConfigManager.GetInstance">
+            <summary>
+                Get the instance of the configuration manager.
+            </summary>
+            
+            <returns>The instance</returns>
+        </member>
+        <member name="M:Simple.Config.ConfigManager.Load(System.String)">
+            <summary>
+                Loads a new configuration file.
+            </summary>
+            
+            <param name="filename">The file to load from.</param>
+            
+            <exception cref="T:Simple.Config.Errors.NamespaceClashException">
+                If a namespace clash occurs.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.PropertyClashException">
+                If a property clash occurs.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.InvalidConfigFileException">
+                If the configuration file is invalid.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.UnknownFormatException">
+                If the format of the configuration file is unkown.
+            </exception>
+            
+            <exception cref="T:System.IO.IOException">
+                If an I/O error occurs.
+            </exception>
+            
+            <exception cref="T:System.NullReferenceException">
+                If the filename argument is null.
+            </exception>
+        </member>
+        <member name="M:Simple.Config.ConfigManager.InsertNewNamespaces(System.Collections.Generic.IEnumerable{Simple.Config.Domain.Namespace})">
+             <summary>
+                 This helper method adds new namespaces to the lookup table.
+             </summary>
+             
+             <param name="namespaces">The new namespaces to be added</param>
+             
+             <exception cref="T:Simple.Config.Errors.NamespaceClashException">
+                 If a namespace clash occurs.
+             </exception>
+             
+             <exception cref="T:Simple.Config.Errors.PropertyClashException">
+                 If a property clash occurs.
+             </exception>
+            
+             <exception cref="T:System.NullReferenceException">
+                 If the argument is null.
+             </exception>
+        </member>
+        <member name="M:Simple.Config.ConfigManager.RemoveFile(System.String)">
+            <summary>
+                Removes the config file and the associated namespaces from the lookup tables.
+            </summary>
+            
+            <param name="filename">The config filename.</param>
+            <returns>
+                true if the config file was found and removed, false otherwise.
+            </returns>
+            
+            <exception cref="T:System.NullReferenceException">
+                If the argument is null.
+            </exception>
+        </member>
+        <member name="M:Simple.Config.ConfigManager.GetConfigFile(System.String)">
+            <summary>
+             Get a config file by its filename.
+            </summary>
+            
+            <param name="filename">The config filename.</param>
+            <returns>
+                The config file or null if not found.
+            </returns>
+            
+            <exception cref="T:System.NullReferenceException">
+                If argument is null.
+            </exception>
+        </member>
+        <member name="M:Simple.Config.ConfigManager.GetNamespace(System.String)">
+            <summary>
+                Get a namespace by its name.
+            </summary>
+            
+            <param name="name">The namespace.</param>
+            <returns>
+                The namespace or null if not found.
+            </returns>
+            
+            <exception cref="T:System.NullReferenceException">
+                If argument is null.
+            </exception>
+        </member>
+        <member name="M:Simple.Config.ConfigManager.GetProperty(System.String,System.String)">
+            <summary>
+                Shortcut for GetNamespace(namespaceString).GetProperty(property).
+                Get a property by name.
+            </summary>
+            
+            <param name="namespaceString">The namespace to look in.</param>
+            <param name="property">The name of the property.</param>
+            <returns>
+                The property or null if not found.
+            </returns>
+            
+            <exception cref="T:System.NullReferenceException">
+                If any argument is null.
+            </exception>
+        </member>
+        <member name="M:Simple.Config.ConfigManager.GetValue(System.String,System.String)">
+            <summary>
+                Shortcut for GetNamespace(namespaceString).GetProperty(property).Value.
+                Get the value of a property.
+            </summary>
+            
+            <param name="namespaceString">The namespace to look in.</param>
+            <param name="property">The name of the property.</param>
+            <returns>
+                The value of the property (the first value if there are more)
+                or null if not found.
+            </returns>
+            
+            <exception cref="T:System.NullReferenceException">
+                If any argument is null.
+            </exception>
+        </member>
+        <member name="M:Simple.Config.ConfigManager.GetValues(System.String,System.String)">
+            <summary>
+                Shortcut for GetNamespace(namespaceString).GetProperty(property).Values.
+                Get the values of a property.
+            </summary>
+            
+            <param name="namespaceString">The namespace to look in.</param>
+            <param name="property">The name of the property.</param>
+            <returns>
+                The values of the property or null if not found.
+            </returns>
+            
+            <exception cref="T:System.NullReferenceException">
+                If any argument is null.
+            </exception>
+        </member>
+        <member name="M:Simple.Config.ConfigManager.Clear">
+            <summary>
+                Clears the config manager of all files and namespaces
+            </summary>
+        </member>
+        <member name="M:Simple.Config.ConfigManager.Clear(System.Boolean)">
+            <summary>
+                Clear the config manager of all files and namespaces and reloads
+                the preload files if required.
+            </summary>
+            
+            <param name="preload">Reload the preload files?</param>
+        </member>
+        <member name="P:Simple.Config.ConfigManager.ConfigFiles">
+            <summary>
+                The ConfigFiles property.
+            </summary>
+            
+            <value>
+                The array of config files which are currently loaded.
+                The results are in no particular order.
+            </value>
+        </member>
+        <member name="P:Simple.Config.ConfigManager.Namespaces">
+            <summary>
+                The Namespaces property.
+            </summary>
+            
+            <value>
+                The array of namespaces which are currently loaded.
+                The results are in no particular order.
+            </value>
+        </member>
+        <member name="P:Simple.Config.ConfigManager.Item(System.String)">
+            <summary>
+                Shortcut for getting a namespace by its name.
+                Same as GetNamespace(string name).
+            </summary>
+            
+            <param name="name">The namespace.</param>
+            <returns>
+                The namespace or null if not found.
+            </returns>
+            
+            <exception cref="T:System.NullReferenceException">
+                If argument is null.
+            </exception>
+        </member>
+        <member name="T:Simple.Config.Handlers.IConfigHandler">
+            <summary>
+                This interface abstract a configuration file handler.
+                A configuration file handler has the task of identifying whether
+                it can process the file, loading namespaces with their properties
+                from a file.
+            </summary>
+        </member>
+        <member name="M:Simple.Config.Handlers.IConfigHandler.Supports(System.String)">
+            <summary>
+                Determines whether the file is supported by the handler,
+                by looking at the extension.
+            </summary>
+            
+            <param name="filename">The name of the file.</param>
+            <returns>Whether the file is supported or not.</returns>
+            
+            <exception cref="T:System.IO.IOException">
+                If an I/O error occurs.
+            </exception>
+        </member>
+        <member name="M:Simple.Config.Handlers.IConfigHandler.LoadFromFile(System.String)">
+            <summary>
+                Loads the namespaces and properties from the file into
+                Namespace and Property objects.
+            </summary>
+            
+            <param name="filename">The name of the file.</param>
+            <returns>The populated Namespace objects</returns>
+            
+            <exception cref="T:Simple.Config.Errors.NamespaceClashException">
+                If a namespace clash occurs.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.PropertyClashException">
+                If a property clash occurs.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.InvalidConfigFileException">
+                If the configuration file is invalid.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.UnknownFormatException">
+                If the format of the configuration file is unkown.
+            </exception>
+            
+            <exception cref="T:System.IO.IOException">
+                If an I/O error occurs.
+            </exception>
+        </member>
+        <member name="T:Simple.Config.Handlers.IniConfigHandler">
+            <summary>
+                A configuration file handler for INI files.
+            </summary>
+        </member>
+        <member name="M:Simple.Config.Handlers.IniConfigHandler.Supports(System.String)">
+            <summary>
+                Determines whether the file is supported by the handler,
+                by looking at the extension. In this case
+                the extension should be .ini.
+            </summary>
+            
+            <param name="filename">The name of the file.</param>
+            <returns>Whether the file is supported or not.</returns>
+            
+            <exception cref="T:System.IO.IOException">
+                If an I/O error occurs.
+            </exception>
+        </member>
+        <member name="M:Simple.Config.Handlers.IniConfigHandler.LoadFromFile(System.String)">
+            <summary>
+                Loads the namespaces and properties from the file into
+                Namespace and Property objects.
+            </summary>
+            
+            <param name="filename">The name of the file.</param>
+            <returns>The populated Namespace objects</returns>
+            
+            <exception cref="T:Simple.Config.Errors.NamespaceClashException">
+                If a namespace clash occurs.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.PropertyClashException">
+                If a property clash occurs.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.InvalidConfigFileException">
+                If the configuration file is invalid.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.UnknownFormatException">
+                If the format of the configuration file is unkown.
+            </exception>
+            
+            <exception cref="T:System.IO.IOException">
+                If an I/O error occurs.
+            </exception>
+        </member>
+        <member name="T:Simple.Config.Errors.InvalidConfigFileException">
+            <summary>
+                Exception thrown when an error occurs while loading a configuration
+                file (signaling the file is invalid). If the error is caused by
+                another exception (XML parsing exceptions for example) then the
+                other exception is wrapped as inner exception. I/O exceptions are
+                not included here. They should be propagated.
+            </summary>
+        </member>
+        <member name="M:Simple.Config.Errors.InvalidConfigFileException.#ctor(System.String,System.Exception)">
+            <param name="message">the error message</param>
+            <param name="inner">the inner exception</param>
+        </member>
+        <member name="T:Simple.Config.Domain.Namespace">
+            <summary>
+                A namespace groups logically a set of properties.
+                As expected, the namespace contains a set of Property objects and
+                properties and methods to access them.
+            </summary>
+        </member>
+        <member name="F:Simple.Config.Domain.Namespace._name">
+            <summary>
+                The name of the namespace
+            </summary>
+        </member>
+        <member name="F:Simple.Config.Domain.Namespace._properties">
+            <summary>
+                The properties contained in the namespace
+                in the order in which they appear in the configuration file.
+            </summary>
+        </member>
+        <member name="F:Simple.Config.Domain.Namespace._propertiesLookup">
+            <summary>
+                A hash table mapping property names to Property objects
+                to speed up the lookup of properties by name.
+            </summary>
+        </member>
+        <member name="M:Simple.Config.Domain.Namespace.#ctor(System.String)">
+            <param name="name">The name of the namespace</param>
+        </member>
+        <member name="M:Simple.Config.Domain.Namespace.AddProperty(Simple.Config.Domain.Property)">
+            <summary>
+                Add a new property to the namespace.
+            </summary>
+            
+            <param name="property">The property to add</param>
+            
+            <exception cref="T:Simple.Config.Errors.PropertyClashException">
+                If a property clash occurs.
+            </exception>
+        </member>
+        <member name="M:Simple.Config.Domain.Namespace.GetProperty(System.String)">
+            <summary>
+                Get the property with the specified name.
+            </summary>
+            
+            <param name="name">The name of the property</param>
+            <returns>The property or null if not found.</returns>
+            
+            <exception cref="T:System.NullReferenceException">
+                if name is null
+            </exception>
+        </member>
+        <member name="P:Simple.Config.Domain.Namespace.Name">
+            <summary>
+                The Name property.
+            </summary>
+            
+            <value>
+                The name of the namespace.
+            </value>
+        </member>
+        <member name="P:Simple.Config.Domain.Namespace.Properties">
+            <summary>
+                The Properties property.
+            </summary>
+            
+            <value>
+                The array of properties owned by the namespace.
+            </value>
+        </member>
+        <member name="P:Simple.Config.Domain.Namespace.Item(System.String)">
+            <summary>
+                Shortcut for accessing a single value property by its name.
+                Same as GetProperty(string name).Value
+            </summary>
+            
+            <param name="name">The name of the property</param>
+            
+            <exception cref="T:System.NullReferenceException">
+                if name is null
+            </exception>
+        </member>
+        <member name="T:Simple.Config.Errors.NamespaceClashException">
+            <summary>
+                Exception thrown when a namespace name conflict occurs
+                (a namespace is loaded and a namespace with the same name 
+                already exists).
+            </summary>
+        </member>
+        <member name="M:Simple.Config.Errors.NamespaceClashException.#ctor(System.String)">
+            <param name="message">the error message</param>
+        </member>
+        <member name="T:Simple.Config.Domain.Property">
+            <summary>
+                This class corresponds to a property.
+                A property has a name and more string values.
+                The class exposes properties to access the name and the values.
+            </summary>
+        </member>
+        <member name="F:Simple.Config.Domain.Property._name">
+            <summary>
+                The name of the property.
+            </summary>
+        </member>
+        <member name="F:Simple.Config.Domain.Property._values">
+            <summary>
+                The values of the property (only one element for most properties).
+            </summary>
+        </member>
+        <member name="M:Simple.Config.Domain.Property.#ctor(System.String,System.Collections.Generic.List{System.String})">
+            <param name="name">The name of the property</param>
+            <param name="values">The values of the property (one or more)</param>
+        </member>
+        <member name="P:Simple.Config.Domain.Property.Name">
+            <summary>
+                The Name property.
+            </summary>
+            
+            <value>
+                The name of the property.
+            </value>
+        </member>
+        <member name="P:Simple.Config.Domain.Property.Value">
+            <summary>
+                The Value property.     
+                The getter will return the first element in the array
+                if there are more or an empty string if there isn't any.
+            </summary>
+            
+            <value>
+                The value of the property.
+            </value>
+            
+            <exception cref="T:System.NullReferenceException">
+                if value is null
+            </exception>
+        </member>
+        <member name="P:Simple.Config.Domain.Property.Values">
+            <summary>
+                The Values property.
+            </summary>
+            
+            <value>
+                The values of the property.
+            </value>
+            
+            <exception cref="T:System.NullReferenceException">
+                if values is null
+            </exception>
+        </member>
+        <member name="T:Simple.Config.Errors.PropertyClashException">
+            <summary>
+                Exception thrown when a property name conflict occurs
+                (a property is loaded and a property with the same name 
+                already exists in the owner namespace).
+            </summary>
+        </member>
+        <member name="M:Simple.Config.Errors.PropertyClashException.#ctor(System.String)">
+            <param name="message">the error message</param>
+        </member>
+        <member name="T:Simple.Config.Errors.UnknownFormatException">
+            <summary>
+                Exception thrown when the configuration file format is unknown
+                (no handler supports it).
+            </summary>
+        </member>
+        <member name="T:Simple.Config.Handlers.XmlConfigHandler">
+            <summary>
+                A configuration file handler for XML files as they are defined
+                in the component specification.
+            </summary>
+        </member>
+        <member name="M:Simple.Config.Handlers.XmlConfigHandler.Supports(System.String)">
+            <summary>
+            Determines whether the file is supported by the handler
+            by looking at the extension.In this case
+            the extension should be .xml.
+            </summary>
+            
+            <param name="filename">The name of the file.</param>
+            <returns>Whether the file is supported or not.</returns>
+            
+            <exception cref="T:System.IO.IOException">
+                If an I/O error occurs.
+            </exception>
+        </member>
+        <member name="M:Simple.Config.Handlers.XmlConfigHandler.LoadFromFile(System.String)">
+            <summary>
+                Loads the namespaces and properties from the file into
+                Namespace and Property objects.
+            </summary>
+            
+            <param name="filename">The name of the file.</param>
+            <returns>The populated Namespace objects</returns>
+            
+            <exception cref="T:Simple.Config.Errors.NamespaceClashException">
+                If a namespace clash occurs.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.PropertyClashException">
+                If a property clash occurs.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.InvalidConfigFileException">
+                If the configuration file is invalid.
+            </exception>
+            
+            <exception cref="T:Simple.Config.Errors.UnknownFormatException">
+                If the format of the configuration file is unkown.
+            </exception>
+            
+            <exception cref="T:System.IO.IOException">
+                If an I/O error occurs.
+            </exception>
+        </member>
+    </members>
+</doc>

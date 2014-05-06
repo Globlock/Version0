@@ -22,3 +22,11 @@ A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Glo
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Newtonsoft.Json.dll
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Newtonsoft.Json.xml
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Management.Automation.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Configuration.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Microsoft.WindowsAzure.Configuration.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Simple.Config.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Configuration.Abstractions.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Microsoft.WindowsAzure.Configuration.xml
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Simple.Config.pdb
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Simple.Config.xml
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Configuration.Abstractions.pdb

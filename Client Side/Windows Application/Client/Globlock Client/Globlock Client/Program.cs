@@ -28,34 +28,6 @@ namespace Globlock_Client {
 
         static void setupApplicationSettings() {
             BrokerManager brokerM = new BrokerManager();
-
-            //brokerM.brokerDatabase.queryTable("Transactions", new string[] { "desc", "datemodified" }, "id = 1");
-            //brokerM.brokerDatabase.testQuery();
-            //brokerM.requestResponse(BrokerManager.REQUEST_TYPE_HAND);
-            //string[] s = BrokerDevice.getPorts();
         }
-
-        //private static BrokerDatabase setupDatabaseBroker(INIAccess iniAccess) {
-        //    string workingDir = iniAccess.IniReadValue("WORKINGDIRECTORY", "directory");
-        //    string dbLocation = iniAccess.IniReadValue("DATABASE", "location");
-        //    string dbFilename = iniAccess.IniReadValue("DATABASE", "filename");
-        //    string dbFullPath = System.IO.Path.Combine(workingDir, dbLocation);
-        //    string dbAbsolute = System.IO.Path.Combine(workingDir, dbLocation, dbFilename);
-
-        //    BrokerDatabase dbBroker = new BrokerDatabase(dbFullPath, dbFilename);
-        //    return dbBroker;
-        //}
-
-
-        //private static INIAccess setupINI() {
-        //    // Load Initialisation File
-        //    INIAccess iniAccess = new INIAccess();
-        //    iniAccess.inspectFile();
-        //    Debug.WriteLine("Working Directory: " + iniAccess.IniReadValue("WORKINGDIRECTORY", "directory"));
-        //    return iniAccess;
-        //}
-
-        
-        
     }
 }

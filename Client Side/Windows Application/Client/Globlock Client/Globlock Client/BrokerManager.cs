@@ -19,6 +19,7 @@ namespace Globlock_Client {
         // Broker and Web Objects
         public BrokerRequest brokerRequest { get; set; }
         public BrokerDatabase brokerDatabase { get; set; }
+        public BrokerDevice brokerDevice { get; set; }
         private WebClient webClient;
         private INIAccess iniAccess;
         private PathObject drivePaths;
@@ -32,6 +33,7 @@ namespace Globlock_Client {
         public System.Uri HTTP_ADDR { get; set; }
         private byte[] serverResponse;
         private string decodedString;
+        private string messageHolder;
         
         /// <summary>
         /// Request Types
@@ -51,7 +53,7 @@ namespace Globlock_Client {
         
         // Constructor
         public BrokerManager() {
-            testMode = true;                                                                    //Testing only  
+            testMode = true;                                                                    
             prepareINIFile();
             prepareBrokers();
             prepareWebClient();
@@ -80,10 +82,25 @@ namespace Globlock_Client {
             brokerRequest = new BrokerRequest();
             Debug.WriteLine("Request Broker Created");
             brokerDatabase = new BrokerDatabase(drivePaths.dPath_Database_FullPath, drivePaths.dPath_Database_Filename);
-            Debug.WriteLine("Database Broker Created");
-            brokerDatabase.databaseTransaction("Application Initialized!");
+            Debug.WriteLine("Database Broker Created"); brokerDatabase.databaseTransaction("Application Initialized!");
+            prepareDevice();
         }
 
+        private void prepareDevice() {
+            brokerDevice = new BrokerDevice();
+            brokerDevice.connectToDevice();
+            if (brokerDevice.validDeviceFound) {
+                messageHolder = String.Format("Device found on '{0}' !", brokerDevice.arduinoPort);
+                brokerDatabase.databaseTransaction(messageHolder);
+                new Toast(messageHolder).Show();
+            } else {
+                messageHolder = "NO GLOBLOCK DEVICE FOUND, CANNOT CONTINUE!";
+                brokerDatabase.databaseTransaction(messageHolder);
+                new Toast(messageHolder).Show();
+                Application.Exit();
+            }
+            return;
+        }
         private void prepareWebClient() {
             decodedString = "Undefined";
             serverResponse = null;

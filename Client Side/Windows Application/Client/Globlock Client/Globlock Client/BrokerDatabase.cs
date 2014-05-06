@@ -97,7 +97,7 @@ namespace Globlock_Client {
         /// <param name="datetime">DateTime value to be converted to SQLite format</param>
         /// <returns>SQLite Formatted datatime value</returns>
         private string DateTimeSQLite(DateTime datetime) {
-            // http://techreadme.blogspot.ie/2012/11/sqlite-read-write-datetime-values-using.html
+            // Modified from http://techreadme.blogspot.ie/2012/11/sqlite-read-write-datetime-values-using.html
             string dateTimeFormat = "{0}-{1}-{2} {3}:{4}:{5}.{6}";
             return string.Format(dateTimeFormat, datetime.Year, datetime.Month, datetime.Day, datetime.Hour, datetime.Minute, datetime.Second,datetime.Millisecond);
         }
@@ -184,7 +184,7 @@ namespace Globlock_Client {
 
         /// <summary>
         /// Executes a non query, and returns the number of rows affected by the transaction
-        ///     From: http://www.dreamincode.net/forums/topic/157830-using-sqlite-with-c%23/
+        /// Modified from: http://www.dreamincode.net/forums/topic/157830-using-sqlite-with-c%23/
         /// </summary>
         /// <param name="sql">SQL Command to execute on the SQLite DB</param>
         /// <returns></returns>
