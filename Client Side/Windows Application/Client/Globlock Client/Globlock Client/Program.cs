@@ -28,6 +28,7 @@ namespace Globlock_Client {
 
         static void setupApplicationSettings() {
             BrokerManager brokerM = new BrokerManager();
+            Application.Run(new Main());
         }
     }
 }

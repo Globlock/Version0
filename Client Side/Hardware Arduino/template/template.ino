@@ -19,10 +19,6 @@ Implementation:
 ----------------------------------------------------------------
 Controller Board: Arduino UNO R3
 ----------------------------------------------------------------
-
-Code developed and modified from codeproject tutorial, AVAILABLE here:
-http://www.codeproject.com/Articles/473828/Arduino-Csharp-and-Serial-Interface
-----------------------------------------------------------------
 */
 
 /* 
@@ -33,26 +29,34 @@ INCLUDES, METHODS, GLOBAL & VARIABLE DECLARATIONS
 
 /*   CONSTANTS   */
 #define GLOBLOCK_INDICATOR_LED 13
-#define GLOBLOCK_ACTION_SUCCESS 0
-#define GLOBLOCK_ACTION_FAILURE -1
-#define GLOBLOCK_SERIAL_DATA_UNAVAILABLE 250
+#define GLOBLOCK_SERIAL_SUCCESS 1
+#define GLOBLOCK_SERIAL_FAILURE 999
 #define GLOBLOCK_SERIAL_DATA_STX "\x02"
 #define GLOBLOCK_SERIAL_DATA_ETX "\x03"
 #define GLOBLOCK_SERIAL_DATA_DLR "|"
 #define GLOBLOCK_SERIAL_DATA_HDR '#'
 #define GLOBLOCK_SERIAL_DATA_FTR '#'
+#define GLOBLOCK_SERIAL_DATA_NLN '\n'
 #define GLOBLOCK_SERIAL_BAUDRATE 9600
 
 /*   VARIABLES  */
-String command = "";
+String inputData;
+char inputByte, dataHeader, dataType;
+int inputResult;
+int inputLength;
+String dataMessage;
 
 /*   METHOD DECLARATIONS   */
-int readSerialInputString(String *inputData);
-void returnHandshake();
-void displayReport();
-void displayData();
+int readSerialInputData();
+void handleData(String inputData);
 void handleError(String errorMessage);
-boolean testRFID();
+void returnHandshake(String dataMessage);
+void displayReport(String dataMessage);
+void displayData(String lcdMessage);
+void handleError(String errorMessage);
+boolean testRFID(String dataMessage);
+void callBack(boolean success, String data);
+int successAlert(int count, int freq);
 /*
 ---------------------------------------------------------------- */
 
@@ -63,130 +67,184 @@ METHODS
 /*  
 SETUP  
 * Initialize serial to Baudrate and set pinmode for indicator led
-*/
-void setup(){
-  pinMode(GLOBLOCK_INDICATOR_LED, OUTPUT);
-  Serial.begin(GLOBLOCK_SERIAL_BAUDRATE);
-}
+*/  void setup(){
+      pinMode(GLOBLOCK_INDICATOR_LED, OUTPUT);
+      Serial.begin(GLOBLOCK_SERIAL_BAUDRATE);
+    }
 
 /*  
 LOOP  
-* Tests 
-*/
-void loop(){
-  String inputData = "";
-  char dataHeader, dataType;
-  int inputResult = readSerialInput(&inputData);
-
-  if (inputResult == GLOBLOCK_ACTION_SUCCESS) {
-    
-    dataHeader = inputData.charAt(0);
-    dataType = inputData.charAt(1);
-    
-    switch (dataType) {
-      case 'H'://Handshake 
-        returnHandshake();   
-        break;
-      case 'R'://Report to LCD
-        displayReport();    
-        break;
-      case 'D'://Display to LCD    
-        displayData();
-        break;
-      case 'T'://Display to LCD    
-        testRFID();
-        break;
-      case '\n':
-        break;
-      default:
-        handleError("INVALID HEADER");
-        break;
+* Tests to see if data is available and calls handleData if serial input is available
+*/  void loop(){
+      inputData = "";
+      inputResult = readSerialInputData();
+      if (inputResult == GLOBLOCK_SERIAL_SUCCESS) {
+        handleData(inputData);
+      } else if (inputResult == GLOBLOCK_SERIAL_FAILURE) {
+        //Flash green - and alert still running
+      } else { 
+        handleError("SERIAL DATA UNSCUCCESSFUL - MALFORMED");
+      }
     }
-  } else if (inputResult == GLOBLOCK_SERIAL_DATA_UNAVAILABLE){
-    //Flash green
-  } else if (inputResult == GLOBLOCK_ACTION_FAILURE){
-    handleError("SERIAL DATA UNSCUCCESSFUL - MALFORMED");
-  }
-}
 
-void handleError(String errorMessage){
-     digitalWrite(GLOBLOCK_INDICATOR_LED, HIGH);
-     delay(250);
-     digitalWrite(GLOBLOCK_INDICATOR_LED, LOW);
-     delay(250);
-}
+/*  
+READ SERIAL INPUT DATA  
+* Attempts to read serial input and if successful, assign to inputData by reference, and returns success code
+*/  int readSerialInputData(){
+      int inputComplete = 0;
+      if(Serial.available()){
+        if (!(Serial.available()>0)) return GLOBLOCK_SERIAL_FAILURE;
+        do{
+          inputData += (char)Serial.read();
+          if (inputByte == GLOBLOCK_SERIAL_DATA_FTR || inputByte == GLOBLOCK_SERIAL_DATA_HDR) inputComplete++;
+          allowToBuffer(10);
+        } while((inputComplete<3) && (Serial.available()));
+        return GLOBLOCK_SERIAL_SUCCESS;
+      } else {
+        return GLOBLOCK_SERIAL_FAILURE;
+      }
+    }
 
-int readSerialInput(String *inputData){
-  int serialStatus = GLOBLOCK_ACTION_SUCCESS;
+/*  
+HANDLE DATA
+* Breaks up inputData to define header and dataMessage, and carries out appropriate method call defined by headrer type
+* If no valid header is found, calls handleError()
+*/  void handleData(String inputData){
+      /* Assignments */
+      inputLength = inputData.length();
+      dataMessage = "Undefined";
+      dataHeader = inputData.charAt(0);
+      dataType = inputData.charAt(1);
+      if (inputLength > 3)dataMessage = inputData.substring(3, inputLength-1);
+      /* Switch for Header types */
+      switch (dataType) {
+        case 'H'://Handshake 
+          returnHandshake(dataMessage);   
+          break;
+        case 'R'://Report to LCD
+          displayReport(dataMessage);    
+          break;
+        case 'D'://Display to LCD    
+          displayData(dataMessage);
+          break;
+        case 'T'://Display to LCD    
+          testRFID(dataMessage);
+          break;
+        case 'G':
+          globeAvailable(inputData);
+        case '\n':
+          break;
+        default:
+          handleError("INVALID HEADER");
+          break;
+        }
+    }
+
+/*  
+HANDLE ERROR
+* Accepts message input as a string and invokes a callBack with a flase success to client. Allows scope for LCD display
+*/  void handleError(String errorMessage){
+         callBack(false, errorMessage);
+         // LCD Display Warning
+    }
+
+/*  
+RETURN HANDSHAKE
+* This method is called if the 'H' header is sent from client and returns a basic response, then calls successAlert
+* If no valid header is found, calls handleError()
+*/  void returnHandshake(String dataMessage){
+      Serial.print(GLOBLOCK_SERIAL_DATA_STX);
+      Serial.print("#H#HANDSHAKE RESPONSE");
+      Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
+      Serial.print("#B#" + dataMessage);
+      Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
+      Serial.print("#F#COMPLETE");
+      Serial.print(GLOBLOCK_SERIAL_DATA_ETX);
+      successAlert(5, 100);
+    }
+
+/*  
+DISPLAY REPORT
+* This method is called if the 'R' header is sent from client and returns a basic success response through callBack.  
+* Allows scope for LCD display, and further reporting functionality, such as last ID read from device etc..
+*/  void displayReport(String dataMessage){
+      //LCDDisplay(dataMessage);
+      callBack(true, "Display Successful");
+    }
+
+/*  
+DISPLAY DATA
+* This method is called if the 'D' header is sent from client and returns a basic success response through callBack.  
+* Allows scope for LCD display, and further reporting functionality, such as last ID read from device etc..
+*/  void displayData(String lcdMessage){
+      //LCDDisplay(dataMessage);
+    }
+
+/*  
+TEST RFID
+* This method is called if the 'T' header is sent from client and returns a mock RFID value for testing purposes. 
+*/  boolean testRFID(String dataMessage){
+      Serial.print(GLOBLOCK_SERIAL_DATA_STX);
+      Serial.print("#H#TEST RFID RESPONSE");
+      Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
+      Serial.print("#B#ID:FFAA10205691");
+      Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
+      Serial.print("#F#COMPLETE");
+      Serial.print(GLOBLOCK_SERIAL_DATA_ETX);
+      successAlert(5, 100);
+    }
+
+/*  
+CALL BACK
+* Returns a response to the client of 'Success' or 'Failure' and generates an appropriate successAlert.
+*/  void callBack(boolean success, String data){
+      if (success){
+        Serial.print(GLOBLOCK_SERIAL_DATA_STX);
+        Serial.print("#H#REQUEST RESPONSE");
+        Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
+        Serial.print("#B#SUCCEEDED:" + data);
+        Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
+        Serial.print("#F#COMPLETE");
+        Serial.print(GLOBLOCK_SERIAL_DATA_ETX);
+        successAlert(5, 100);
+      } else {
+        Serial.print(GLOBLOCK_SERIAL_DATA_STX);
+        Serial.print("#H#REQUEST RESPONSE");
+        Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
+        Serial.print("#B#FAILED!" + data);
+        Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
+        Serial.print("#F#COMPLETE");
+        Serial.print(GLOBLOCK_SERIAL_DATA_ETX);
+        successAlert(3, 250);
+      }
+    }
+
+/*  
+SUCCESS ALERT
+* Recursive method that flashes Indicator LED recursively, at a particular interval
+*/  int successAlert(int count, int freq){
+      if ((count == 1)||(count == 0)) return 0;
+      digitalWrite(GLOBLOCK_INDICATOR_LED, HIGH);
+      delay(freq);
+      digitalWrite(GLOBLOCK_INDICATOR_LED, LOW);
+      delay(freq);
+      return successAlert((count-1), freq);
+    }
+    
+/*  
+ALLOW TO BUFFER
+* Delay method that allows the serial to buffer its input and prevent re-read
+*/  void allowToBuffer(int bufferLimit){
+      delay(bufferLimit);
+    }
+
+/*  
+GLOBE AVAILABLE
+* Globe is placed on the device
+*/  void globeAvailable(String inputData){
   
-  if(Serial.available()){
-    char byteIn;
-    int packet = 0;
-    do{
-      byteIn = (char)Serial.read();
-      *inputData += byteIn; 
-      if (byteIn == GLOBLOCK_SERIAL_DATA_FTR || byteIn == GLOBLOCK_SERIAL_DATA_HDR) packet++;
-    } while(packet <2 && Serial.available());
-  } else {
-    serialStatus = GLOBLOCK_SERIAL_DATA_UNAVAILABLE;
-  }
-  return serialStatus;
-}
+    }
 
-void returnHandshake(){
-  Serial.print(GLOBLOCK_SERIAL_DATA_STX);
-  Serial.print("#HR#RESPONSE");
-  Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
-  Serial.print("#B1#EMPTYDATA");
-  Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
-  Serial.print("#FR#COMPLETE");
-  Serial.print(GLOBLOCK_SERIAL_DATA_ETX);
-}
-
-void testRFID(){
-  Serial.print(GLOBLOCK_SERIAL_DATA_STX);
-  Serial.print("#HR#TEST RFID RESPONSE");
-  Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
-  Serial.print("#B1#FFAA10205691");
-  Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
-  Serial.print("#FR#COMPLETE");
-  Serial.print(GLOBLOCK_SERIAL_DATA_ETX);
-}
-
-void displayReport(){
-}
-void displayData(){
-}
-boolean testRFID(){
-}
-
-//  String inputString = "";         // a string to hold incoming data
-//  boolean stringComplete = false;  // whether the string is complete
-//  
-//  void serialEvent() {
-//    while (Serial.available()) {
-//      // get the new byte:
-//      char inChar = (char)Serial.read(); 
-//      // add it to the inputString:
-//      inputString += inChar;
-//      // if the incoming character is a newline, set a flag
-//      // so the main loop can do something about it:
-//      if (inChar == '\n') {
-//        stringComplete = true;
-//      } 
-//    }
-//  }
-//  
-//  void loop() {
-//    // print the string when a newline arrives:
-//    if (stringComplete) {
-//      Serial.println(inputString); 
-//      // clear the string:
-//      inputString = "";
-//      stringComplete = false;
-//    }
-//    //digitalWrite(ledPin, HIGH);
-//    //delay(1000);
-//    //digitalWrite(ledPin, LOW);
-//    //delay(1000);
-//  }
+/* 
+COMPLETE
+---------------------------------------------------------------- */

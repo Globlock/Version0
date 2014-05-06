@@ -35,8 +35,8 @@ namespace Globlock_Client {
         /// Default Schema SQL statments
         /// </summary>
         private string[] schema = { "CREATE TABLE IF NOT EXISTS Sessions( id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[sessiontoken] VARCHAR(250),[datemodified] datetime);", 
-                                    "CREATE TABLE IF NOT EXISTS Transactions( id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[desc] VARCHAR(250),[datemodified] datetime);", 
-                                    "CREATE TABLE IF NOT EXISTS Users ( id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, [datecreated] datetime, [username] VARCHAR(250),[password] VARCHAR(250)), [current];"};
+                                    "CREATE TABLE IF NOT EXISTS Transactions( id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[desc] VARCHAR(250),[datemodified] datetime);",
+                                    "CREATE TABLE IF NOT EXISTS UserTable( id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,[username] VARCHAR(250),[password] VARCHAR(250),[super] VARCHAR(2),[current] VARCHAR(2));"};
         
         /// <summary>
         /// Constructor for BrokerDatabase
@@ -211,14 +211,14 @@ namespace Globlock_Client {
         }
 
         public bool userExists(string username, string password) { 
-            string where = string.Format("WHERE username = {0} AND password = {1}", username, password);
-            DataTable resultData = queryTable("Users", new string[] { "username", "password", "superuser" }, where);
+            string where = string.Format("username = {0} AND password = {1}", username, password);
+            DataTable resultData = queryTable("Users", new string[] { "username", "password", "super" }, where);
             return (resultData.Rows.Count >= 1);
         }
 
-        public DataTable currentUser() {
-            string where = "WHERE current = 1";
-            DataTable resultData = queryTable("Users", new string[] { "username", "password", "superuser" }, where);
+        public DataTable getCurrentUser() {
+            string where = "current = 1";
+            resultData = queryTable("UserTable", new string[] { "username", "password", "super" }, where);
             if (resultData.Rows.Count == 1) {
                 return resultData;
             } else { 
@@ -226,13 +226,6 @@ namespace Globlock_Client {
                 markNonCurrent();
             }
             return null;
-        }
-
-        public DataTable getCurrentUser() {
-            resultData = new DataTable();
-            string where = "WHERE current = 1";
-            resultData = queryTable("Users", new string[] { "username", "password", "superuser" }, where);
-            return resultData;
         }
 
         public void markNonCurrent() {

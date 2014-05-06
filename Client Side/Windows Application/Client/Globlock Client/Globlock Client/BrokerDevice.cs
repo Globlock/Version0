@@ -73,7 +73,6 @@ namespace Globlock_Client {
             private string receivedMessage, packetHeader, packetbody;
             private bool receiveddata;
             private bool validReponse;
-
             private int baudrate { get; set; }
             private int databits { get; set; }
             private StopBits stopbits { get; set; }
@@ -99,7 +98,7 @@ namespace Globlock_Client {
             }
 
             private void connectPort() {
-                //sPort = new SerialPort(portname, baudrate, parity, databits, stopbits);
+                //Not needed: sPort = new SerialPort(portname, baudrate, parity, databits, stopbits);
                 sPort = new SerialPort(portname); // Default port settings
                 sPort.DataReceived += new SerialDataReceivedEventHandler(dataReceived);
                 sPort.Open();
@@ -115,11 +114,13 @@ namespace Globlock_Client {
                 return -1;
             }
 
-            
-            public void interact(string type, string message) {
+            public int interact(string type, string message) {
                 connectPort();
                 createThread(new ThreadStart(displayOnDevice));
-
+                if (sPort.IsOpen && connectionSuccess()) {
+                    closePort();
+                    return validResponse();
+                } else return -1;
             }
 
             private void displayOnDevice() {
@@ -150,25 +151,16 @@ namespace Globlock_Client {
                 dataPacket = new Dictionary<string, string>();
                 foreach (string s in dataList.ToList()) {
                     packetHeader = s.Substring(0, 3);
-                    packetbody = s.Substring(3, s.Length);
+                    packetbody = s.Substring(3, s.Length-3);
                     switch (packetHeader) {
-                        case "#HR#":
+                        case "#H#":
                             dataPacket.Add("Header", packetbody);
                             validReponse = true;
                             break;
-                        case "#B1#":
-                            dataPacket.Add("Body1", packetbody);
+                        case "#B#":
+                            dataPacket.Add("Body", packetbody);
                             break;
-                        case "#B2#":
-                            dataPacket.Add("Body2", packetbody);
-                            break;
-                        case "#B3#":
-                            dataPacket.Add("Body3", packetbody);
-                            break;
-                        case "#B4#":
-                            dataPacket.Add("Body4", packetbody);
-                            break;
-                        case "#FR#":
+                        case "#F#":
                             dataPacket.Add("Footer", packetbody);
                             break;
                     }

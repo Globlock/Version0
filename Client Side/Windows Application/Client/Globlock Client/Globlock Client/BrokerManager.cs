@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Net;
 using Newtonsoft.Json;
+using System.Data;
 
 namespace Globlock_Client {
     class BrokerManager {
@@ -24,6 +25,7 @@ namespace Globlock_Client {
         private INIAccess iniAccess;
         private PathObject drivePaths;
         private UserObject currentUser;
+
         private string saltValue;
 
         // Web Interaction variables
@@ -53,20 +55,28 @@ namespace Globlock_Client {
         
         // Constructor
         public BrokerManager() {
-            testMode = true;                                                                    
+            testMode = true;
+            irrecoverableError = false;
+                                                    
             prepareINIFile();
-            prepareBrokers();
+            prepareDatabase();
             prepareWebClient();
+            prepareRequest();
             validateUser();
         }
 
-        private void validateUser() {
-            // Get User Info here
-            currentUser = new UserObject("test user", "ABCD1234");
-            Debug.WriteLine(currentUser.encryptPassword());
-            
-            // See if user exists in local DB
-            //DataTable users = brokerDatabase.getDataTable("");
+        public bool validateUser() {
+            DataTable users = brokerDatabase.getCurrentUser();
+            if (users.Columns.Count > 0){
+                DataRow dr = users.Rows[0];
+                string username = dr["username"].ToString();
+                string password = dr["password"].ToString();
+                bool super = dr["password"].ToString().Equals("1");
+                currentUser = new UserObject(username, password, super);
+                MessageBox.Show("Current User: " + username);
+                return true;
+            } 
+            return false;
 
         }
 
@@ -74,39 +84,40 @@ namespace Globlock_Client {
             iniAccess = new INIAccess();
             iniAccess.inspectFile();
             drivePaths = new PathObject(iniAccess, testMode);
-            Debug.WriteLine("INI & Drive Paths Created - Working Directory: " + drivePaths.dPath_Working_Directory);
+            //TEST
+            MessageBox.Show("INI & Drive Paths Created - Working Directory: " + drivePaths.dPath_Working_Directory);
         }
 
-        private void prepareBrokers() {
-            irrecoverableError = false;
-            brokerRequest = new BrokerRequest();
-            Debug.WriteLine("Request Broker Created");
+        private void prepareDatabase() {
             brokerDatabase = new BrokerDatabase(drivePaths.dPath_Database_FullPath, drivePaths.dPath_Database_Filename);
-            Debug.WriteLine("Database Broker Created"); brokerDatabase.databaseTransaction("Application Initialized!");
-            prepareDevice();
+            brokerDatabase.databaseTransaction("Application Initialized!");
+        }
+
+        private void prepareWebClient() {
+            decodedString = "Undefined";
+            serverResponse = null;
+            dataPOST = new NameValueCollection();
+            webClient = new WebClient();
+            brokerDatabase.databaseTransaction("Web Client Created");
+        }
+
+        private void prepareRequest() {
+            brokerRequest = new BrokerRequest();
+            brokerDatabase.databaseTransaction("Request Broker Created");
         }
 
         private void prepareDevice() {
             brokerDevice = new BrokerDevice();
             brokerDevice.connectToDevice();
-            if (brokerDevice.validDeviceFound) {
-                messageHolder = String.Format("Device found on '{0}' !", brokerDevice.arduinoPort);
-                brokerDatabase.databaseTransaction(messageHolder);
-                new Toast(messageHolder).Show();
-            } else {
+            messageHolder = String.Format("Device found on '{0}' !", brokerDevice.arduinoPort);
+            if (!brokerDevice.validDeviceFound) {
                 messageHolder = "NO GLOBLOCK DEVICE FOUND, CANNOT CONTINUE!";
-                brokerDatabase.databaseTransaction(messageHolder);
-                new Toast(messageHolder).Show();
-                Application.Exit();
+                irrecoverableError = true;
             }
-            return;
+            brokerDatabase.databaseTransaction(messageHolder);
         }
-        private void prepareWebClient() {
-            decodedString = "Undefined";
-            serverResponse = null;
-            dataPOST = new NameValueCollection();
-            webClient = new WebClient();  
-        }
+
+
 
         public string getSessionToken() {
             return brokerRequest.session.token;
@@ -248,10 +259,20 @@ namespace Globlock_Client {
             private string encryptedPassword;
             private bool superUser;
             private StringBuilder returnValue;
+            private bool super;
+
             public UserObject(string username, string password) {
                 this.username = username;
                 this.password = password;
+                this.super = false;
             }
+
+            public UserObject(string username, string password, bool super) {
+                this.username = username;
+                this.password = password;
+                this.super = super;
+            }
+
             public string encryptPassword() {
                 return SHA1HashStringForUTF8String(password);
             }
