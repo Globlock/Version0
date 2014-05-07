@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Globlock_Client {
 
-    class INIAccess {
+    public class Obj_SettingsAccess {
 
         // Local File
         private string path, filename, absolute;
@@ -22,13 +22,13 @@ namespace Globlock_Client {
         private static extern int GetPrivateProfileString(string section, string key,string def, StringBuilder retVal, int size,string filePath);
 
         // Constructor
-        public INIAccess(string path, string filename) {
+        public Obj_SettingsAccess(string path, string filename) {
             this.path = path;
             this.filename = filename;
             this.absolute = System.IO.Path.Combine(path, filename);
         }
 
-        public INIAccess() {
+        public Obj_SettingsAccess() {
             if (!File.Exists(absolute)) {
                 this.filename = DEFAULT_INI;
                 this.path = System.IO.Directory.GetCurrentDirectory();

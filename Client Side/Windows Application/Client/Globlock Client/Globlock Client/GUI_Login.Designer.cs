@@ -1,5 +1,5 @@
 ﻿namespace Globlock_Client {
-    partial class Login {
+    partial class GUI_Login {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -24,11 +24,11 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Login));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GUI_Login));
             this.chkRemember = new System.Windows.Forms.CheckBox();
             this.lblUser = new System.Windows.Forms.Label();
             this.lblPass = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtBoxUser = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.btnGo = new System.Windows.Forms.Button();
             this.pnlDetails = new System.Windows.Forms.Panel();
@@ -63,7 +63,6 @@
             this.lblUser.Name = "lblUser";
             this.lblUser.Size = new System.Drawing.Size(32, 32);
             this.lblUser.TabIndex = 1;
-            this.lblUser.Click += new System.EventHandler(this.label1_Click);
             // 
             // lblPass
             // 
@@ -75,13 +74,13 @@
             this.lblPass.Size = new System.Drawing.Size(32, 32);
             this.lblPass.TabIndex = 2;
             // 
-            // textBox1
+            // txtBoxUser
             // 
-            this.textBox1.Font = new System.Drawing.Font("Monospac821 BT", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(48, 15);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(400, 30);
-            this.textBox1.TabIndex = 0;
+            this.txtBoxUser.Font = new System.Drawing.Font("Monospac821 BT", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtBoxUser.Location = new System.Drawing.Point(48, 15);
+            this.txtBoxUser.Name = "txtBoxUser";
+            this.txtBoxUser.Size = new System.Drawing.Size(400, 30);
+            this.txtBoxUser.TabIndex = 0;
             // 
             // textBox2
             // 
@@ -102,12 +101,12 @@
             this.btnGo.Size = new System.Drawing.Size(64, 65);
             this.btnGo.TabIndex = 3;
             this.btnGo.UseVisualStyleBackColor = true;
-            this.btnGo.Click += new System.EventHandler(this.button1_Click);
+            this.btnGo.Click += new System.EventHandler(this.btnGo_Click);
             // 
             // pnlDetails
             // 
             this.pnlDetails.Controls.Add(this.btnGo);
-            this.pnlDetails.Controls.Add(this.textBox1);
+            this.pnlDetails.Controls.Add(this.txtBoxUser);
             this.pnlDetails.Controls.Add(this.lblUser);
             this.pnlDetails.Controls.Add(this.chkRemember);
             this.pnlDetails.Controls.Add(this.textBox2);
@@ -138,7 +137,7 @@
             // logOffToolStripMenuItem
             // 
             this.logOffToolStripMenuItem.Name = "logOffToolStripMenuItem";
-            this.logOffToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.logOffToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.logOffToolStripMenuItem.Text = "Log Off";
             this.logOffToolStripMenuItem.Click += new System.EventHandler(this.logOffToolStripMenuItem_Click);
             // 
@@ -160,7 +159,7 @@
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             // 
-            // Login
+            // GUI_Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -169,7 +168,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "Login";
+            this.Name = "GUI_Login";
             this.Text = "Login";
             this.Load += new System.EventHandler(this.Login_Load);
             this.pnlDetails.ResumeLayout(false);
@@ -184,7 +183,7 @@
         private System.Windows.Forms.CheckBox chkRemember;
         private System.Windows.Forms.Label lblUser;
         private System.Windows.Forms.Label lblPass;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtBoxUser;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button btnGo;
         private System.Windows.Forms.Panel pnlDetails;

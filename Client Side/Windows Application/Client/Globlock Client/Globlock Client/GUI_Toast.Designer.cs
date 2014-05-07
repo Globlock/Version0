@@ -1,5 +1,5 @@
 ﻿namespace Globlock_Client {
-    partial class Toast {
+    partial class GUI_Toast {
         /// <summary>
         /// Required designer variable.
         /// </summary>

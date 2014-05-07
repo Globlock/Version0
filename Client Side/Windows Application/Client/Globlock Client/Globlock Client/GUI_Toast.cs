@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Globlock_Client {
-    public partial class Toast : Form {
+    public partial class GUI_Toast : Form {
 
         private Timer timerMove;
         private int startPosX, startPosY;
         private string msg;
         private bool complete = false;
 
-        public Toast() {
+        public GUI_Toast() {
             InitializeComponent();
             setupMovement();
         }
 
-        public Toast(string msg) {
+        public GUI_Toast(string msg) {
             InitializeComponent();
             setupForm(msg);
         }

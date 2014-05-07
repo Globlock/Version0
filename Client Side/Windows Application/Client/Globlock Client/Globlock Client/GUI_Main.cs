@@ -10,12 +10,16 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Globlock_Client {
-    public partial class Main : Form {
+    public partial class GUI_Main : Form {
         private string dbLocation, dbFilename, serverAddress;
-        public Main() {
+        private BrokerManager brokerM;
+        public GUI_Main() {
             InitializeComponent();
             initializeSettings();
-
+        }
+        public GUI_Main(BrokerManager brokerManager) {
+            InitializeComponent();
+            initializeSettings();
         }
 
         private void Main_Load(object sender, EventArgs e) {
@@ -44,6 +48,10 @@ namespace Globlock_Client {
             if (fbd.ShowDialog() == DialogResult.OK) {
                     MessageBox.Show("Folder Selected: "+ fbd.SelectedPath);   
             }
+        }
+
+        internal void updateBroker(BrokerManager brokerM) {
+            this.brokerM = brokerM;
         }
     }
 }

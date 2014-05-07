@@ -1,5 +1,5 @@
 ﻿namespace Globlock_Client {
-    partial class Main {
+    partial class GUI_Main {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -23,7 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GUI_Main));
             this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 

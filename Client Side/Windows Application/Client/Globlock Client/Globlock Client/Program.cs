@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Text;
 using System.IO;
+using System.Threading;
 
 namespace Globlock_Client {
     static class Program {
@@ -21,14 +22,17 @@ namespace Globlock_Client {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            // Create INI Access and broker Objects
-            //Application.Run(new Main());
-            setupApplicationSettings();
+            initializeApplication();
         }
 
-        static void setupApplicationSettings() {
+        static void initializeApplication() {
             BrokerManager brokerM = new BrokerManager();
-            Application.Run(new Main());
+            if (!brokerM.validateUser()) {
+                Application.Run(new GUI_Login(brokerM));
+            } else {
+                Application.Run(new GUI_Main(brokerM));
+            }
         }
+        
     }
 }

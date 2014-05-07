@@ -12,19 +12,19 @@ using Newtonsoft.Json;
 using System.Data;
 
 namespace Globlock_Client {
-    class BrokerManager {
+    public class BrokerManager {
         // Test
         private bool testMode;
         private bool irrecoverableError;
         
         // Broker and Web Objects
         public BrokerRequest brokerRequest { get; set; }
-        public BrokerDatabase brokerDatabase { get; set; }
-        public BrokerDevice brokerDevice { get; set; }
+        private BrokerDatabase brokerDatabase { get; set; }
+        private BrokerDevice brokerDevice { get; set; }
         private WebClient webClient;
-        private INIAccess iniAccess;
-        private PathObject drivePaths;
-        private UserObject currentUser;
+        private Obj_SettingsAccess iniAccess;
+        private Obj_FilePaths drivePaths;
+        private Obj_User currentUser;
 
         private string saltValue;
 
@@ -36,6 +36,7 @@ namespace Globlock_Client {
         private byte[] serverResponse;
         private string decodedString;
         private string messageHolder;
+        public bool errorState;
         
         /// <summary>
         /// Request Types
@@ -56,13 +57,11 @@ namespace Globlock_Client {
         // Constructor
         public BrokerManager() {
             testMode = true;
-            irrecoverableError = false;
-                                                    
+            irrecoverableError = false;                    
             prepareINIFile();
             prepareDatabase();
             prepareWebClient();
             prepareRequest();
-            validateUser();
         }
 
         public bool validateUser() {
@@ -72,18 +71,21 @@ namespace Globlock_Client {
                 string username = dr["username"].ToString();
                 string password = dr["password"].ToString();
                 bool super = dr["password"].ToString().Equals("1");
-                currentUser = new UserObject(username, password, super);
-                MessageBox.Show("Current User: " + username);
+                currentUser = new Obj_User(username, password, super);
+                MessageBox.Show("Current User: " + username); //TEST
                 return true;
-            } 
+            }
             return false;
+        }
 
+        public string[] listUsers() {
+            return brokerDatabase.listAllUsers();
         }
 
         private void prepareINIFile(){
-            iniAccess = new INIAccess();
+            iniAccess = new Obj_SettingsAccess();
             iniAccess.inspectFile();
-            drivePaths = new PathObject(iniAccess, testMode);
+            drivePaths = new Obj_FilePaths(iniAccess, testMode);
             //TEST
             MessageBox.Show("INI & Drive Paths Created - Working Directory: " + drivePaths.dPath_Working_Directory);
         }
@@ -116,8 +118,6 @@ namespace Globlock_Client {
             }
             brokerDatabase.databaseTransaction(messageHolder);
         }
-
-
 
         public string getSessionToken() {
             return brokerRequest.session.token;
@@ -166,9 +166,11 @@ namespace Globlock_Client {
                     serverRequest("PULL");
                     break;
             }
-            if (int.Parse(brokerRequest.error.code) > 0) new Toast("Server Error occured :" + brokerRequest.error.code + " - " + brokerRequest.error.message).Show();
-            else { 
-                
+            if (int.Parse(brokerRequest.error.code) > 0) {
+                new GUI_Toast("Server Error occured :" + brokerRequest.error.code + " - " + brokerRequest.error.message).Show();
+                errorState = true;
+            } else {
+
             } 
 
         }
@@ -253,84 +255,8 @@ namespace Globlock_Client {
             
         }
 
-        public class UserObject {
-            private string username;
-            private string password;
-            private string encryptedPassword;
-            private bool superUser;
-            private StringBuilder returnValue;
-            private bool super;
+        
 
-            public UserObject(string username, string password) {
-                this.username = username;
-                this.password = password;
-                this.super = false;
-            }
-
-            public UserObject(string username, string password, bool super) {
-                this.username = username;
-                this.password = password;
-                this.super = super;
-            }
-
-            public string encryptPassword() {
-                return SHA1HashStringForUTF8String(password);
-            }
-
-            private static string SHA1HashStringForUTF8String(string s) {
-                byte[] bytes = Encoding.UTF8.GetBytes(s);
-                var sha1 = System.Security.Cryptography.SHA1.Create();
-                byte[] hashBytes = sha1.ComputeHash(bytes);
-                return HexStringFromBytes(hashBytes);
-            }
- 
-            private static string HexStringFromBytes(byte[] bytes) {
-                var sb = new StringBuilder();
-                foreach (byte b in bytes) {
-                    var hex = b.ToString("x2");
-                    sb.Append(hex);
-                }
-                return sb.ToString();
-            }
-
-        }
-
-        public class PathObject {
-            private bool testMode;
-            public string dPath_Working_Directory { get; set; }
-            public string dPath_Database_Location { get; set; }
-            public string dPath_Database_Filename { get; set; }
-            public string dPath_Database_FullPath { get; set; }
-            public string dPath_Database_Absolute { get; set; }
-            public string server_API_Address { get; set; }
-            public string server_API_Filename { get; set; }
-            public System.Uri server_API_URI { get; set; }
-
-            public PathObject() { 
-            }
-
-            public PathObject(INIAccess iniAccess, bool testMode) {
-                this.testMode = testMode;
-                this.buildFromINI(iniAccess);
-            }
-
-            internal void buildFromINI(INIAccess iniAccess) {
-                dPath_Working_Directory = iniAccess.IniReadValue("WORKINGDIRECTORY", "directory");
-                dPath_Database_Location = iniAccess.IniReadValue("DATABASE", "location");
-                dPath_Database_Filename = iniAccess.IniReadValue("DATABASE", "filename");
-                dPath_Database_FullPath = System.IO.Path.Combine(dPath_Working_Directory, dPath_Database_Location);
-                dPath_Database_Absolute = System.IO.Path.Combine(dPath_Working_Directory, dPath_Database_Location, dPath_Database_Filename);
-                
-                if (testMode) {                                                                             //Testing only
-                    server_API_URI = new System.Uri("http://localhost/26042014/requestBroker_test.php");    //Testing only
-                    server_API_Filename = "requestBroker_test.php";                                         //Testing only
-                    server_API_Address = "http://localhost/26042014/";                                      //Testing only
-                    return;
-                }
-                server_API_Address = iniAccess.IniReadValue("SERVER", "location");
-                server_API_Filename = iniAccess.IniReadValue("SERVER", "filename");
-                server_API_URI = new System.Uri(System.IO.Path.Combine(server_API_Address, server_API_Filename));    //Testing only
-            }
-        }
+       
     }
 }

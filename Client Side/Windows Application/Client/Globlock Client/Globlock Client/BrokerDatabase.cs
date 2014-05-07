@@ -9,7 +9,7 @@ using System.Data;
 
 namespace Globlock_Client {
     
-    class BrokerDatabase {
+    public class BrokerDatabase {
 
         /// <summary>
         /// Path & Version declarations
@@ -151,7 +151,6 @@ namespace Globlock_Client {
             return insertSuccess;
         }
 
-
         public bool updateData(String tableName, Dictionary<String, String> data, String where)    {
             String vals = "";
             Boolean returnCode = true;
@@ -212,7 +211,7 @@ namespace Globlock_Client {
 
         public bool userExists(string username, string password) { 
             string where = string.Format("username = {0} AND password = {1}", username, password);
-            DataTable resultData = queryTable("Users", new string[] { "username", "password", "super" }, where);
+            DataTable resultData = queryTable("UserTable", new string[] { "username", "password", "super" }, where);
             return (resultData.Rows.Count >= 1);
         }
 
@@ -225,15 +224,25 @@ namespace Globlock_Client {
                 // Mark all as non current
                 markNonCurrent();
             }
-            return null;
+            return new DataTable();
         }
 
         public void markNonCurrent() {
             // Mark all as non current
             data = new Dictionary<String, String>();
             data.Add("current", "0");
-            updateData("Users", data, String.Format("Users.current = {0}", "1"));
+            updateData("UserTable", data, String.Format("UserTable.current = {0}", "1"));
         }
+
+        public string[] listAllUsers() {
+            List<String> userList = new List<String>();
+            DataTable temp = queryTable("UserTable", new string[]{"username"}, "1");
+            foreach (DataRow row in temp.Rows) {
+                userList.Add(row["username"].ToString());
+            }
+            return userList.ToArray();
+        }
+
 
         private DataTable queryTable(string table, string[] values, string where) { 
             DataTable resultData;
@@ -269,6 +278,7 @@ namespace Globlock_Client {
             }
         }
 
+        #region Open/Close
         public void openConnection(string sql) {
             //sqlite_conn = new SQLiteConnection(connectionData);
             sqlite_conn.Open();
@@ -277,6 +287,7 @@ namespace Globlock_Client {
         }
 
         public void closeConnection() { sqlite_conn.Close(); }
+        #endregion 
 
         public DataTable getDataTable2(string sql) {
             DataTable dt = new DataTable();
