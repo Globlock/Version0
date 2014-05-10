@@ -30,12 +30,16 @@ TO DO:
 	include 'configurations.php';
 	include 'logWrite.php';
 	include 'dbconnection.php';
+	include 'databaseBroker.php';
 	include 'sessionHandler.php';
 	include 'encryptionHelper.php';
 	include 'requestBroker.php';
 	include 'userHandler.php';
 	include 'globeHandler.php';
 	
+	include 'sh_session_handler.php';
+	include 'dbb_database_broker.php';
+	include 'gh_globe_handler.php';
 	/* Strain Inputs */
 	//htmlspecialchars etc..
 
@@ -55,7 +59,6 @@ function start(&$broker){
 }	
 
 function handleRequest(&$broker){
-		//To DO - Handle Request, start to finish
 		$broker->setValue("header", "type", $_POST["request_header"]);
 		if (!$broker->validateHeader()) {
 			$broker->handleErrors("BAD REQUEST: UNDEFINED OR MALFORMED HEADER REQUEST", 400);
@@ -65,11 +68,11 @@ function handleRequest(&$broker){
 		switch ($broker->brokerData['header']['type']){
 			case "HANDSHAKE":	//
 				$broker->setValue('header', 'type', $_POST["request_header"]);
-				echo returnHandshake($broker);
+				returnHandshake($broker);
 				break;
 			case "SESSION":
 				if (validUser($broker)) 
-					getSessionToken($broker);
+					handleSessionToken($broker);
 				break;
 			case "VALIDATE":
 				handleValidation($broker);
@@ -87,13 +90,39 @@ function handleRequest(&$broker){
 				unAssignGlobe($broker);
 				break;
 			case "PULL":
-				pullFiles($broker)
-				break;
+				pullFiles($broker);
+				//break;
 			case "PUSH":
 				pushFiles($broker);
 				break;
 		}
 		echo $broker->returnJSON();
+}
+
+/** */
+function handleSessionToken(&$broker){
+	//$super = isSuper(&$broker);
+	$super = "1";
+	$session_token = $super . sh_getSessionToken();
+	$broker->setValue('header', 'type', "SESSION TOKEN RESPONSE");
+	$broker->setValue('session', 'token', $session_token);
+}
+
+/** */
+//VALIDATE GLOBE
+function handleValidation(&$broker){
+	$broker->setValue('header','type', "VALIDATE RESPONSE");
+	//Pass broker to validSession with activity at 1 (gets updated)
+	if (!(isset($_POST["session_token"]))) throw new Exception("Exception Thrown (EMPTY POST):");
+	$broker->setValue("header", "type", $_POST["request_header"]);
+	$broker->setValue("session", "token", $_POST["session_token"]);
+	
+	if (sh_validSessionToken($broker, 1)) {
+		//echo "<br/>Valid Session<br/>";
+		gh_validateGlobe($broker);
+	}
+	//Validate globe and if found return results
+	//globeValidation($broker);
 }
 
 /**
@@ -110,21 +139,14 @@ PULL		- in [Session, Globe Project, Globe ID], out [File list]
  */
 
 
-/** */
-//VALIDATE GLOBE
-function handleValidation(&$broker){
-	$broker->setValue('header','type', "VALIDATE RESPONSE");
-	//Pass broker to validSession with activity at 1 (gets updated)
-	if (!validSession($broker, 1)) return;
-	//Validate globe and if found return results
-	globeValidation($broker);
-}
+
 
 /** */
 //ABORT SESSION
 function abortSession(&$broker){
 	$broker->setValue('header', 'type', "ABORT RESPONSE");
 	if(validSession($broker, 2)){
+	echo "<br/>Valid<br/>";
 		$sessionToken = $broker->brokerData['session']['token'];
 		disposeSessions($sessionToken);
 	}
@@ -186,20 +208,13 @@ function pushFiles(&$broker){
 function returnHandshake(&$broker){
 	if (empty($_POST["request_body"])){ 
 		$broker->handleErrors("LENGTH REQUIRED: MESSAGE REQUEST BODY EMPTY",411);	
-		return $broker->returnJSON();
 	} else {
 		$broker->setValue('header', 'message', $_POST["request_body"]);
 		$message = getHandShakeResponse($broker->brokerData['header']['message']);
 		$broker->setValue('header','type', "HANDSHAKE RESPONSE");
 		$broker->setValue('header', 'message', $message);
-		return $broker->returnJSON();
 	}
 }
 
-/** */
-function getSessionToken(&$broker){
-	$message = generateSessionToken();
-	$broker->setValue('header', 'type', "SESSION TOKEN RESPONSE");
-	$broker->setValue('session', 'token', $message);
-}
+
 ?>

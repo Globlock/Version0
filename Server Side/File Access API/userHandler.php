@@ -29,22 +29,9 @@ TO DO:
 	
 	*/
 
-/** verifyUser
+/** validUser
 	Requires $_POST user_name and user_pass to be set
 */
-	
-function searchUser(&$broker){
-	try {
-		$requestArgs = array($broker->brokerData['user']['name'], $broker->brokerData['user']['pass']);
-		$result = accessRequest("update_asset", "id", "user_id", 2, "ss", $requestArgs);
-		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
-	} catch (Exception $e) {
-		writeLogInfo("Exception occurred in [searchUser] ! | [". $e ."]", 1) ;
-		writeLogInfo("Exception occurred in [searchUser] !  | [". $e ."]", -1) 
-		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO UPDATE ASSET | [". $e ."]", 500);
-		return -1;
-	} finally { return $result; }
-}
 
 function validUser(&$broker){
 	try{
@@ -65,6 +52,39 @@ function validUser(&$broker){
 		return $result;
 	}
 }
+	
+function searchUser(&$broker){
+	try {
+		$requestArgs = array($broker->brokerData['user']['name'], $broker->brokerData['user']['pass']);
+		$result = accessRequest("search_user", "id", "user_id", 2, "ss", $requestArgs);
+		//echo "<br/> user found! <br/>";
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");		
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [searchUser] ! | [". $e ."]", 1) ;
+		writeLogInfo("Exception occurred in [searchUser] !  | [". $e ."]", -1); 
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE USERS | [". $e ."]", 401);
+		return -1;
+	} finally { return $result; }
+}
+
+function isSuper(&$broker){
+	try {
+		$null_value = null;
+		$requestArgs = array($broker->brokerData['user']['name'], $broker->brokerData['user']['pass']);
+		$result = accessRequest("search_super", "rows", $null_value, 2, "ss", $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+		if ($result > 0) return 1;
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [searchUser] ! | [". $e ."]", 1) ;
+		writeLogInfo("Exception occurred in [searchUser] !  | [". $e ."]", -1); 
+		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE USERS | [". $e ."]", 401);
+		return -1;
+	} finally { return $result; }
+}
+
+
+
+
 
 
 

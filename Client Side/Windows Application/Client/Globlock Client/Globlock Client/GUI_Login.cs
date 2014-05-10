@@ -12,9 +12,10 @@ namespace Globlock_Client {
     public partial class GUI_Login : Form {
         private Icon ico;
         private AutoCompleteStringCollection userSource;
-
+        private Obj_User user;
         public BrokerManager brokerManager {get; set;}
 
+        #region Constructors
         public GUI_Login() {
             InitializeComponent();
         }
@@ -24,7 +25,9 @@ namespace Globlock_Client {
             this.brokerManager = brokerManager;
             setupAutoComplete();
         }
- 
+        #endregion
+
+        #region Form Visuals
         private void setupAutoComplete() { 
             // List
             userSource = new AutoCompleteStringCollection();
@@ -34,19 +37,20 @@ namespace Globlock_Client {
             txtBoxUser.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             txtBoxUser.AutoCompleteSource = AutoCompleteSource.CustomSource;
         }
-        
+
         private void Login_Load(object sender, EventArgs e) {
             this.Location = new Point((Screen.PrimaryScreen.WorkingArea.Width - this.Width) / 2,
                           (Screen.PrimaryScreen.WorkingArea.Height - this.Height));
             ico = notifyIcon1.Icon;
         }
+        #endregion
 
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e) {
             this.Show();
         }
 
         private void logOffToolStripMenuItem_Click(object sender, EventArgs e) {
-
+            //brokerManager.
         }
 
         private void validateUserServerside(){
@@ -55,27 +59,47 @@ namespace Globlock_Client {
             // If not, create a new entry
             // call getSession token to test user details
         }
-        private void getSessionToken() { 
-            // Using the request Broker, attempt to communicate with the server and retrieve a session token
+        private void validateUserinDB() {
+            
         }
-
         private void addUserToDB() {
 
         }
 
         private void btnGo_Click(object sender, EventArgs e) {
+            createUserObject();
             this.Hide();
-            GUI_Toast t = new GUI_Toast("Connecting to the server...");
-            t.Show();
-            //Handshake
             brokerManager.requestResponse(BrokerManager.REQUEST_TYPE_HAND);
             if (brokerManager.errorState) {
-                //Application.Exit();
+                outputError();
             } else { 
-                //attempt Session Token Retrieval, with username and password
+                attemptSessionRetrieval();
+                dropSession();
+                if (chkRemember.Checked) brokerManager.markUserCurrent();
             }
         }
 
+        private void outputError() {
+            MessageBox.Show("An irrecoverable error has occured!");
+            Application.Exit();
+        }
+        private void attemptSessionRetrieval() {
+            brokerManager.requestResponse(BrokerManager.REQUEST_TYPE_SESH, user.getServerFormat());
+            if (brokerManager.errorState) outputError();
+        }
+        private void dropSession() {
+            string[] token = {brokerManager.getSessionToken().Substring(1)};
+            brokerManager.requestResponse(BrokerManager.REQUEST_TYPE_ABRT, token);
+            if (brokerManager.errorState) outputError();
+        }
+
+        private void createUserObject() {
+            user = new Obj_User(txtBoxUser.Text, txtBoxPass.Text);
+            brokerManager.assignUser(user);
+        }
+        // If user is in DB, check details against DB
+        // If user is not in DB, add to DB
+        // Then test against Server
 
   
     }

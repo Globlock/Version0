@@ -33,22 +33,41 @@ publish_directory="Publish"
 ;Database Login and Host Information
 [database_info]
 db_host="127.0.0.1"
-db_name="globlock_test"
+db_name="gb_production"
+;db_name="globlock_test"
 db_user="root"
 db_pass=""
 
 ;SQL Statements
 [database_statements]
-test_table="SELECT 1 from client_sessions"
-create_table="CREATE TABLE IF NOT EXISTS client_sessions (session_id int(11) NOT NULL AUTO_INCREMENT, session_token CHAR(64) NOT NULL DEFAULT '1',session_activity int(11) NOT NULL DEFAULT '0',session_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (session_id))"
-insert_placeholder="INSERT INTO client_sessions (session_id, session_token, session_activity ) VALUES ( NULL, 0, 0 )"
-select_session="SELECT session_id FROM client_sessions WHERE session_activity =? AND session_token=?"
-select_session_token="SELECT session_id FROM client_sessions WHERE session_token =? AND session_activity != -1"
-update_token="UPDATE client_sessions SET session_activity =?, session_token=? WHERE session_id =?"
-update_session="UPDATE client_sessions SET session_activity =?, session_token=? WHERE session_id =?"
-dispose_session="UPDATE client_sessions SET session_activity =-1 WHERE session_token =?  AND session_activity != -1"
-dispose_expired="UPDATE client_sessions SET session_activity =-1 WHERE DATE_SUB(NOW(),INTERVAL 1 HOUR) > session_create AND session_activity != -1"
-verify_user="SELECT * FROM system_user WHERE user_name = ? AND user_pass = ?"
+test_table="SELECT 1 from gb_sessions"
+table_sessions="CREATE TABLE IF NOT EXISTS gb_sessions (session_id int(11) NOT NULL AUTO_INCREMENT, session_token VARCHAR(128) NOT NULL DEFAULT '1',session_activity int(11) NOT NULL DEFAULT '0',session_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (session_id))"
+
+
+insert_session_token="INSERT INTO gb_sessions(session_id , session_token, session_activity, session_create) VALUES (null, ?,?, CURRENT_TIMESTAMP)"
+select_active_session="SELECT session_id FROM gb_sessions WHERE session_activity =? AND session_token= ?"
+update_active_session="UPDATE gb_sessions SET session_activity=? WHERE session_id = ?"
+
+select_globe_asset="SELECT asset_id FROM gb_assets WHERE asset_object =?"
+select_globe_project="SELECT gb_globes.globe_name FROM gb_globes, gb_assets WHERE gb_assets.globe_id = gb_globes.globe_id AND gb_assets.asset_object = ?"
+
+table_users="CREATE TABLE IF NOT EXISTS gb_users (user_id int(11) NOT NULL AUTO_INCREMENT, user_name VARCHAR(64) NOT NULL DEFAULT '1',user_password int(11) NOT NULL DEFAULT '0',user_super int(1)NOT NULL DEFAULT '0',user_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (user_id))"
+search_user="SELECT * FROM gb_users WHERE user_name = ? AND user_password = ?"
+search_super="SELECT * FROM gb_users WHERE user_name = ? AND user_pass = ? AND user_super = '1'"
+table_globes="CREATE TABLE IF NOT EXISTS gb_globes (globe_id int(11) NOT NULL AUTO_INCREMENT, globe_name varchar(120) NOT NULL, globe_desc varchar(250) DEFAULT NULL, globe_code varchar(10) DEFAULT NULL, globe_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP, globe_owner int(11) NOT NULL, PRIMARY KEY (globe_id))"
+table_assets="CREATE TABLE IF NOT EXISTS gb_assets ( asset_id int(11) NOT NULL AUTO_INCREMENT, asset_object varchar(120) NOT NULL, asset_revision varchar(120) NOT NULL DEFAULT '0', PRIMARY KEY (asset_id))"
+insert_placeholder="INSERT INTO gb_sessions (session_id, session_token, session_activity ) VALUES ( NULL, 0, 0 )"
+select_session_id="SELECT session_id FROM gb_sessions WHERE session_activity =? AND session_token=?"
+select_session="SELECT session_id FROM gb_sessions WHERE session_activity =? AND session_token=?"
+select_session_token="SELECT session_id FROM gb_sessions WHERE session_token =? AND session_activity != -1"
+update_session_activity="UPDATE gb_sessions SET session_activity=? WHERE session_id = ?;"
+update_session_token="UPDATE gb_sessions SET session_token=?,  session_activity=?  WHERE session_id = ?;"
+
+update_token="UPDATE gb_sessions SET session_activity =?, session_token=? WHERE session_id =?"
+update_session="UPDATE gb_sessions SET session_activity =?, session_token=? WHERE session_id =?"
+dispose_session="UPDATE gb_sessions SET session_activity =-1 WHERE session_token =?  AND session_activity != -1"
+dispose_expired="UPDATE gb_sessions SET session_activity =-1 WHERE DATE_SUB(NOW(),INTERVAL 1 HOUR) > session_create AND session_activity != -1"
+verify_user="SELECT * FROM gb_users WHERE user_name = ? AND user_pass = ?"
 search_globe="SELECT * FROM globe_assets_test WHERE object = ?"
 search_project="SELECT * FROM globes_test WHERE globe_name = ?"
 search_project_by_globe="SELECT globes_test.globe_name FROM globes_test, globe_assets_test WHERE globe_assets_test.asset_id = globes_test.globe_asset AND globe_assets_test.object = ?"

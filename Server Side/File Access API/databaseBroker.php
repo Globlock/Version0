@@ -30,12 +30,10 @@ function accessRequest($query, $type, $idname, $count, $params, &$requestArgs){
 	global $databaseConnection;
 	$configuration = new configurations();
 	$configs = $configuration->configs;
-	
 	try {
 		// Prepare the SQL Statement
 		$prepSTMT = $databaseConnection->prepare($configs["database_statements"][$query]);
 		if(!$prepSTMT) throw new Exception("Exception Thrown (Preparing Statement):".mysqli_error($databaseConnection));
-		
 		// Handle multiple arguments
 		switch ($count){
 			case 0:	//
@@ -49,7 +47,7 @@ function accessRequest($query, $type, $idname, $count, $params, &$requestArgs){
 				if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
 				break;
 			case 3: 
-				$result = $prepSTMT->bind_param($params, $requestArgs[0], $requestArgs[1], $requestArgs[1]);
+				$result = $prepSTMT->bind_param($params, $requestArgs[0], $requestArgs[1], $requestArgs[2]);
 				if (!$result) throw new Exception("Exception Thrown (Binding):".mysqli_error($databaseConnection));
 				break; 
 			case 10:
@@ -59,7 +57,6 @@ function accessRequest($query, $type, $idname, $count, $params, &$requestArgs){
 		
 		// Execute the statement
 		$prepSTMT->execute();
-		
 		switch ($type){
 			case "create":
 				$result = $prepSTMT->get_result();
@@ -75,6 +72,7 @@ function accessRequest($query, $type, $idname, $count, $params, &$requestArgs){
 				$updatedRows = $prepSTMT->affected_rows;
 				$prepSTMT->close();
 				return $updatedRows;
+				break;
 			case "insert":
 				$insert_id->$prepSTMT->insert_id;
 				$prepSTMT->close;
@@ -94,8 +92,78 @@ function accessRequest($query, $type, $idname, $count, $params, &$requestArgs){
 				break;
 		}
 	} catch(Exception $e){
-		$prepSTMT->close();
+		//$prepSTMT->close();
+		echo "<br/>balls<br/>";
 	} 
 }
+
+function dbb_updateToken($query, $params, $requestArgs){
+	try{
+		echo "<br/> DBB Update <br/>";
+		global $databaseConnection;
+		$configuration = new configurations();
+		$configs = $configuration->configs;
+		$query = $configs["database_statements"][$query];
+		$prepSTMT = $databaseConnection->prepare($query);
+		echo "<br/> Query: ".$query."<br/>";
+		echo "<br/> ARGS: ".$requestArgs[0].", ".$requestArgs[1]." <br/>";
+		$result = $prepSTMT->bind_param($params, $requestArgs[0], $requestArgs[1]);
+		$prepSTMT->execute();
+		$updatedRows = $prepSTMT->affected_rows;
+		echo "<br/> Updated: ".$updatedRows. "<br/>";
+		$prepSTMT->close();
+	return $updatedRows;
+	}catch(Exception $e){
+		echo "<br/> Error: ".$e."<br/>";
+		return -1;
+	}
+}
+
+function dbb_insertToken($query, $params, $requestArgs){
+	try{
+		echo "<br/> DBB Update <br/>";
+		global $databaseConnection;
+		$configuration = new configurations();
+		$configs = $configuration->configs;
+		$query = $configs["database_statements"][$query];
+		$prepSTMT = $databaseConnection->prepare($query);
+		echo "<br/> Query: ".$query."<br/>";
+		echo "<br/> ARGS: ".$requestArgs[0].", ".$requestArgs[1]."<br/>";
+		$result = $prepSTMT->bind_param($params, $requestArgs[0], $requestArgs[1]);
+		$prepSTMT->execute();
+		$insert_id->$prepSTMT->insert_id;
+		echo "<br/> Updated: ".$insert_id. "<br/>";
+		$prepSTMT->close();
+	return $insert_id;
+	}catch(Exception $e){
+		echo "<br/> Error: ".$e."<br/>";
+		return -1;
+	}
+}
+
+function dbb_selectSessionID($query, $record, $params, $requestArgs){
+	try{
+		global $databaseConnection;
+		$configuration = new configurations();
+		$configs = $configuration->configs;
+		$query = $configs["database_statements"][$query];
+		$prepSTMT = $databaseConnection->prepare($query);
+		$result = $prepSTMT->bind_param($params, $requestArgs[0], $requestArgs[1]);
+		echo "<br/>Query : ".$query." ARGS : ".$requestArgs[0].", ".$requestArgs[1]."<br/>";
+		$prepSTMT->execute();
+		$result = $prepSTMT->get_result();
+//		$prepSTMT->close();
+		if ( $myrow = $result->fetch_assoc()) return $myrow[$record];
+		return 0;
+	}catch(Exception $e){
+		echo "<br/> Error: ".$e."<br/>";
+		return -1;
+	}
+}
+
+
+
+
+
 
 ?>

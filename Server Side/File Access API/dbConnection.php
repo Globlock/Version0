@@ -29,7 +29,8 @@ Usage:
 	DEFINE('DATABASE_USER', 'root');
 	DEFINE('DATABASE_PASS', '');
 	DEFINE('DATABASE_HOST', '127.0.0.1');
-	DEFINE('DATABASE_NAME', 'globlock_test');
+	DEFINE('DATABASE_NAME', 'gb_production');
+	// TO DO - Read from config
 	
 
 /*Define constant to connect to database */

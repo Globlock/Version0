@@ -29,7 +29,7 @@
             this.lblUser = new System.Windows.Forms.Label();
             this.lblPass = new System.Windows.Forms.Label();
             this.txtBoxUser = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.txtBoxPass = new System.Windows.Forms.TextBox();
             this.btnGo = new System.Windows.Forms.Button();
             this.pnlDetails = new System.Windows.Forms.Panel();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
@@ -82,14 +82,14 @@
             this.txtBoxUser.Size = new System.Drawing.Size(400, 30);
             this.txtBoxUser.TabIndex = 0;
             // 
-            // textBox2
+            // txtBoxPass
             // 
-            this.textBox2.Font = new System.Drawing.Font("Monospac821 BT", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.Location = new System.Drawing.Point(48, 51);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.PasswordChar = '*';
-            this.textBox2.Size = new System.Drawing.Size(400, 30);
-            this.textBox2.TabIndex = 1;
+            this.txtBoxPass.Font = new System.Drawing.Font("Monospac821 BT", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtBoxPass.Location = new System.Drawing.Point(48, 51);
+            this.txtBoxPass.Name = "txtBoxPass";
+            this.txtBoxPass.PasswordChar = '*';
+            this.txtBoxPass.Size = new System.Drawing.Size(400, 30);
+            this.txtBoxPass.TabIndex = 1;
             // 
             // btnGo
             // 
@@ -109,7 +109,7 @@
             this.pnlDetails.Controls.Add(this.txtBoxUser);
             this.pnlDetails.Controls.Add(this.lblUser);
             this.pnlDetails.Controls.Add(this.chkRemember);
-            this.pnlDetails.Controls.Add(this.textBox2);
+            this.pnlDetails.Controls.Add(this.txtBoxPass);
             this.pnlDetails.Controls.Add(this.lblPass);
             this.pnlDetails.Location = new System.Drawing.Point(0, 0);
             this.pnlDetails.Name = "pnlDetails";
@@ -184,7 +184,7 @@
         private System.Windows.Forms.Label lblUser;
         private System.Windows.Forms.Label lblPass;
         private System.Windows.Forms.TextBox txtBoxUser;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox txtBoxPass;
         private System.Windows.Forms.Button btnGo;
         private System.Windows.Forms.Panel pnlDetails;
         private System.Windows.Forms.NotifyIcon notifyIcon1;

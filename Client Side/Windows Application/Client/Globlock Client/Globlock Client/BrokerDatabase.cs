@@ -215,10 +215,16 @@ namespace Globlock_Client {
             return (resultData.Rows.Count >= 1);
         }
 
+        public bool userExists(string username) {
+            string where = string.Format("username = {0}", username);
+            DataTable resultData = queryTable("UserTable", new string[] { "username", "password", "super" }, where);
+            return (resultData.Rows.Count >= 1);
+        }
+
         public DataTable getCurrentUser() {
             string where = "current = 1";
             resultData = queryTable("UserTable", new string[] { "username", "password", "super" }, where);
-            if (resultData.Rows.Count == 1) {
+            if (resultData.Rows.Count <= 1) {
                 return resultData;
             } else { 
                 // Mark all as non current
@@ -232,6 +238,19 @@ namespace Globlock_Client {
             data = new Dictionary<String, String>();
             data.Add("current", "0");
             updateData("UserTable", data, String.Format("UserTable.current = {0}", "1"));
+        }
+
+        public void markCurrent(string username) {
+            data = new Dictionary<String, String>();
+            data.Add("current", "1");
+            updateData("UserTable", data, String.Format("UserTable.username = {0}", username));
+        }
+
+        public void insertUser(string username, string password) {
+            data = new Dictionary<String, String>();
+            data.Add("username", username);
+            data.Add("password", password);
+            insertData("UserTable", data);
         }
 
         public string[] listAllUsers() {
@@ -305,6 +324,7 @@ namespace Globlock_Client {
             }
             return dt;
         }
+
 
     }
 

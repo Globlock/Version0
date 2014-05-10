@@ -27,7 +27,7 @@ namespace Globlock_Client {
 
         static void initializeApplication() {
             BrokerManager brokerM = new BrokerManager();
-            if (!brokerM.validateUser()) {
+            if (!brokerM.userIsCurrent()) {
                 Application.Run(new GUI_Login(brokerM));
             } else {
                 Application.Run(new GUI_Main(brokerM));

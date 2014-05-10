@@ -98,25 +98,44 @@ $sessionStages = array(
 /** generateSessionToken */
 function generateSessionToken(){
 	writeLogInfo("Generating 'session_token' in [client_sessions]...");
-	createDBPlaceholder();
+	//createDBPlaceholder();
 	$session_token = generateToken();
-	$session_record = selectToken(0,0);
-	if (!updateToken($session_record, $session_token, 1)) return -1;
+	//$session_record = selectToken("0","0");
+	//echo "<br/>Sess Record: ".$session_record ."<br/>";
+	echo "<br/>Sess Token: ".$session_token ."<br/>";
+	if (!insertToken($session_token)) return -1;
 	disposeExpired();	
 	return $session_token;
+}
+
+function insertToken($session_token){
+	try {
+		//echo "<br/> Starting Token Insert <br/>";
+		$activity = 1;
+		$requestArgs = array($session_token, $activity );
+		$result = dbb_insertToken("insert_session_token", "si", $requestArgs);
+		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+		//echo "<br/>TEST: Update Complete <br/>";
+		writeLogInfo("Successfully Updated Session Token in [disposeSessions]! | [". $session_record ."]", -1) ;
+	} catch (Exception $e) {
+		writeLogInfo("Exception occurred in [updateToken] ! | [". $e ."]", 1) ;
+		//$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO UPDATE TOKEN | [". $e ."]", 500);
+		return -1;
+	} finally { return $result; }
 }
 
 /** */
 function createDBPlaceholder(){
 	try {
-		$result = accessRequest("test_table", "rows", null, 0, null, null);
+		$nullValue = null; //Only variables can be passed by reference
+		$result = accessRequest("test_table", "rows", $nullValue, 0, $nullValue, $nullValue);
 		if($result == FALSE) createSessionTable();
 		$result = insertPlaceholder();
 		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
 		writeLogInfo("Successfully Inserted Placeholder in [client_sessions]! | ", -1) ;
 	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [createDBPlaceholder] ! | [". $e ."]", 1) ;
-		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE TOKEN | [". $e ."]", 500);
+		//$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE TOKEN | [". $e ."]", 500);
 		return -1;
 	} finally { return $result; }
 }
@@ -124,12 +143,13 @@ function createDBPlaceholder(){
 /** */
 function insertPlaceholder(){
 	try {
-		$result = accessRequest("insert_placeholder", "rows", null, 0, null, null);
+		$nullValue = null; //Only variables can be passed by reference
+		$result = accessRequest("insert_placeholder", "rows", $nullValue, 0, $nullValue, $nullValue);
 		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
 		writeLogInfo("Successfully Inserted Placeholder in [client_sessions]! | ", -1) ;
 	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [insertPlaceholder] ! | [". $e ."]", 1) ;
-		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE TOKEN | [". $e ."]", 500);
+		//$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE TOKEN | [". $e ."]", 500);
 		return -1;
 	} finally { return $result; }
 }
@@ -138,26 +158,30 @@ function insertPlaceholder(){
 function selectToken($session_token, $session_activity=0){
 	try {
 		$requestArgs = array($session_activity, $session_token);
-		$result = accessRequest("select_session", "id", "session_id", 2, "is", $requestArgs);
+		$result = dbb_selectSessionID("select_session_id", "session_id", "is", $requestArgs);
 		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
+		echo "<br/>Token: ".$result."<br/>";
 		writeLogInfo("Successfully Retrieved Session Token in [disposeSessions]! | Session Record [". $result ."], Session Token [". $session_token ."]", -1) ;
 	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [selectToken] ! | [". $e ."]", 1) ;
-		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE TOKEN | [". $e ."]", 500);
+		//$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO RETRIEVE TOKEN | [". $e ."]", 500);
 		return -1;
 	} finally { return $result; }
 }
 
 /** */
-function updateToken($session_record, $session_token, $session_activity){
+function updateToken($session_record, $session_activity){
 	try {
-		$requestArgs = array($session_activity, $session_token, $session_record);
-		$result = accessRequest("update_token", "rows", null, 3, "isi", $requestArgs);
+		echo "<br/> Starting Update <br/>";
+		$requestArgs = array($session_activity, $session_record);
+		print_r($requestArgs);
+		$result = dbb_updateToken("update_session_activity", "ii", $requestArgs);
 		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
-		writeLogInfo("Successfully Updated Session Token in [disposeSessions]! | [". $sessionToken ."]", -1) ;
+		echo "<br/> Update Complete <br/>";
+		writeLogInfo("Successfully Updated Session Token in [disposeSessions]! | [". $session_record ."]", -1) ;
 	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [updateToken] ! | [". $e ."]", 1) ;
-		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO UPDATE TOKEN | [". $e ."]", 500);
+		//$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO UPDATE TOKEN | [". $e ."]", 500);
 		return -1;
 	} finally { return $result; }
 }
@@ -166,13 +190,14 @@ function updateToken($session_record, $session_token, $session_activity){
 /** */
 function updateSession($session_record, $session_activity){
 	try {
+		$nullValue = null; //Only variables can be passed by reference
 		$requestArgs = array($session_record, $session_activity);
-		$result = accessRequest("update_session", "rows", null, 2, "ii", $requestArgs);
+		$result = accessRequest("update_session", "rows", $nullValue, 2, "ii", $requestArgs);
 		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
 		writeLogInfo("Successfully Updated Session in [updateSession]! | Session Record [". $session_record ."]", -1) ;
 	} catch (Exception $e) {
-		writeLogInfo("Exception occurred in [updateToken] ! | [". $e ."]", 1) ;
-		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO UPDATE TOKEN | [". $e ."]", 500);
+		writeLogInfo("Exception occurred in [updateSession] ! | [". $e ."]", 1) ;
+		//$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO UPDATE TOKEN | [". $e ."]", 500);
 		return -1;
 	} finally { return $result; }
 }
@@ -180,7 +205,7 @@ function updateSession($session_record, $session_activity){
 /** */
 function generateToken(){
 	$randString = addSalt(date("Ymdhis") . rand(1,1000), "session");
-	return strtoupper(encryptMessage($randString));
+	return strtolower(encryptMessage($randString));
 }
 
 /** */
@@ -200,13 +225,15 @@ function verifySession($sessionToken, $session_activity){
 
 function disposeSessions($sessionToken){
 	try {
+		echo "inDispose()";
+		$nullValue = null; //Only variables can be passed by reference
 		$requestArgs = array($sessionToken);
 		$result = accessRequest("dispose_session", "rows", null, 1, "s", $requestArgs);
 		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
 		writeLogInfo("Successfully Dropped Session in [disposeSessions]! | [". $sessionToken ."]", -1) ;
 	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [sessionDispose] ! | [". $e ."]", 1) ;
-		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO DISPOSE SESSION | [". $e ."]", 500);
+		//$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO DISPOSE SESSION | [". $e ."]", 500);
 		return -1;
 	} finally { return $result; }
 }
@@ -218,20 +245,16 @@ function validSession(&$broker, $activity){
 	if ($activity == 2) $update = -1;
 	try{
 				
-		if (!(isset($_POST["session_token"]))) 
-			throw new Exception("Exception Thrown (EMPTY POST):");
-			
+		if (!(isset($_POST["session_token"]))) throw new Exception("Exception Thrown (EMPTY POST):");
 		$broker->setValue("header", "type", $_POST["request_header"]);
 		$broker->setValue("session", "token", $_POST["session_token"]);
 		$token = $broker->brokerData['session']['token'];
-		
 		if (!verifySession($token, $activity)) 
 			throw new Exception("Exception Thrown (SESSION NOT FOUND):");
-		
 		// Update Activity or Drop
-		if (!(updateToken(selectToken($token, $activity), $token, $update)))
+		
+		if (!(updateToken(selectToken($token, $activity), $update)))
 			throw new Exception("Exception Thrown (UPDATE SESSION FAILED):");
-
 		return true;
 		
 		} catch (Exception $e){
@@ -250,12 +273,13 @@ function sessionToBroker(&$broker){
 /** */
 function disposeExpired(){
 	try {
-		$result = accessRequest("dispose_expired", "rows", null, 0, null, null);
+		$nullValue = null; //Only variables can be passed by reference
+		$result = accessRequest("dispose_expired", "rows", $nullValue, 0, $nullValue, $nullValue);
 		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
-		writeLogInfo("Disposed of  ".$count." expired 'session_token' in [client_sessions] Table");
+		writeLogInfo("Disposed of  ".$result." expired 'session_token' in [client_sessions] Table");
 	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [createDBPlaceholder] ! | [". $e ."]", 1) ;
-		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO DISPOSE EXPIRED SESSIONS | [". $e ."]", 500);
+		//$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO DISPOSE EXPIRED SESSIONS | [". $e ."]", 500);
 		return -1;
 	} finally { return $result; }
 }
@@ -263,13 +287,14 @@ function disposeExpired(){
 /** */
 function createSessionTable(){
 	try {
-		$result = accessRequest("create_table", "create", null, 0, null, null);
+		$nullValue = null; //Only variables can be passed by reference
+		$result = accessRequest("table_sessions", "create", $nullValue, 0, $nullValue, $nullValue);
 		if ($result == -1) throw new Exception("Exception Thrown while executing Database Access Request:");
 		writeLogInfo("Table [client_sessions] created!"); 
 	} catch (Exception $e) {
 		writeLogInfo("Exception occurred in [searchUser] ! | [". $e ."]", 1) ;
-		writeLogInfo("Exception occurred in [searchUser] !  | [". $e ."]", -1) 
-		$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO CREATE SESSION TABLE | [". $e ."]", 500);
+		writeLogInfo("Exception occurred in [searchUser] !  | [". $e ."]", -1) ;
+		//$broker->handleErrors("INTERNAL SERVER ERROR: UNABLE TO CREATE SESSION TABLE | [". $e ."]", 500);
 		return -1;
 	} finally { return $result; }
 }

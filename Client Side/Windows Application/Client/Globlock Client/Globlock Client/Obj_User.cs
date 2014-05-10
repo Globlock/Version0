@@ -10,12 +10,14 @@ namespace Globlock_Client {
             private string password;
             private string encryptedPassword;
             private bool superUser;
+            private string salt = "";
             private StringBuilder returnValue;
             private bool super;
 
             public Obj_User(string username, string password) {
                 this.username = username;
                 this.password = password;
+                this.encryptedPassword = encryptPassword();
                 this.super = false;
             }
 
@@ -45,5 +47,13 @@ namespace Globlock_Client {
                 return sb.ToString();
             }
 
+            public void setSuper() {
+                this.super = true;
+            }
+
+            public string[] getServerFormat() {
+                string[] serverFormat = new String[] { this.username, this.encryptedPassword };
+                return serverFormat;
+            }
         }
 }
