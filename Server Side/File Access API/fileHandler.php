@@ -97,8 +97,9 @@ function pullRequest(&$broker, $globe_id){
 	$configs = $configuration->configs;
 
 	try {
+		echo "<br/>Attempting File Pull Request<br/>"; 
 		$working_Directory = getWorkingDirectory($globe_id, $configs);
-		
+		echo "<br/>Working Directory: ".$working_Directory."<br/>"; 
 		prepareRoot($configs["file_locations"]["publish_directory"]);
 		$publish_Directory = getPublishDirectory($configs);
 		prepareSub($publish_Directory);
@@ -111,6 +112,7 @@ function pullRequest(&$broker, $globe_id){
 		echo "<br/>Exception in 'pullRequest' !!<br/>";
 	}
 	$funcTy->getSeconds($time_seconds);
+	echo "<br/>Time Taken".$time_seconds."<br/>";
 }
 
 /** */
@@ -152,6 +154,7 @@ function getPublishDirectory(&$configs){
 /** */
 function prepareRoot($publish_directory){
 	// TODO Error handling as this step is critical for security of the file access
+	echo "<br/>Attempting Root Preparation<br/>"; 
 	if (!file_exists($publish_directory)){
 		createDirectory($publish_directory);
 		writeAccessFile("root", $publish_directory);

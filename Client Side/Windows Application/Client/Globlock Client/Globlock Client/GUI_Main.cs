@@ -53,5 +53,9 @@ namespace Globlock_Client {
         internal void updateBroker(BrokerManager brokerM) {
             this.brokerM = brokerM;
         }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
+            //Application.S
+        }
     }
 }

@@ -10,6 +10,7 @@ Message: <input type='text' name='request_body'><br>
 TEST: <input type='text' name='testtest'><br>
 Session Token: <input type='text' name='session_token'><br>
 Globe ID: <input type='text' name='globe_id'><br>
+Globe Project: <input type='text' name='globe_project'><br>
 Username: <input type='text' name='user_name'><br>
 Password: <input type='text' name='user_pass'><br>
 <input type='submit'>

@@ -50,6 +50,11 @@ update_active_session="UPDATE gb_sessions SET session_activity=? WHERE session_i
 
 select_globe_asset="SELECT asset_id FROM gb_assets WHERE asset_object =?"
 select_globe_project="SELECT gb_globes.globe_name FROM gb_globes, gb_assets WHERE gb_assets.globe_id = gb_globes.globe_id AND gb_assets.asset_object = ?"
+select_globe_id="SELECT globe_id FROM gb_globes WHERE globe_name = ?"
+insert_globe_asset="INSERT INTO gb_assets(asset_id , asset_object, asset_revision, asset_create, globe_id) VALUES (null, ?, 0, CURRENT_TIMESTAMP, ?)"
+select_globe_project_unnassigned="SELECT gb_globes.globe_name FROM gb_globes,gb_assets  WHERE gb_assets.globe_id <> gb_globes.globe_id";
+select_globe_id_from_object="SELECT globe_id FROM gb_assets WHERE asset_object = ?"
+select_globe_revision="SELECT asset_revision FROM gb_assets WHERE asset_object = ?"
 
 table_users="CREATE TABLE IF NOT EXISTS gb_users (user_id int(11) NOT NULL AUTO_INCREMENT, user_name VARCHAR(64) NOT NULL DEFAULT '1',user_password int(11) NOT NULL DEFAULT '0',user_super int(1)NOT NULL DEFAULT '0',user_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (user_id))"
 search_user="SELECT * FROM gb_users WHERE user_name = ? AND user_password = ?"
@@ -157,16 +162,8 @@ action["push"]=false
 list["count"]=0
 list["size"]='-'
 list["root"]='-'
-listitem[]="-"
-listitem[]="-"
-listitem[]="-"
-listitem[]="-"
-listitem[]="-"
-listitem[]="-"
-listitem[]="-"
-listitem[]="-"
-listitem[]="-"
-listitem[]="-"
+listitem[]=""
+
 
 ;List of different error codes for return
 [error_codes]

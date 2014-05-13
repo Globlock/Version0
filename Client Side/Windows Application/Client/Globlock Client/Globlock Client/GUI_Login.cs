@@ -74,7 +74,7 @@ namespace Globlock_Client {
                 outputError();
             } else { 
                 attemptSessionRetrieval();
-                dropSession();
+                abortSession();
                 if (chkRemember.Checked) brokerManager.markUserCurrent();
             }
         }
@@ -87,7 +87,7 @@ namespace Globlock_Client {
             brokerManager.requestResponse(BrokerManager.REQUEST_TYPE_SESH, user.getServerFormat());
             if (brokerManager.errorState) outputError();
         }
-        private void dropSession() {
+        private void abortSession() {
             string[] token = {brokerManager.getSessionToken().Substring(1)};
             brokerManager.requestResponse(BrokerManager.REQUEST_TYPE_ABRT, token);
             if (brokerManager.errorState) outputError();
@@ -97,10 +97,14 @@ namespace Globlock_Client {
             user = new Obj_User(txtBoxUser.Text, txtBoxPass.Text);
             brokerManager.assignUser(user);
         }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e) {
+
+        }
         // If user is in DB, check details against DB
         // If user is not in DB, add to DB
         // Then test against Server
 
-  
+
     }
 }

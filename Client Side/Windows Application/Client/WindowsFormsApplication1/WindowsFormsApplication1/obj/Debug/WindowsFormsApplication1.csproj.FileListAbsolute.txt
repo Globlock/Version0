@@ -1,0 +1,9 @@
+A:\_Globlock\Version0\Client Side\Windows Application\Client\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe.config
+A:\_Globlock\Version0\Client Side\Windows Application\Client\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.csprojResolveAssemblyReference.cache
+A:\_Globlock\Version0\Client Side\Windows Application\Client\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Form1.resources
+A:\_Globlock\Version0\Client Side\Windows Application\Client\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.Properties.Resources.resources
+A:\_Globlock\Version0\Client Side\Windows Application\Client\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.csproj.GenerateResource.Cache
+A:\_Globlock\Version0\Client Side\Windows Application\Client\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe
+A:\_Globlock\Version0\Client Side\Windows Application\Client\WindowsFormsApplication1\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.pdb
+A:\_Globlock\Version0\Client Side\Windows Application\Client\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.exe
+A:\_Globlock\Version0\Client Side\Windows Application\Client\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb

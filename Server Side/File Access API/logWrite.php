@@ -85,6 +85,10 @@ function writeLogInfo($info, $type=0){
 	[required] Parameter $filename, which defines the concatenated location and file name to be written to. 
 */
 function fileExists($filename){
+	$dirname = pathinfo($filename)['dirname'];
+	if (!file_exists($dirname)){
+		if (!mkdir($dirname, 0777, true)) die('Failed to create folders...');
+	}
 	if (file_exists($filename)) {
 		return true;
 	} else {

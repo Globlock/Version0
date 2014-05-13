@@ -40,6 +40,8 @@ TO DO:
 	include 'sh_session_handler.php';
 	include 'dbb_database_broker.php';
 	include 'gh_globe_handler.php';
+	include 'h_file_handler.php';
+	include 'functionTimer.php';
 	/* Strain Inputs */
 	//htmlspecialchars etc..
 
@@ -78,10 +80,10 @@ function handleRequest(&$broker){
 				handleValidation($broker);
 				break;
 			case "ABORT":
-				abortSession($broker);
+				handleAbort($broker);
 				break;
 			case "SET":
-				assignGlobe($broker);
+				handleSet($broker);
 				break;
 			case "FORCE":
 				reAssignGlobe($broker);
@@ -90,13 +92,24 @@ function handleRequest(&$broker){
 				unAssignGlobe($broker);
 				break;
 			case "PULL":
-				pullFiles($broker);
-				//break;
+				handlePull($broker);
+				break;
 			case "PUSH":
 				pushFiles($broker);
 				break;
 		}
 		echo $broker->returnJSON();
+}
+/** */
+function returnHandshake(&$broker){
+	if (empty($_POST["request_body"])){ 
+		$broker->handleErrors("LENGTH REQUIRED: MESSAGE REQUEST BODY EMPTY",411);	
+	} else {
+		$broker->setValue('header', 'message', $_POST["request_body"]);
+		$message = getHandShakeResponse($broker->brokerData['header']['message']);
+		$broker->setValue('header','type', "HANDSHAKE RESPONSE");
+		$broker->setValue('header', 'message', $message);
+	}
 }
 
 /** */
@@ -109,20 +122,63 @@ function handleSessionToken(&$broker){
 }
 
 /** */
-//VALIDATE GLOBE
 function handleValidation(&$broker){
 	$broker->setValue('header','type', "VALIDATE RESPONSE");
 	//Pass broker to validSession with activity at 1 (gets updated)
-	if (!(isset($_POST["session_token"]))) throw new Exception("Exception Thrown (EMPTY POST):");
-	$broker->setValue("header", "type", $_POST["request_header"]);
+	if (!(isset($_POST["session_token"]))) throw new Exception("Exception Thrown (SESSION TOKEN NOT SET)");
 	$broker->setValue("session", "token", $_POST["session_token"]);
-	
-	if (sh_validSessionToken($broker, 1)) {
-		//echo "<br/>Valid Session<br/>";
+
+	//if (sh_validSessionToken($broker, 1)) {//TO DO  Validate for production
+		echo "<br/>Temp Valid Session<br/>";
 		gh_validateGlobe($broker);
-	}
-	//Validate globe and if found return results
-	//globeValidation($broker);
+	//}//TO DO  Validate for production
+}
+
+/** */
+function handleAbort(&$broker){
+	$broker->setValue('header','type', "ABORT RESPONSE");
+	if (!(isset($_POST["session_token"]))) throw new Exception("Exception Thrown (SESSION TOKEN NOT SET)");
+	$broker->setValue("session", "token", $_POST["session_token"]);
+	if (sh_validSessionToken($broker, 2)) {
+		$broker->setValue('header','message', "ABORT SUCCESSFUL");
+		echo "<br/>Session Aborted<br/>";
+	}	
+}
+
+function handleSet(&$broker){
+	$broker->setValue('header','type', "SET RESPONSE");
+	//Pass broker to validSession with activity at 2 (gets updated to -1 and dropped)
+	if (!(isset($_POST["session_token"]))) throw new Exception("Exception Thrown (EMPTY POST):");
+	$broker->setValue("session", "token", $_POST["session_token"]);
+	//if (sh_validSessionToken($broker, 2)) { //TO DO  Validate for production
+		echo "<br/>Temp Valid Session<br/>";
+		gh_setGlobeProject($broker);
+	//}
+	//TO DO
+	// gh_setGlobeProject($broker);
+}
+
+/** */
+//PULL FILES
+function handlePull(&$broker){
+	try{
+		echo "<br/>Attempting To Handle Pull<br/>"; 
+		//if(validSession($broker, 2)){
+			$broker->setValue('header', 'type', "PULL RESPONSE");
+			$fileDetails = gh_getGlobeRevisionDetails($broker);
+			echo "<br/>File Details: <br/>"; 
+			print_r($fileDetails );
+			if (($fileDetails['globe_id']==-1)||($fileDetails['asset_revision']==-1)) {
+				echo "<br/>Globe/Revision Failed!<br/>"; 
+				throw new Exception("Exception Thrown (INVALID ID OR REVISION):");
+			} else {
+				echo "<br/>All good!<br/>"; 
+			}
+			fh_pullRequest($broker, $fileDetails['globe_id']);
+		//}
+		}catch(Exception $e){
+			echo "<br/>ERROR!! ".$e."<br/>"; 
+		}
 }
 
 /**
@@ -204,17 +260,7 @@ function pushFiles(&$broker){
 	}
 }
 
-/** */
-function returnHandshake(&$broker){
-	if (empty($_POST["request_body"])){ 
-		$broker->handleErrors("LENGTH REQUIRED: MESSAGE REQUEST BODY EMPTY",411);	
-	} else {
-		$broker->setValue('header', 'message', $_POST["request_body"]);
-		$message = getHandShakeResponse($broker->brokerData['header']['message']);
-		$broker->setValue('header','type', "HANDSHAKE RESPONSE");
-		$broker->setValue('header', 'message', $message);
-	}
-}
+
 
 
 ?>

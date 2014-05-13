@@ -40,13 +40,13 @@ INCLUDES, METHODS, GLOBAL & VARIABLE DECLARATIONS
 #define GLOBLOCK_SERIAL_DATA_FTR '#'
 #define GLOBLOCK_SERIAL_DATA_NLN '\n'
 #define GLOBLOCK_SERIAL_BAUDRATE 9600
+#define GLOBLOCK_RFID_RX_PIN 9
+#define GLOBLOCK_RFID_TX_PIN 8
 
 /*   VARIABLES  */
-String inputData;
-char inputByte, dataHeader, dataType;
-int inputResult;
-int inputLength;
-String dataMessage;
+String bufferedInput, clientInput, clientMessage, response, tagID;
+char inputByte, clientHeader, requestType;
+int inputResult, inputLength;
 
 /*   METHOD DECLARATIONS   */
 int readSerialInputData();
@@ -59,15 +59,16 @@ void handleError(String errorMessage);
 boolean testRFID(String dataMessage);
 void callBack(boolean success, String data);
 int successAlert(int count, int freq);
+
+/* RFID Object */
+ID20Reader rfid(GLOBLOCK_RFID_RX_PIN, GLOBLOCK_RFID_TX_PIN); //Create an instance of ID20Reader. //GLOBLOCK_RFID_RX_PIN not used (no transmission , but must be declared
+
+/* Communication paths */
+//R2D :        Reader to Arduino Device
+//R2D2 C3PO :  Reader to Arduino Device to Client (3 Part Object Header, Body, Footer)
+
 /*
 ---------------------------------------------------------------- */
-
-/* RFID Setup */
-
-int rx_pin = 9; //Data input pin
-int tx_pin = 8; //Unused, but must be defined. (Nothing is sent from the Arduino to the reader.)
-
-ID20Reader rfid(rx_pin, tx_pin); //Create an instance of ID20Reader.
 
 /* 
 METHODS
@@ -79,42 +80,66 @@ SETUP
 */  void setup(){
       pinMode(GLOBLOCK_INDICATOR_LED, OUTPUT);
       Serial.begin(GLOBLOCK_SERIAL_BAUDRATE);
+      // TO DO - LCDwrite Write Starting Device
+      // TO DO - LCDwrite Waiting for Client Application
     }
 
 /*  
 LOOP  
-* Tests to see if data is available and calls handleData if serial input is available
+* Clear values in memory, and test comms R2D2
 */  void loop(){
+      clearValues();
+      verifyDevice();
+      verifyClient();
+    }
+    
+/*  
+CLEAR VALUES
+* Clear values in memory by assigning empty or 0, to prevent incorrect responses
+*/  void clearValues(){
+      inputResult = 0;              
+      bufferedInput = clientInput = clientMessage = response = tagID = response = "";
+    }
+
+/*  
+VERIFY DEVICE  
+* Attempts to read a tag from the RFID Reader to Device (R2D2) and if successful, serializes the tagID in the client 3 part object format
+*/  void verifyDevice(){
       /* R2D - RFID Tag Read on ID12A/ID20 */
       rfid.read(); 
-      if(rfid.available()) {
-        String code = rfid.get();   //Get the tag
-        Serial.println(code);       //Print the tag to the serial monitor for testing
-      }
-  
-      inputData = "";
-      inputResult = readSerialInputData();
-      if (inputResult == GLOBLOCK_SERIAL_SUCCESS) {
-        handleData(inputData);
-      } else if (inputResult == GLOBLOCK_SERIAL_FAILURE) {
-        //Flash green - and alert still running
-      } else { 
-        handleError("SERIAL DATA UNSCUCCESSFUL - MALFORMED");
+      if (rfid.available()) {
+        tagID = rfid.get();   // TO DO - Test Tag value length and structure
+        serializeC3PO(tagID, 0);
       }
     }
 
 /*  
+VERIFY CLIENT 
+* Attempts to read serial input from the Client Application and if successful, handles the client input in 'handleClientInput()'
+*/  void verifyClient(){
+      inputResult = readSerialInputData();
+      if (inputResult == GLOBLOCK_SERIAL_SUCCESS) {
+        handleClientInput();
+      } else if (inputResult == GLOBLOCK_SERIAL_FAILURE) {
+        //Flash green - and alert still running
+      } else { 
+        handleError("SERIAL DATA UNSCUCCESSFUL - MALFORMED HEADER");
+      }
+    }
+/*  
 READ SERIAL INPUT DATA  
-* Attempts to read serial input and if successful, assign to inputData by reference, and returns success code
+* Attempts to read serial input from the client and if successful empties the buffer and assigned to 'clientInput'
+* Returns SUCCESS/FAILURE code
 */  int readSerialInputData(){
       int inputComplete = 0;
       if(Serial.available()){
         if (!(Serial.available()>0)) return GLOBLOCK_SERIAL_FAILURE;
         do{
-          inputData += (char)Serial.read();
+          bufferedInput += (char)Serial.read();
           if (inputByte == GLOBLOCK_SERIAL_DATA_FTR || inputByte == GLOBLOCK_SERIAL_DATA_HDR) inputComplete++;
           allowToBuffer(10);
         } while((inputComplete<3) && (Serial.available()));
+        clientInput = bufferedInput;
         return GLOBLOCK_SERIAL_SUCCESS;
       } else {
         return GLOBLOCK_SERIAL_FAILURE;
@@ -123,32 +148,29 @@ READ SERIAL INPUT DATA
 
 /*  
 HANDLE DATA
-* Breaks up inputData to define header and dataMessage, and carries out appropriate method call defined by headrer type
+* Breaks up clientInput to define header, requestType and clientMessage, and carries out appropriate method call defined by header type
 * If no valid header is found, calls handleError()
-*/  void handleData(String inputData){
+*/  void handleClientInput(){
       /* Assignments */
-      inputLength = inputData.length();
-      dataMessage = "Undefined";
-      dataHeader = inputData.charAt(0);
-      dataType = inputData.charAt(1);
-      if (inputLength > 3)dataMessage = inputData.substring(3, inputLength-1);
+      inputLength = clientInput.length();
+      clientMessage = "Undefined";
+      clientHeader = clientInput.charAt(0);
+      requestType = clientInput.charAt(1);
+      if (inputLength > 3)clientMessage = clientInput.substring(3, inputLength-1);
       /* Switch for Header types */
-      switch (dataType) {
+      switch (requestType) {
         case 'H'://Handshake 
-          returnHandshake(dataMessage);   
-          break;
-        case 'R'://Report to LCD
-          displayReport(dataMessage);    
+          serializeC3PO("HANDSHAKE", 1);
           break;
         case 'D'://Display to LCD    
-          displayData(dataMessage);
+          displayOnLCD(clientMessage);
+          serializeC3PO("DISPLAY COMPLETE", 1);
           break;
-        case 'T'://Display to LCD    
-          testRFID(dataMessage);
+        case 'T'://Test RFID tag ID   
+          serializeC3PO("55378008AA", 0);
           break;
-        case 'G':
-          globeAvailable(inputData);
-        case '\n':
+        case 'L'://Sit and wait for tag ID, Display "Listening" to LCD    
+          displayOnLCD("Listening");
           break;
         default:
           handleError("INVALID HEADER");
@@ -160,79 +182,18 @@ HANDLE DATA
 HANDLE ERROR
 * Accepts message input as a string and invokes a callBack with a flase success to client. Allows scope for LCD display
 */  void handleError(String errorMessage){
-         callBack(false, errorMessage);
-         // LCD Display Warning
-    }
-
-/*  
-RETURN HANDSHAKE
-* This method is called if the 'H' header is sent from client and returns a basic response, then calls successAlert
-* If no valid header is found, calls handleError()
-*/  void returnHandshake(String dataMessage){
-      Serial.print(GLOBLOCK_SERIAL_DATA_STX);
-      Serial.print("#H#HANDSHAKE RESPONSE");
-      Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
-      Serial.print("#B#" + dataMessage);
-      Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
-      Serial.print("#F#COMPLETE");
-      Serial.print(GLOBLOCK_SERIAL_DATA_ETX);
-      successAlert(5, 100);
-    }
-
-/*  
-DISPLAY REPORT
-* This method is called if the 'R' header is sent from client and returns a basic success response through callBack.  
-* Allows scope for LCD display, and further reporting functionality, such as last ID read from device etc..
-*/  void displayReport(String dataMessage){
-      //LCDDisplay(dataMessage);
-      callBack(true, "Display Successful");
+      // LCD Display Warning
+      // displayOnLCD(errorMessage);
+      serializeC3PO(errorMessage, -1);
+      successAlert(3, 250);
     }
 
 /*  
 DISPLAY DATA
 * This method is called if the 'D' header is sent from client and returns a basic success response through callBack.  
 * Allows scope for LCD display, and further reporting functionality, such as last ID read from device etc..
-*/  void displayData(String lcdMessage){
+*/  void displayOnLCD(String lcdMessage){
       //LCDDisplay(dataMessage);
-    }
-
-/*  
-TEST RFID
-* This method is called if the 'T' header is sent from client and returns a mock RFID value for testing purposes. 
-*/  boolean testRFID(String dataMessage){
-      Serial.print(GLOBLOCK_SERIAL_DATA_STX);
-      Serial.print("#H#TEST RFID RESPONSE");
-      Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
-      Serial.print("#B#ID:FFAA10205691");
-      Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
-      Serial.print("#F#COMPLETE");
-      Serial.print(GLOBLOCK_SERIAL_DATA_ETX);
-      successAlert(5, 100);
-    }
-
-/*  
-CALL BACK
-* Returns a response to the client of 'Success' or 'Failure' and generates an appropriate successAlert.
-*/  void callBack(boolean success, String data){
-      if (success){
-        Serial.print(GLOBLOCK_SERIAL_DATA_STX);
-        Serial.print("#H#REQUEST RESPONSE");
-        Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
-        Serial.print("#B#SUCCEEDED:" + data);
-        Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
-        Serial.print("#F#COMPLETE");
-        Serial.print(GLOBLOCK_SERIAL_DATA_ETX);
-        successAlert(5, 100);
-      } else {
-        Serial.print(GLOBLOCK_SERIAL_DATA_STX);
-        Serial.print("#H#REQUEST RESPONSE");
-        Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
-        Serial.print("#B#FAILED!" + data);
-        Serial.print(GLOBLOCK_SERIAL_DATA_DLR);
-        Serial.print("#F#COMPLETE");
-        Serial.print(GLOBLOCK_SERIAL_DATA_ETX);
-        successAlert(3, 250);
-      }
     }
 
 /*  
@@ -254,17 +215,35 @@ ALLOW TO BUFFER
       delay(bufferLimit);
     }
 
-/*  
-GLOBE AVAILABLE
-* Globe is placed on the device
-*/  void globeAvailable(String inputData){
-  
+/*
+SERIALIZE C3PO
+* Format the data, depending on type in the correct format for Client 3 Part Object reponse, and print to the serial object  
+*/  void serializeC3PO(String data, int typeCode){
+        response += GLOBLOCK_SERIAL_DATA_STX;  
+        switch (typeCode) {
+          case 0: //Tag read initiated client comms
+            response += "#H#TAG";
+            response += "#B#TAGID:";
+            break;
+          case 1:
+            response += "#H#REQUEST REPONSE";
+            response += "#B#DATA:";
+            break;
+          case -1:
+            response += "#H#REQUEST ERROR";
+            response += "#B#ERROR:";
+            break;
+          default:
+            response += "#H#UNKNOWN";
+            response += "#B#UNKNOWN:";
+            break;
+        }
+        response += data;
+        response += "#F#COMPLETE";
+        response += GLOBLOCK_SERIAL_DATA_ETX;
+        successAlert(5, 100);
+        Serial.println(response);
     }
-
-void setup() {
-  Serial.begin(9600);
-  Serial.println("RFID Reader - Swipe a card ~~~~~");
-}
 
 /* 
 COMPLETE

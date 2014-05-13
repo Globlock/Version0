@@ -41,12 +41,12 @@ function sh_validSessionToken(&$broker, $activity){
 		echo "<br/>Valid Session<br/>";
 		$query = "update_active_session";
 		$activity++;
+		if ($activity = 2) $activity = -1;	// Abort Clause (Session token can only be used for an action once)
 		$result = dbb_updateActiveSession($query, $activity, $result);
 		echo "<br/>Successful Update: ".$result."<br/>";
 		return ($result > 0);
 	}
 	return false;
 }
-
 
 ?>
