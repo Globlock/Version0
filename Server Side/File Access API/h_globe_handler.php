@@ -10,14 +10,14 @@ function gh_validateGlobe(&$broker){
 	$broker->setValue('globe', "id", $_POST["globe_id"]);
 	$globe_object = $broker->brokerData['globe']['id'];
 	$query = "select_globe_asset"; $record = "asset_id";
-	echo "<br/> VALIDATE Globe! <br/>";
+	//echo "<br/> VALIDATE Globe! <br/>";
 	$result = dbb_selectGlobeAsset($query, $record, "s", $globe_object);
 	if($result >= 1){
-		echo "<br/> Found Globe! <br/>";
+		//echo "<br/> Found Globe! <br/>";
 		$query = "select_globe_project"; $record = "globe_name";
 		// return globe project
 		$project = dbb_selectGlobeProject($query, $record, 's', $globe_object);
-		echo "<br/>ProjectName: ".$project."<br/>";
+		//echo "<br/>ProjectName: ".$project."<br/>";
 		$broker->setValue('globe', "project", $project);
 		$broker->setValue('status', "assigned", "true");
 		$broker->setValue('action', "drop", "true");
@@ -25,10 +25,10 @@ function gh_validateGlobe(&$broker){
 		$broker->setValue('action', "pull", "true");
 		$broker->setValue('status', "assigned", "true");
 		$broker->setValue('action', "set", "false");
-		echo "<br/>Project Exists: TRUE<br/>";
+		//echo "<br/>Project Exists: TRUE<br/>";
 		return -1;
 	} else {
-		echo "<br/>Project Exists: FALSE<br/>";
+		//echo "<br/>Project Exists: FALSE<br/>";
 		$query = "select_globe_project_unnassigned";
 		$list = dbb_selectUnnassignedProjects($query);
 		listProjectInBroker($broker, $list);
@@ -46,7 +46,7 @@ function listProjectInBroker(&$broker, $list){
 	$list = array_slice($list, 1);	
 	asort($list);	// Sort A-Z
 	foreach ($list as $listItem) {
-		echo "<br/> Adding Project: ".$listItem."<br/>";
+		//echo "<br/> Adding Project: ".$listItem."<br/>";
 		$broker->setValue('listitem', $index, $listItem);
 		$index++;
 	}

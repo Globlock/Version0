@@ -38,7 +38,7 @@ class configurations {
     }
 	
 	public static function getConfigurations(){
-		$configurations_array = parse_ini_file("configurations.ini.php", true);
+		$configurations_array = parse_ini_file("s_configs.ini.php", true);
 		return $configurations_array;
 	}
 	

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,6 +15,12 @@ namespace Globlock_Client {
         private Icon ico;
         private AutoCompleteStringCollection userSource;
         private Obj_User user;
+        private SerialPort arduino;
+        private Boolean receivedResponse;
+        private string validPort = "";
+        private string[] portList;
+        private int SERIAL_TIMEOUT = 2000;
+
         public BrokerManager brokerManager {get; set;}
 
         #region Constructors
@@ -24,6 +32,7 @@ namespace Globlock_Client {
             InitializeComponent();
             this.brokerManager = brokerManager;
             setupAutoComplete();
+            attemptDeviceComms();
         }
         #endregion
 
@@ -41,30 +50,8 @@ namespace Globlock_Client {
         private void Login_Load(object sender, EventArgs e) {
             this.Location = new Point((Screen.PrimaryScreen.WorkingArea.Width - this.Width) / 2,
                           (Screen.PrimaryScreen.WorkingArea.Height - this.Height));
-            ico = notifyIcon1.Icon;
         }
         #endregion
-
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e) {
-            this.Show();
-        }
-
-        private void logOffToolStripMenuItem_Click(object sender, EventArgs e) {
-            //brokerManager.
-        }
-
-        private void validateUserServerside(){
-            // ** Possibly move this to brokerManager for invokation, so it can be accessed from Main
-            // See if the User already exists in the DB
-            // If not, create a new entry
-            // call getSession token to test user details
-        }
-        private void validateUserinDB() {
-            
-        }
-        private void addUserToDB() {
-
-        }
 
         private void btnGo_Click(object sender, EventArgs e) {
             createUserObject();
@@ -77,11 +64,12 @@ namespace Globlock_Client {
                 abortSession();
                 if (chkRemember.Checked) brokerManager.markUserCurrent();
             }
+            GUI_Main mainGui = new GUI_Main(brokerManager);
         }
 
-        private void outputError() {
-            MessageBox.Show("An irrecoverable error has occured!");
-            Application.Exit();
+        private void outputError(string error="") {
+            MessageBox.Show("An irrecoverable error has occured! "+error);
+            Environment.Exit(0);
         }
         private void attemptSessionRetrieval() {
             brokerManager.requestResponse(BrokerManager.REQUEST_TYPE_SESH, user.getServerFormat());
@@ -98,13 +86,43 @@ namespace Globlock_Client {
             brokerManager.assignUser(user);
         }
 
-        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e) {
 
+        private void attemptDeviceComms() {
+            MessageBox.Show("Serial Test Attempt");
+            portList = SerialPort.GetPortNames();
+
+            foreach (string port in portList) {
+                arduino = new SerialPort(port); // Default port settings
+                arduino.DataReceived += new SerialDataReceivedEventHandler(dataReceived);
+                arduino.Open();
+                arduino.Write("#H#");
+                Thread.Sleep(SERIAL_TIMEOUT); //2000
+                if (receivedResponse == true) {
+                    validPort = arduino.PortName;
+                    MessageBox.Show(validPort);
+                }
+            }
         }
-        // If user is in DB, check details against DB
-        // If user is not in DB, add to DB
-        // Then test against Server
+
+        private void dataReceived(object sender, SerialDataReceivedEventArgs e) {
+            
+            string rm = "";
+            int headerstart, bodystart, footerstart;
+            try {
+                rm = arduino.ReadTo("\x03");//Read until the ETX code
+                receivedResponse = true;
+                MessageBox.Show(rm);
+                //headerstart = rm.IndexOf("#H:");
+                //bodystart = rm.IndexOf("#B:");
+                //footerstart = rm.IndexOf("#F:");
+                //if ()
+                validPort = arduino.PortName;
+            }catch(Exception exception){
+                MessageBox.Show(exception.ToString());
+            }
+        }
 
 
+     
     }
 }

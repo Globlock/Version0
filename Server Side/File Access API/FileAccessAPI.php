@@ -27,21 +27,29 @@ TO DO:
 */
 
 	/* Global Files, Libraries and Declarations */
-	include 'configurations.php';
-	include 'logWrite.php';
-	include 'dbconnection.php';
-	include 'databaseBroker.php';
-	include 'sessionHandler.php';
-	include 'encryptionHelper.php';
-	include 'requestBroker.php';
-	include 'userHandler.php';
-	include 'globeHandler.php';
+	//include 'configurations.php';
+	//include 'logWrite.php';
+	//include 'dbconnection.php';
+	//include 'databaseBroker.php';
+	//include 'sessionHandler.php';
+	//include 'encryptionHelper.php';
+	//include 'requestBroker.php';
+	//include 'userHandler.php';
+	//include 'globeHandler.php';
 	
-	include 'sh_session_handler.php';
-	include 'dbb_database_broker.php';
-	include 'gh_globe_handler.php';
+	include 's_logWrite.php';
+	include 'b_configBroker.php';
+	include 'b_databaseBroker.php';
+	include 'b_requestBroker.php';
+	include	'h_encryption_handler.php';
+	include 'h_session_handler.php';
+	include 'h_user_handler.php';
+	include 'h_globe_handler.php';
 	include 'h_file_handler.php';
-	include 'functionTimer.php';
+	
+	include 't_functionTimer.php';
+	
+	
 	/* Strain Inputs */
 	//htmlspecialchars etc..
 
@@ -129,7 +137,7 @@ function handleValidation(&$broker){
 	$broker->setValue("session", "token", $_POST["session_token"]);
 
 	//if (sh_validSessionToken($broker, 1)) {//TO DO  Validate for production
-		echo "<br/>Temp Valid Session<br/>";
+		//echo "<br/>Temp Valid Session<br/>";
 		gh_validateGlobe($broker);
 	//}//TO DO  Validate for production
 }
@@ -140,8 +148,9 @@ function handleAbort(&$broker){
 	if (!(isset($_POST["session_token"]))) throw new Exception("Exception Thrown (SESSION TOKEN NOT SET)");
 	$broker->setValue("session", "token", $_POST["session_token"]);
 	if (sh_validSessionToken($broker, 2)) {
+		//echo "<br/>Session Aborted<br/>";
 		$broker->setValue('header','message', "ABORT SUCCESSFUL");
-		echo "<br/>Session Aborted<br/>";
+		
 	}	
 }
 
@@ -151,7 +160,7 @@ function handleSet(&$broker){
 	if (!(isset($_POST["session_token"]))) throw new Exception("Exception Thrown (EMPTY POST):");
 	$broker->setValue("session", "token", $_POST["session_token"]);
 	//if (sh_validSessionToken($broker, 2)) { //TO DO  Validate for production
-		echo "<br/>Temp Valid Session<br/>";
+		//echo "<br/>Temp Valid Session<br/>";
 		gh_setGlobeProject($broker);
 	//}
 	//TO DO

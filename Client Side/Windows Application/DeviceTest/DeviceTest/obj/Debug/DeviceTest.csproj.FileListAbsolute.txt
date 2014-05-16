@@ -1,0 +1,11 @@
+A:\_Globlock\Version0\Client Side\Windows Application\DeviceTest\DeviceTest\bin\Debug\DeviceTest.exe.config
+A:\_Globlock\Version0\Client Side\Windows Application\DeviceTest\DeviceTest\bin\Debug\DeviceTest.exe
+A:\_Globlock\Version0\Client Side\Windows Application\DeviceTest\DeviceTest\bin\Debug\DeviceTest.pdb
+A:\_Globlock\Version0\Client Side\Windows Application\DeviceTest\DeviceTest\obj\Debug\DeviceTest.Form1.resources
+A:\_Globlock\Version0\Client Side\Windows Application\DeviceTest\DeviceTest\obj\Debug\DeviceTest.Properties.Resources.resources
+A:\_Globlock\Version0\Client Side\Windows Application\DeviceTest\DeviceTest\obj\Debug\DeviceTest.csproj.GenerateResource.Cache
+A:\_Globlock\Version0\Client Side\Windows Application\DeviceTest\DeviceTest\obj\Debug\DeviceTest.exe
+A:\_Globlock\Version0\Client Side\Windows Application\DeviceTest\DeviceTest\obj\Debug\DeviceTest.pdb
+A:\_Globlock\Version0\Client Side\Windows Application\DeviceTest\DeviceTest\obj\Debug\DeviceTest.csprojResolveAssemblyReference.cache
+A:\_Globlock\Version0\Client Side\Windows Application\DeviceTest\DeviceTest\bin\Debug\Newtonsoft.Json.dll
+A:\_Globlock\Version0\Client Side\Windows Application\DeviceTest\DeviceTest\bin\Debug\Newtonsoft.Json.xml

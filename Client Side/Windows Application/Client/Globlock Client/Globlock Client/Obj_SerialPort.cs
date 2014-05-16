@@ -14,7 +14,7 @@ namespace Globlock_Client {
         public const int SERIAL_HANDSHAKE = 0;
         public const int SERIAL_REPORT = 1;
         public const int SERIAL_DATA = 9;
-        public const int SERIAL_TIMEOUT = 1000;
+        public const int SERIAL_TIMEOUT = 2000;
         private ThreadStart comms;
         private Thread threadComms;
 
@@ -47,6 +47,13 @@ namespace Globlock_Client {
         }
 
         private void connectPort() {
+            //Not needed: sPort = new SerialPort(portname, baudrate, parity, databits, stopbits);
+            sPort = new SerialPort(portname); // Default port settings
+            sPort.DataReceived += new SerialDataReceivedEventHandler(dataReceived);
+            sPort.Open();
+        }
+
+        public void connectPort(string portname) {
             //Not needed: sPort = new SerialPort(portname, baudrate, parity, databits, stopbits);
             sPort = new SerialPort(portname); // Default port settings
             sPort.DataReceived += new SerialDataReceivedEventHandler(dataReceived);
@@ -95,29 +102,33 @@ namespace Globlock_Client {
 
         #region Input
         private void dataReceived(object sender, SerialDataReceivedEventArgs e) {
-            receivedMessage = sPort.ReadTo("\x03");//Read until the ETX code
-            dataList = receivedMessage.Split(new string[] { "\x02", "|" }, StringSplitOptions.RemoveEmptyEntries);
-            dataPacket = new Dictionary<string, string>();
-            foreach (string s in dataList.ToList()) {
-                packetHeader = s.Substring(0, 3);
-                packetbody = s.Substring(3, s.Length - 3);
-                switch (packetHeader) {
-                    case "#H#":
-                        dataPacket.Add("Header", packetbody);
-                        validReponse = true;
-                        break;
-                    case "#B#":
-                        dataPacket.Add("Body", packetbody);
-                        break;
-                    case "#F#":
-                        dataPacket.Add("Footer", packetbody);
-                        break;
+            try {
+                receivedMessage = sPort.ReadTo("\x03");//Read until the ETX code
+                dataList = receivedMessage.Split(new string[] { "\x02", "|" }, StringSplitOptions.RemoveEmptyEntries);
+                dataPacket = new Dictionary<string, string>();
+                foreach (string s in dataList.ToList()) {
+                    packetHeader = s.Substring(0, 3);
+                    packetbody = s.Substring(3, s.Length - 3);
+                    switch (packetHeader) {
+                        case "#H#":
+                            dataPacket.Add("Header", packetbody);
+                            validReponse = true;
+                            break;
+                        case "#B#":
+                            dataPacket.Add("Body", packetbody);
+                            break;
+                        case "#F#":
+                            dataPacket.Add("Footer", packetbody);
+                            break;
+                    }
                 }
+                receiveddata = true;
+                logentry = String.Join("[{0}] Received : #({1})#{2}", timeStamp(), sender.ToString(), receivedMessage);
+                this.appendToLog(logentry);
+                System.Diagnostics.Debug.WriteLine(logentry);
+            } catch (Exception exception) {
+                MessageBox.Show(exception.ToString());
             }
-            receiveddata = true;
-            logentry = String.Join("[{0}] Received : #({1})#{2}", timeStamp(), sender.ToString(), receivedMessage);
-            this.appendToLog(logentry);
-            System.Diagnostics.Debug.WriteLine(logentry);
         }
 
         private void dataReceivedTest() {

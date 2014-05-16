@@ -11,28 +11,25 @@ using System.Windows.Forms;
 
 namespace Globlock_Client {
     public partial class GUI_Main : Form {
-        private string dbLocation, dbFilename, serverAddress;
         private BrokerManager brokerM;
+
         public GUI_Main() {
             InitializeComponent();
             initializeSettings();
         }
         public GUI_Main(BrokerManager brokerManager) {
+            this.brokerM = brokerManager;
             InitializeComponent();
             initializeSettings();
         }
 
         private void Main_Load(object sender, EventArgs e) {
-
+            this.Location = new Point((Screen.PrimaryScreen.WorkingArea.Width - this.Width) / 2,
+                          (Screen.PrimaryScreen.WorkingArea.Height - this.Height));
         }
 
         private void initializeSettings() {
-            //INIAccess local = new INIAccess();
-            //local
-            //   dbLocation = local.IniReadValue("Database","location");
-            //    dbFilename = local.IniReadValue("Database", "filename");
-            //}
-            //DatabaseBroker dbBroker = new DatabaseBroker(dbLocation, dbFilename);
+            
         }
 
         private void button1_Click(object sender, EventArgs e) {
@@ -44,18 +41,25 @@ namespace Globlock_Client {
             //if (openFileDialog1.ShowDialog() == DialogResult.OK) {
             //        MessageBox.Show("Folder Selected: "+ openFileDialog1.FileName);
             //}
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
-            if (fbd.ShowDialog() == DialogResult.OK) {
-                    MessageBox.Show("Folder Selected: "+ fbd.SelectedPath);   
-            }
+            //FolderBrowserDialog fbd = new FolderBrowserDialog();
+            //if (fbd.ShowDialog() == DialogResult.OK) {
+            //       MessageBox.Show("Folder Selected: "+ fbd.SelectedPath);   
+            //}
         }
 
         internal void updateBroker(BrokerManager brokerM) {
             this.brokerM = brokerM;
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
-            //Application.S
+        private void exitToolStripMenuItem_Click_2(object sender, EventArgs e) {
+            Environment.Exit(0);
         }
+
+        private void testDeviceToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (brokerM.testDevice()) MessageBox.Show(String.Format("Device Available on {0}",brokerM.getPort()));
+
+        }
+
+        
     }
 }

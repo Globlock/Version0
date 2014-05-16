@@ -33,17 +33,16 @@ function tableAccessible(){
 function sh_validSessionToken(&$broker, $activity){
 	writeLogInfo("Validating 'session_token'...");
 	$sessiontoken = $broker->brokerData['session']['token'];
-	echo "<br/>Token in Broker: ".$sessiontoken."<br/>";
 	$query = "select_active_session"; 
 	$result = dbb_selectActiveSession($query, "session_id", "si", $activity, $sessiontoken);
-	echo "<br/><br/><br/><br/><br/>".$result."<br/><br/><br/><br/><br/>";
+	//echo "<br/><br/><br/><br/><br/>".$result."<br/><br/><br/><br/><br/>";
 	if ($result > 0){
-		echo "<br/>Valid Session<br/>";
+		//echo "<br/>Valid Session<br/>";
 		$query = "update_active_session";
 		$activity++;
 		if ($activity = 2) $activity = -1;	// Abort Clause (Session token can only be used for an action once)
 		$result = dbb_updateActiveSession($query, $activity, $result);
-		echo "<br/>Successful Update: ".$result."<br/>";
+		//echo "<br/>Successful Update: ".$result."<br/>";
 		return ($result > 0);
 	}
 	return false;

@@ -27,6 +27,7 @@ namespace Globlock_Client {
 
         public void connectToDevice() {
             try {
+                validDeviceFound = false;
                 arduinoPort = getArduinoPort();
             } catch (Exception e) {
                 System.Diagnostics.Debug.WriteLine("Error occured! " + e);
@@ -42,11 +43,13 @@ namespace Globlock_Client {
                 foreach (string port in portList) {
                     arduinoPort = port;
                     if (!validDeviceFound)
-                        if (attemptHandshake() == 1) 
+                        if (attemptHandshake() == 1) {
                             System.Diagnostics.Debug.WriteLine("Successfully connected to '{0}'. Valid Device Found!", port);
+                        }
                 }
             } catch (Exception e) {
                 System.Diagnostics.Debug.WriteLine("Error occured! " + e);
+                arduinoPort = "Error";
             }
             return arduinoPort;
         }

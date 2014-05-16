@@ -62,6 +62,7 @@ namespace Globlock_Client {
             prepareDatabase();
             prepareWebClient();
             prepareRequest();
+            //prepareDevice(); handled in Login
         }
 
         public bool userIsCurrent() {
@@ -87,7 +88,7 @@ namespace Globlock_Client {
             iniAccess.inspectFile();
             drivePaths = new Obj_FilePaths(iniAccess, testMode);
             //TEST
-            MessageBox.Show("INI & Drive Paths Created - Working Directory: " + drivePaths.dPath_Working_Directory);
+            //MessageBox.Show("INI & Drive Paths Created - Working Directory: " + drivePaths.dPath_Working_Directory);
         }
 
         private void prepareDatabase() {
@@ -116,6 +117,8 @@ namespace Globlock_Client {
             if (!brokerDevice.validDeviceFound) {
                 messageHolder = "NO GLOBLOCK DEVICE FOUND, CANNOT CONTINUE!";
                 irrecoverableError = true;
+                MessageBox.Show(String.Format("An irrecoverable error has occured! [{0}]",messageHolder));
+                Environment.Exit(0);
             }
             brokerDatabase.databaseTransaction(messageHolder);
         }
@@ -187,7 +190,7 @@ namespace Globlock_Client {
                 if (serverResponse.Equals(null)) throw new Exception("Server Unavailable");
                 decodedString = System.Text.Encoding.Default.GetString(serverResponse);
                 brokerRequest = JsonConvert.DeserializeObject<BrokerRequest>(decodedString);
-                MessageBox.Show(decodedString);//TEST
+                //MessageBox.Show(decodedString);//TEST
             } catch (Exception e) {
                 Debug.WriteLine("Exception occured {0}", e);
                 brokerRequest = new BrokerRequest();
@@ -212,8 +215,8 @@ namespace Globlock_Client {
                 }
             }
             if (irrecoverableError) {
-                MessageBox.Show("An irrecoverable error has occured!");
-                Application.Exit();
+                //MessageBox.Show("An irrecoverable error has occured!");
+                Environment.Exit(0);
             } else {
                 if (getSessionToken()[0] == '1') {
                     currentUser.setSuper();
@@ -241,7 +244,7 @@ namespace Globlock_Client {
             dataPOST.Add("request_header", "SESSION");
             dataPOST.Add("user_name", args[0]);
             dataPOST.Add("user_pass", args[1]);
-            MessageBox.Show(String.Format("Header: {0}\nUsername: {1}\nPass: {2}", dataPOST["request_header"], dataPOST["user_name"], dataPOST["user_pass"]));//TEST
+            //MessageBox.Show(String.Format("Header: {0}\nUsername: {1}\nPass: {2}", dataPOST["request_header"], dataPOST["user_name"], dataPOST["user_pass"]));//TEST
         }
         
         private void setupVALIDATE(string[] args){
@@ -311,5 +314,14 @@ namespace Globlock_Client {
             brokerDatabase.markCurrent(tempDetails[0]);
         }
 
+        public string getPort() {
+            return brokerDevice.arduinoPort;
+        }
+
+        public bool testDevice() {
+            brokerDevice.connectToDevice();
+            if (brokerDevice.arduinoPort.Equals("Error")) return false;
+            return true;
+        }
     }
 }

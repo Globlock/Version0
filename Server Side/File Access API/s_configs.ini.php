@@ -28,7 +28,16 @@ storage_directory="Storage"
 working_directory="Current"
 archive_directory="Archive"
 publish_directory="Publish"
+document_directory="Documents"
 
+;Types of files that can be uploaded through management suite
+[file_upload_types]
+ext[]="doc"
+ext[]="docx"
+ext[]="xls"
+ext[]="xlsx"
+ext[]="txt"
+ext[]=""
 
 ;Database Login and Host Information
 [database_info]
@@ -55,8 +64,12 @@ insert_globe_asset="INSERT INTO gb_assets(asset_id , asset_object, asset_revisio
 select_globe_project_unnassigned="SELECT gb_globes.globe_name FROM gb_globes,gb_assets  WHERE gb_assets.globe_id <> gb_globes.globe_id";
 select_globe_id_from_object="SELECT globe_id FROM gb_assets WHERE asset_object = ?"
 select_globe_revision="SELECT asset_revision FROM gb_assets WHERE asset_object = ?"
+insert_new_document="INSERT INTO gb_documents (document_id, doc_owner, doc_name, doc_desc, doc_filename, doc_type, doc_create) VALUES (null, '0',?,?,?,?, CURRENT_TIMESTAMP)"
+select_all_documents="SELECT doc_name, doc_desc, doc_filename, doc_create FROM gb_documents"
 
 table_users="CREATE TABLE IF NOT EXISTS gb_users (user_id int(11) NOT NULL AUTO_INCREMENT, user_name VARCHAR(64) NOT NULL DEFAULT '1',user_password int(11) NOT NULL DEFAULT '0',user_super int(1)NOT NULL DEFAULT '0',user_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (user_id))"
+table_documents="CREATE TABLE IF NOT EXISTS gb_documents (document_id int(11) NOT NULL AUTO_INCREMENT, doc_owner int(11) NOT NULL DEFAULT '0', doc_name varchar(120) NOT NULL , doc_desc varchar(250) NOT NULL, doc_filename varchar(250) NOT NULL, doc_type varchar(10) NOT NULL, doc_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (document_id))"
+
 search_user="SELECT * FROM gb_users WHERE user_name = ? AND user_password = ?"
 search_super="SELECT * FROM gb_users WHERE user_name = ? AND user_pass = ? AND user_super = '1'"
 table_globes="CREATE TABLE IF NOT EXISTS gb_globes (globe_id int(11) NOT NULL AUTO_INCREMENT, globe_name varchar(120) NOT NULL, globe_desc varchar(250) DEFAULT NULL, globe_code varchar(10) DEFAULT NULL, globe_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP, globe_owner int(11) NOT NULL, PRIMARY KEY (globe_id))"

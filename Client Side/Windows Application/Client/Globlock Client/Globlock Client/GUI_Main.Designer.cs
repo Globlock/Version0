@@ -28,10 +28,9 @@
             this.button1 = new System.Windows.Forms.Button();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.logOffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pushToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testDeviceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -49,11 +48,10 @@
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.logOffToolStripMenuItem,
-            this.pushToolStripMenuItem,
-            this.exitToolStripMenuItem,
-            this.settingsToolStripMenuItem});
+            this.testDeviceToolStripMenuItem,
+            this.exitToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 92);
             // 
             // logOffToolStripMenuItem
             // 
@@ -61,31 +59,26 @@
             this.logOffToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.logOffToolStripMenuItem.Text = "Log Off";
             // 
-            // pushToolStripMenuItem
-            // 
-            this.pushToolStripMenuItem.Name = "pushToolStripMenuItem";
-            this.pushToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.pushToolStripMenuItem.Text = "Push";
-            // 
-            // exitToolStripMenuItem
-            // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-            // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            // 
             // notifyIcon1
             // 
             this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
             this.notifyIcon1.Text = "Globlock Client";
             this.notifyIcon1.Visible = true;
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click_2);
+            // 
+            // testDeviceToolStripMenuItem
+            // 
+            this.testDeviceToolStripMenuItem.Name = "testDeviceToolStripMenuItem";
+            this.testDeviceToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.testDeviceToolStripMenuItem.Text = "Test Device";
+            this.testDeviceToolStripMenuItem.Click += new System.EventHandler(this.testDeviceToolStripMenuItem_Click);
             // 
             // GUI_Main
             // 
@@ -107,9 +100,8 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem logOffToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem pushToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testDeviceToolStripMenuItem;
     }
 }

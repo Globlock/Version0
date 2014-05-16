@@ -32,9 +32,9 @@ namespace Globlock_Client {
             dPath_Database_Absolute = System.IO.Path.Combine(dPath_Working_Directory, dPath_Database_Location, dPath_Database_Filename);
 
             if (testMode) {                                                                             //Testing only
-                server_API_URI = new System.Uri("http://localhost/09052014/FileAccessAPI.php");    //Testing only
+                server_API_URI = new System.Uri("http://localhost/11052014/FileAccessAPI.php");    //Testing only
                 server_API_Filename = "FileAccessAPI.php";                                         //Testing only
-                server_API_Address = "http://localhost/09052014/";                                      //Testing only
+                server_API_Address = "http://localhost/11052014/";                                      //Testing only
                 return;
             }
             server_API_Address = iniAccess.IniReadValue("SERVER", "location");

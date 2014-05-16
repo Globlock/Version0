@@ -44,7 +44,7 @@ INCLUDES, METHODS, GLOBAL & VARIABLE DECLARATIONS
 #define GLOBLOCK_RFID_TX_PIN 8
 
 /*   VARIABLES  */
-String bufferedInput, clientInput, clientMessage, response, tagID;
+String bufferedInput, clientInput, clientMessage, response, jsonResponse, tagID;
 char inputByte, clientHeader, requestType;
 int inputResult, inputLength;
 
@@ -98,7 +98,7 @@ CLEAR VALUES
 * Clear values in memory by assigning empty or 0, to prevent incorrect responses
 */  void clearValues(){
       inputResult = 0;              
-      bufferedInput = clientInput = clientMessage = response = tagID = response = "";
+      bufferedInput = clientInput = clientMessage = jsonResponse = response = tagID = response = "";
     }
 
 /*  
@@ -160,7 +160,8 @@ HANDLE DATA
       /* Switch for Header types */
       switch (requestType) {
         case 'H'://Handshake 
-          serializeC3PO("HANDSHAKE", 1);
+          //serializeC3PO("HANDSHAKE", 1);
+          serializeJSON("HANDSHAKE", 1);
           break;
         case 'D'://Display to LCD    
           displayOnLCD(clientMessage);
@@ -222,28 +223,64 @@ SERIALIZE C3PO
         response += GLOBLOCK_SERIAL_DATA_STX;  
         switch (typeCode) {
           case 0: //Tag read initiated client comms
-            response += "#H#TAG";
-            response += "#B#TAGID:";
+            response += "#H:TAG";
+            //response += GLOBLOCK_SERIAL_DATA_DLR;
+            response += "#B:TAGID:";
             break;
           case 1:
-            response += "#H#REQUEST REPONSE";
-            response += "#B#DATA:";
+            response += "#H:REQUEST REPONSE";
+            //response += GLOBLOCK_SERIAL_DATA_DLR;
+            response += "#B:DATA:";
             break;
           case -1:
-            response += "#H#REQUEST ERROR";
-            response += "#B#ERROR:";
+            response += "#H:REQUEST ERROR";
+            //response += GLOBLOCK_SERIAL_DATA_DLR;
+            response += "#B:ERROR:";
             break;
           default:
-            response += "#H#UNKNOWN";
-            response += "#B#UNKNOWN:";
+            response += "#H:UNKNOWN";
+            //response += GLOBLOCK_SERIAL_DATA_DLR;
+            response += "#B:UNKNOWN:";
             break;
         }
         response += data;
-        response += "#F#COMPLETE";
-        response += GLOBLOCK_SERIAL_DATA_ETX;
+        //response += GLOBLOCK_SERIAL_DATA_DLR;
+        response += "#F:COMPLETE";
+        //response += GLOBLOCK_SERIAL_DATA_ETX;
         successAlert(5, 100);
         Serial.println(response);
     }
+// JSON
+    void serializeJSON(String data, int typeCode){
+      allowToBuffer(20);
+      String header, body;
+      switch (typeCode) {
+          case 0:
+            header = "TAG";
+            body = data;
+            break;
+          case 1:
+            header = "REQUEST RESPONSE";
+            body = "Data:";
+            body += data;
+            break;
+          case -1:
+            header = "ERROR";
+            body = "Error:";
+            body += data;
+            break;
+      }
+      //jsonResponse += GLOBLOCK_SERIAL_DATA_STX; 
+      jsonResponse = "{'DeviceMessage':{'Header':'";
+      jsonResponse += header;
+      jsonResponse += "', 'Body':'";
+      jsonResponse += data;
+      jsonResponse += "', 'Footer':'Complete'}}";
+      //jsonResponse += GLOBLOCK_SERIAL_DATA_ETX;
+      successAlert(5, 100);
+      Serial.println(jsonResponse);
+    }
+    
 
 /* 
 COMPLETE
