@@ -7,7 +7,7 @@
 -->
 <html>
 	<head>
-		<title>Globlock - Documents</title>
+		<title>Globlock - Groups</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
@@ -17,7 +17,7 @@
 		<script src="js/skel.min.js"></script>
 		<script src="js/skel-panels.min.js"></script>
 		<script src="js/view.js"></script>
-
+		
 		<noscript>
 			<link rel="stylesheet" href="css/skel-noscript.css" />
 			<link rel="stylesheet" href="css/style.css" />
@@ -42,8 +42,8 @@
 									<li><a href="index.html">Homepage</a></li>
 									<li><a href="HowTo.html">How To</a></li>
 									<li><a href="Globes.php">Globes</a></li>
-									<li class="current_page_item"><a href="Documents.php">Documents</a></li>
-									<li><a href="Groups.php">Groups</a></li>
+									<li><a href="Documents.php">Documents</a></li>
+									<li class="current_page_item"><a href="Groups.php">Groups</a></li>
 									<li><a href="Users.php">Users</a></li>
 									<li><a href="Repository.html">Repository</a></li>
 								</ul>
@@ -64,75 +64,81 @@
 							<article class="first">
 							
 								<div class="form_description">
-									<h3>Document List</h3>
+									<h3>Group List</h3>
 								</div>	
-								
-									<table id='hor-minimalist-a'>
-										<tr>
-											<th>Document Name</th>
-											<th>Description</th>
-											<th>Filename</th>
-											<th>Date</th>
-										</tr>
+										
+								<table id="hor-minimalist-a">
+									<tr>
+										<th>Group name</th>
+										<th>Description</th>
+										<th>Date Added</th>
+									</tr>
 										<?php
-											include '../e_documenttable.php'; ?>
-									</table>
-								
+											include '../e_grouptable.php';
+										?>
+								</table>
+							
 							</article>		
 
-						</div>	
-						
+						</div>
 						<div class="6u">
-												
+						
 							<section>
 							
-								<form id="form_754783" class="appnitro" enctype="multipart/form-data" method="post" action="../e_newdoc.php">
+								<div class="form_description">
+									<h3>New Group</h3>
+								</div>	
 								
-									<div class="form_description">
-										<h3>Document Upload</h3>	
-									</div>						
-									
-									<p>Upload a document to the GloBlock Server to later include in a Globe Object</p>	
-									
-									<ul>
-		
+								<p>Enter a name and description for your new Group.</p>
+						
+								<form id="form_754783" class="appnitro"  method="post" action="../e_newgroup.php">
+									<ul >
 										<li id="li_1" >
-											<label class="description" for="element_1">Document name </label>
+											<label class="description" for="element_1">Group Name </label>
 											<div>
-												<input id="element_1" name="docname" class="element text medium" type="text" maxlength="255" value=""/> 
+												<input id="element_1" name="groupname" class="element text large" type="text" maxlength="255" value=""/> 
 											</div>
-											<p class="guidelines" id="guide_1"><small>Choose a name that best summarizes the documents contents or function.</small></p> 
+											<p class="guidelines" id="guide_1"><small>Choose a name that best summarizes the Group and/or it's members. Such as ''Design Team', 'Development', 'Finance - Ireland', 'Contractors' etc...</small></p> 
 										</li>		
 										
 										<li id="li_2" >
-											<label class="description" for="element_2">Document Description </label>
+											<label class="description" for="element_2">Group Description </label>
 											<div>
-												<textarea id="element_2" name="docdesc" class="element textarea medium"></textarea> 
+												<textarea id="element_2" name="groupdesc" class="element textarea medium"></textarea> 
 											</div>
-											<p class="guidelines" id="guide_2"><small>Provide a brief description of the document, it's contents or it's function. It may also be wise to add any descriptive comments that you may wish all users to view before opening the document.</small></p> 
-										</li>		
+											<p class="guidelines" id="guide_2"><small>Provide a brief description of the Group, it's users or it's function. It may also be wise to add any descriptive comments that such as the groups goals, projects or type of documents they will likely work on.</small></p> 
+										</li>
 										
-										<li id="li_3" >
-											<label class="description" for="element_3">Select a Document to Upload </label>
-											<div>
-												<input id="element_3" name="file" class="element file" type="file"/> 
-											</div> 
-											<p class="guidelines" id="guide_3"><small>There is a limit of 5mb on current document uploads. </small></p> 
-										</li>									
-											
 										<li class="buttons">
 											<input type="hidden" name="form_id" value="754783" />
 											<input id="saveForm" class="button_text" type="submit" name="submit" value="Submit" />
 										</li>
-										
 									</ul>
-									
 								</form>	
-								
+							
+							</section>							
+
+							<!-- Sidebar -->
+							
+							<section>
+								<div class="form_description">
+									<h3>Ipsum Dolor</h3>
+								</div>	
+							
+								<ul class="link-list">
+									<li><a href="#">Sed dolore viverra</a></li>
+									<li><a href="#">Ligula non varius</a></li>
+									<li><a href="#">Nec sociis natoque</a></li>
+									<li><a href="#">Penatibus et magnis</a></li>
+									<li><a href="#">Dis parturient montes</a></li>
+									<li><a href="#">Nascetur ridiculus</a></li>
+								</ul>
 							</section>
 
 							<section class="last">
-								<h3>Ipsum Dolor</h3>
+								<div class="form_description">
+									<h3>Magna Phasellus</h3>
+								</div>	
 								<p>
 									Vehicula fermentum ligula at pretium. Suspendisse semper iaculis eros, eu aliquam 
 									iaculis. Phasellus ultrices diam sit amet orci lacinia sed consequat. 							
@@ -146,7 +152,6 @@
 							</section>
 						
 						</div>
-					</div>
 				</div>
 			</div>
 

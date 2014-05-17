@@ -371,42 +371,131 @@ function dbb_selectUnnassignedProjects($query){
 
 function dbb_insertNewDocument($query, $docname, $docdesc, $docfile, $doctype ){
 	try{
-		echo "<br/>Attempting Document Insert<br/>"; 
+		//echo "<br/>Attempting Document Insert<br/>"; 
 		global $databaseConnection;
 		$configuration = new configurations();
 		$configs = $configuration->configs;
 		$query = $configs["database_statements"][$query];
-		echo "<br/>Query: ".$query."<br/>"; 
+		//echo "<br/>Query: ".$query."<br/>"; 
 		$prepSTMT = $databaseConnection->prepare($query);
 		$params = 'ssss'; 
 		$prepSTMT ->bind_param($params, $docname, $docdesc, $docfile, $doctype);
 		$prepSTMT->execute();
 		$insert_id = $prepSTMT->insert_id;
-		echo "<br/>Insert ID: ".$insert_id."<br/>"; 
+		//echo "<br/>Insert ID: ".$insert_id."<br/>"; 
 		$prepSTMT->close();
 		return $insert_id;
 	}catch(Exception $e){
-		echo "<br/>Error: ".$e."<br/>"; 
+		//echo "<br/>Error: ".$e."<br/>"; 
 		return -1;
 	}
 }
+
+function dbb_insertNewGroup($query, $groupname, $groupdesc){
+	try{
+		//echo "<br/>Attempting Group Insert<br/>"; 
+		global $databaseConnection;
+		$configuration = new configurations();
+		$configs = $configuration->configs;
+		$query = $configs["database_statements"][$query];
+		//echo "<br/>Query: ".$query."<br/>"; 
+		$prepSTMT = $databaseConnection->prepare($query);
+		$params = 'ss'; 
+		$prepSTMT ->bind_param($params, $groupname, $groupdesc);
+		$prepSTMT->execute();
+		$insert_id = $prepSTMT->insert_id;
+		//echo "<br/>Insert ID: ".$insert_id."<br/>"; 
+		$prepSTMT->close();
+		return $insert_id;
+	}catch(Exception $e){
+		//echo "<br/>Error: ".$e."<br/>"; 
+		return -1;
+	}
+}
+
+function dbb_insertNewglobe($query, $globename, $globedesc){
+	try{
+		//echo "<br/>Attempting globe Insert<br/>"; 
+		global $databaseConnection;
+		$configuration = new configurations();
+		$configs = $configuration->configs;
+		$query = $configs["database_statements"][$query];
+		//echo "<br/>Query: ".$query."<br/>"; 
+		$prepSTMT = $databaseConnection->prepare($query);
+		$params = 'ss'; 
+		$prepSTMT ->bind_param($params, $globename, $globedesc);
+		$prepSTMT->execute();
+		$insert_id = $prepSTMT->insert_id;
+		//echo "<br/>Insert ID: ".$insert_id."<br/>"; 
+		$prepSTMT->close();
+		return $insert_id;
+	}catch(Exception $e){
+		//echo "<br/>Error: ".$e."<br/>"; 
+		return -1;
+	}
+}
+
+function dbb_insertNewUser($query, $user, $pass, $first, $last, $email, $dept, $super){
+	try{
+		//echo "<br/>Attempting User Insert<br/>"; 
+		global $databaseConnection;
+		$configuration = new configurations();
+		$configs = $configuration->configs;
+		$query = $configs["database_statements"][$query];
+		//echo "<br/>Query: ".$query."<br/>"; 
+		$prepSTMT = $databaseConnection->prepare($query);
+		$params = 'ssssssi'; 
+		$prepSTMT ->bind_param($params, $user, $pass, $first, $last, $email, $dept, $super);
+		$prepSTMT->execute();
+		$insert_id = $prepSTMT->insert_id;
+		//echo "<br/>Insert ID: ".$insert_id."<br/>"; 
+		$prepSTMT->close();
+		return $insert_id;
+	}catch(Exception $e){
+		//echo "<br/>Error: ".$e."<br/>"; 
+		return -1;
+	}
+}
+
+function dbb_insertNewGroupUser($query, $user, $pass, $first, $last, $email, $dept, $group, $super){
+	try{
+		//echo "<br/>Attempting Group User Insert<br/>"; 
+		global $databaseConnection;
+		$configuration = new configurations();
+		$configs = $configuration->configs;
+		$query = $configs["database_statements"][$query];
+		//echo "<br/>Query: ".$query."<br/>"; 
+		$prepSTMT = $databaseConnection->prepare($query);
+		$params = 'ssssssii'; 
+		$prepSTMT ->bind_param($params, $user, $pass, $first, $last, $email, $dept, $group, $super);
+		$prepSTMT->execute();
+		$insert_id = $prepSTMT->insert_id;
+		//echo "<br/>Insert ID: ".$insert_id."<br/>"; 
+		$prepSTMT->close();
+		return $insert_id;
+	}catch(Exception $e){
+		//echo "<br/>Error: ".$e."<br/>"; 
+		return -1;
+	}
+}
+
 
 function dbb_selectAllDocuments($query){
 	try{
 		$listHolder = array();
 		$record = array();
-		echo "<br/>Attempting All Document Retrieval<br/>"; 
+		//echo "<br/>Attempting All Document Retrieval<br/>"; 
 		global $databaseConnection;
 		$configuration = new configurations();
 		$configs = $configuration->configs;
 		$query = $configs["database_statements"][$query];
-		echo "<br/>Query: ".$query."<br/>"; 
+		//echo "<br/>Query: ".$query."<br/>"; 
 		$prepSTMT = $databaseConnection->prepare($query);
 		$prepSTMT->bind_result($name, $desc, $file, $date);
 		$prepSTMT->execute();
 		$prepSTMT->store_result();
 		$numRows = $prepSTMT->num_rows;
-		echo "<br/>Found : ".$numRows."<br/>"; 
+		//echo "<br/>Found : ".$numRows."<br/>"; 
 		while ($prepSTMT->fetch()){ 
 			$record["doc"] = $name;
 			$record["desc"] = $desc;
@@ -414,10 +503,135 @@ function dbb_selectAllDocuments($query){
 			$record["date"]= $date;
 			array_push($listHolder, $record);
 		}
-		print_r($listHolder);
+		//print_r($listHolder);
 		$prepSTMT->close();
 	}catch(Exception $e){
-		echo "<br/>Error: ".$e."<br/>"; 
+		//echo "<br/>Error: ".$e."<br/>"; 
+		return -1;
+	}
+	return $listHolder;
+}
+
+function dbb_selectAllGroups($query){
+	try{
+		$listHolder = array();
+		$record = array();
+		//echo "<br/>Attempting All Groups Retrieval<br/>"; 
+		global $databaseConnection;
+		$configuration = new configurations();
+		$configs = $configuration->configs;
+		$query = $configs["database_statements"][$query];
+		//echo "<br/>Query: ".$query."<br/>"; 
+		$prepSTMT = $databaseConnection->prepare($query);
+		$prepSTMT->bind_result($name, $desc, $date);
+		$prepSTMT->execute();
+		$prepSTMT->store_result();
+		$numRows = $prepSTMT->num_rows;
+		//echo "<br/>Found : ".$numRows."<br/>"; 
+		while ($prepSTMT->fetch()){ 
+			$record["name"] = $name;
+			$record["desc"] = $desc;
+			$record["date"]= $date;
+			array_push($listHolder, $record);
+		}
+		//print_r($listHolder);
+		$prepSTMT->close();
+	}catch(Exception $e){
+		//echo "<br/>Error: ".$e."<br/>"; 
+		return -1;
+	}
+	return $listHolder;
+}
+
+function dbb_selectAllGlobes($query){
+	try{
+		$listHolder = array();
+		$record = array();
+		//echo "<br/>Attempting All Groups Retrieval<br/>"; 
+		global $databaseConnection;
+		$configuration = new configurations();
+		$configs = $configuration->configs;
+		$query = $configs["database_statements"][$query];
+		//echo "<br/>Query: ".$query."<br/>"; 
+		$prepSTMT = $databaseConnection->prepare($query);
+		$prepSTMT->bind_result($name, $desc, $date);
+		$prepSTMT->execute();
+		$prepSTMT->store_result();
+		$numRows = $prepSTMT->num_rows;
+		//echo "<br/>Found : ".$numRows."<br/>"; 
+		while ($prepSTMT->fetch()){ 
+			$record["name"] = $name;
+			$record["desc"] = $desc;
+			$record["date"] = $date;
+			array_push($listHolder, $record);
+		}
+		//print_r($listHolder);
+		$prepSTMT->close();
+	}catch(Exception $e){
+		//echo "<br/>Error: ".$e."<br/>"; 
+		return -1;
+	}
+	return $listHolder;
+}
+
+function select_all_groupids($query){
+	try{
+		$listHolder = array();
+		$record = array();
+		//echo "<br/>Attempting All Groups ID's Retrieval<br/>"; 
+		global $databaseConnection;
+		$configuration = new configurations();
+		$configs = $configuration->configs;
+		$query = $configs["database_statements"][$query];
+		//echo "<br/>Query: ".$query."<br/>"; 
+		$prepSTMT = $databaseConnection->prepare($query);
+		$prepSTMT->bind_result($id, $name);
+		$prepSTMT->execute();
+		$prepSTMT->store_result();
+		$numRows = $prepSTMT->num_rows;
+		//echo "<br/>Found : ".$numRows."<br/>"; 
+		while ($prepSTMT->fetch()){ 
+			$record["id"] = $id;
+			$record["name"] = $name;
+			array_push($listHolder, $record);
+		}
+		//print_r($listHolder);
+		$prepSTMT->close();
+	}catch(Exception $e){
+		//echo "<br/>Error: ".$e."<br/>"; 
+		return -1;
+	}
+	return $listHolder;
+}
+function dbb_selectAllUsers($query){
+	try{
+		$listHolder = array();
+		$record = array();
+		//echo "<br/>Attempting All Groups ID's Retrieval<br/>"; 
+		global $databaseConnection;
+		$configuration = new configurations();
+		$configs = $configuration->configs;
+		$query = $configs["database_statements"][$query];
+		//echo "<br/>Query: ".$query."<br/>"; 
+		$prepSTMT = $databaseConnection->prepare($query);
+		$prepSTMT->bind_result($id, $name, $last, $email, $group, $super);
+		$prepSTMT->execute();
+		$prepSTMT->store_result();
+		$numRows = $prepSTMT->num_rows;
+		//echo "<br/>Found : ".$numRows."<br/>"; 
+		while ($prepSTMT->fetch()){ 
+			$record["user_id"] = $id;
+			$record["name"] = $name;
+			$record["last"] = $last;
+			$record["email"] = $email;
+			$record["groupname"] = $group;
+			$record["superuser"] = $super;
+			array_push($listHolder, $record);
+		}
+		//print_r($listHolder);
+		$prepSTMT->close();
+	}catch(Exception $e){
+		//echo "<br/>Error: ".$e."<br/>"; 
 		return -1;
 	}
 	return $listHolder;

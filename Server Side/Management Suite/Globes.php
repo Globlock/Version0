@@ -7,7 +7,7 @@
 -->
 <html>
 	<head>
-		<title>Globlock - Documents</title>
+		<title>Globlock - Globes</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
@@ -17,7 +17,7 @@
 		<script src="js/skel.min.js"></script>
 		<script src="js/skel-panels.min.js"></script>
 		<script src="js/view.js"></script>
-
+		
 		<noscript>
 			<link rel="stylesheet" href="css/skel-noscript.css" />
 			<link rel="stylesheet" href="css/style.css" />
@@ -41,8 +41,8 @@
 								<ul>
 									<li><a href="index.html">Homepage</a></li>
 									<li><a href="HowTo.html">How To</a></li>
-									<li><a href="Globes.php">Globes</a></li>
-									<li class="current_page_item"><a href="Documents.php">Documents</a></li>
+									<li class="current_page_item"><a href="Globes.php">Globes</a></li>
+									<li><a href="Documents.php">Documents</a></li>
 									<li><a href="Groups.php">Groups</a></li>
 									<li><a href="Users.php">Users</a></li>
 									<li><a href="Repository.html">Repository</a></li>
@@ -64,62 +64,53 @@
 							<article class="first">
 							
 								<div class="form_description">
-									<h3>Document List</h3>
+									<h3>Globe List</h3>
 								</div>	
-								
-									<table id='hor-minimalist-a'>
+										
+									<table id="hor-minimalist-a">
 										<tr>
-											<th>Document Name</th>
+											<th>Globe name</th>
 											<th>Description</th>
-											<th>Filename</th>
-											<th>Date</th>
+											<th>Date Added</th>
 										</tr>
 										<?php
-											include '../e_documenttable.php'; ?>
+											include '../e_globetable.php';
+										?>
 									</table>
 								
 							</article>		
 
-						</div>	
+						</div>
 						
 						<div class="6u">
-												
+						
 							<section>
 							
-								<form id="form_754783" class="appnitro" enctype="multipart/form-data" method="post" action="../e_newdoc.php">
+								<form id="form_754783" class="appnitro"  method="post" action="../e_newglobe.php">
 								
 									<div class="form_description">
-										<h3>Document Upload</h3>	
+										<h3>New Globe Object</h3>
 									</div>						
 									
-									<p>Upload a document to the GloBlock Server to later include in a Globe Object</p>	
+									<p>Enter a name and description for your new Globe Project.</p>
 									
 									<ul>
-		
 										<li id="li_1" >
-											<label class="description" for="element_1">Document name </label>
+											<label class="description" for="element_1">Globe name</label>
 											<div>
-												<input id="element_1" name="docname" class="element text medium" type="text" maxlength="255" value=""/> 
+												<input id="element_1" name="globename" class="element text large" type="text" maxlength="255" value=""/> 
 											</div>
-											<p class="guidelines" id="guide_1"><small>Choose a name that best summarizes the documents contents or function.</small></p> 
+												<p class="guidelines" id="guide_1"><small>Choose a name that best summarizes the Globes and/or it's contents.</small></p> 
 										</li>		
 										
 										<li id="li_2" >
-											<label class="description" for="element_2">Document Description </label>
+											<label class="description" for="element_2">Globe Description </label>
 											<div>
-												<textarea id="element_2" name="docdesc" class="element textarea medium"></textarea> 
+												<textarea id="element_2" name="globedesc" class="element textarea medium"></textarea> 
 											</div>
-											<p class="guidelines" id="guide_2"><small>Provide a brief description of the document, it's contents or it's function. It may also be wise to add any descriptive comments that you may wish all users to view before opening the document.</small></p> 
-										</li>		
-										
-										<li id="li_3" >
-											<label class="description" for="element_3">Select a Document to Upload </label>
-											<div>
-												<input id="element_3" name="file" class="element file" type="file"/> 
-											</div> 
-											<p class="guidelines" id="guide_3"><small>There is a limit of 5mb on current document uploads. </small></p> 
-										</li>									
-											
+											<p class="guidelines" id="guide_2"><small>Provide a brief description of the Globe, it's contents or it's function. It may also be wise to add any descriptive comments that you may wish all users to view before opening the Globe, such as the documents' functions or projects aim or goals.</small></p> 
+										</li>
+							
 										<li class="buttons">
 											<input type="hidden" name="form_id" value="754783" />
 											<input id="saveForm" class="button_text" type="submit" name="submit" value="Submit" />
@@ -129,10 +120,29 @@
 									
 								</form>	
 								
+							</section>							
+
+							<!-- Sidebar -->
+							
+							<section>
+								<div class="form_description">
+									<h3>Ipsum Dolor</h3>
+								</div>	
+							
+								<ul class="link-list">
+									<li><a href="#">Sed dolore viverra</a></li>
+									<li><a href="#">Ligula non varius</a></li>
+									<li><a href="#">Nec sociis natoque</a></li>
+									<li><a href="#">Penatibus et magnis</a></li>
+									<li><a href="#">Dis parturient montes</a></li>
+									<li><a href="#">Nascetur ridiculus</a></li>
+								</ul>
 							</section>
 
 							<section class="last">
-								<h3>Ipsum Dolor</h3>
+								<div class="form_description">
+									<h3>Magna Phasellus</h3>
+								</div>	
 								<p>
 									Vehicula fermentum ligula at pretium. Suspendisse semper iaculis eros, eu aliquam 
 									iaculis. Phasellus ultrices diam sit amet orci lacinia sed consequat. 							
@@ -146,7 +156,6 @@
 							</section>
 						
 						</div>
-					</div>
 				</div>
 			</div>
 

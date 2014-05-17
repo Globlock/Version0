@@ -64,11 +64,22 @@ insert_globe_asset="INSERT INTO gb_assets(asset_id , asset_object, asset_revisio
 select_globe_project_unnassigned="SELECT gb_globes.globe_name FROM gb_globes,gb_assets  WHERE gb_assets.globe_id <> gb_globes.globe_id";
 select_globe_id_from_object="SELECT globe_id FROM gb_assets WHERE asset_object = ?"
 select_globe_revision="SELECT asset_revision FROM gb_assets WHERE asset_object = ?"
+
 insert_new_document="INSERT INTO gb_documents (document_id, doc_owner, doc_name, doc_desc, doc_filename, doc_type, doc_create) VALUES (null, '0',?,?,?,?, CURRENT_TIMESTAMP)"
+insert_new_group="INSERT INTO gb_groups (group_id, group_owner, group_name, group_desc, group_create) VALUES (null, '0',?,?, CURRENT_TIMESTAMP)"
+insert_new_globe="INSERT INTO gb_globes (globe_id, globe_name, globe_desc, globe_code, globe_create, globe_owner, globe_asset) VALUES (null ,  ?,  ?,  'GB', CURRENT_TIMESTAMP , '0', null)"
+insert_new_user="INSERT INTO gb_users (user_id,user_name,user_password,user_first,user_last,user_email,user_dept,group_id,user_super,user_create) VALUES (NULL, ?, ?, ?, ?, ?,  ?,  '0',  ?, CURRENT_TIMESTAMP)"
+insert_new_groupuser="INSERT INTO gb_users (user_id,user_name,user_password,user_first,user_last,user_email,user_dept,group_id,user_super,user_create) VALUES (NULL, ?, ?, ?, ?, ?,  ?,  ?,  ?, CURRENT_TIMESTAMP)"
+
 select_all_documents="SELECT doc_name, doc_desc, doc_filename, doc_create FROM gb_documents"
+select_all_groups="SELECT group_name, group_desc, group_create FROM gb_groups"
+select_all_globes="SELECT globe_name, globe_desc, globe_create FROM gb_globes"
+select_all_groupids="SELECT group_id, group_name FROM gb_groups"
+select_all_users="SELECT gb_users.user_id, gb_users.user_name AS name, gb_users.user_email AS last, gb_users.user_email AS email, IF( gb_groups.group_name IS NULL , 'undefined2', gb_groups.group_name ) AS groupname, IF( gb_users.user_super =1, 'Yes',  'No' ) AS superuser FROM gb_users LEFT JOIN gb_groups ON gb_groups.group_id = gb_users.group_id"
 
 table_users="CREATE TABLE IF NOT EXISTS gb_users (user_id int(11) NOT NULL AUTO_INCREMENT, user_name VARCHAR(64) NOT NULL DEFAULT '1',user_password int(11) NOT NULL DEFAULT '0',user_super int(1)NOT NULL DEFAULT '0',user_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (user_id))"
 table_documents="CREATE TABLE IF NOT EXISTS gb_documents (document_id int(11) NOT NULL AUTO_INCREMENT, doc_owner int(11) NOT NULL DEFAULT '0', doc_name varchar(120) NOT NULL , doc_desc varchar(250) NOT NULL, doc_filename varchar(250) NOT NULL, doc_type varchar(10) NOT NULL, doc_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (document_id))"
+table_groups="CREATE TABLE IF NOT EXISTS gb_groups (group_id int(11) NOT NULL AUTO_INCREMENT, group_owner int(11) NOT NULL DEFAULT '0', group_name varchar(120) NOT NULL , group_desc varchar(250) NOT NULL, group_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (group_id))"
 
 search_user="SELECT * FROM gb_users WHERE user_name = ? AND user_password = ?"
 search_super="SELECT * FROM gb_users WHERE user_name = ? AND user_pass = ? AND user_super = '1'"
