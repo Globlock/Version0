@@ -25,6 +25,7 @@ namespace Globlock_Client {
         private Obj_SettingsAccess iniAccess;
         private Obj_FilePaths drivePaths;
         private Obj_User currentUser;
+        public string tagID;
 
         private string saltValue;
 
@@ -34,7 +35,7 @@ namespace Globlock_Client {
         public string API_ADDRESS { get; set; }
         public System.Uri HTTP_ADDR { get; set; }
         private byte[] serverResponse;
-        private string decodedString;
+        public string decodedString;
         private string messageHolder;
         public bool errorState;
         
@@ -147,6 +148,7 @@ namespace Globlock_Client {
                     break;
                 case REQUEST_TYPE_VALD:
                 case "02":
+                    setupVALIDATE(args);
                     serverRequest("VALIDATE");
                     break;
                 case REQUEST_TYPE_ABRT:
@@ -156,6 +158,7 @@ namespace Globlock_Client {
                     break;
                 case REQUEST_TYPE_SETT:
                 case "04":
+                    setupSET(args);
                     serverRequest("SET");
                     break;
                 case REQUEST_TYPE_FORC:
@@ -218,9 +221,9 @@ namespace Globlock_Client {
                 //MessageBox.Show("An irrecoverable error has occured!");
                 Environment.Exit(0);
             } else {
-                if (getSessionToken()[0] == '1') {
+                if (getSessionToken()[0] != '0') {
                     currentUser.setSuper();
-                    MessageBox.Show("Access granted at Super User Level!");
+                    //MessageBox.Show("Server Access granted at Super User Level!");
                 } else {
                     MessageBox.Show("Access granted!");
                 }
@@ -232,7 +235,13 @@ namespace Globlock_Client {
             this.currentUser = user;
         }
 
+        public Obj_User retrieveUser() {
+            return this.currentUser;
+        }
 
+        public void writetoDB(string message) {
+            brokerDatabase.databaseTransaction(message);
+        }
 
         private void setupHAND() {
             dataPOST.Add("request_header","HANDSHAKE");
@@ -265,6 +274,7 @@ namespace Globlock_Client {
             dataPOST.Add("request_header","SET");
             dataPOST.Add("session_token", args[0]);
             dataPOST.Add("globe_project", args[1]);
+            dataPOST.Add("globe_id", args[2]);
         }
 
         private void setupFORCE(string[] args) {

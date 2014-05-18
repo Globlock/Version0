@@ -134,7 +134,7 @@ function dbb_insertNewSessionToken($query, $sessionToken){
 		return $insert_id;
 		//echo "<br/><br/><br/><br/><br/>";
 	}catch(Exception $e){
-		echo "<br/>Error: ".$e."<br/>"; 
+		//echo "<br/>Error: ".$e."<br/>"; 
 		return -1;
 	}
 }
@@ -183,7 +183,7 @@ function dbb_updateActiveSession($query, $activity, $record){
 		$prepSTMT->close();
 		return $updatedRows;
 	}catch(Exception $e){
-		echo "<br/>Error: ".$e."<br/>"; 
+		//echo "<br/>Error: ".$e."<br/>"; 
 		return -1;
 	}
 }
@@ -210,7 +210,7 @@ function dbb_selectGlobeAsset($query, $recordID, $params, $globe_object){
 		//echo "<br/>Record: ".$record."<br/>";
 		return $record;
 	}catch(Exception $e){
-		echo "<br/>Error: ".$e."<br/>"; 
+		//echo "<br/>Error: ".$e."<br/>"; 
 		return -1;
 	}
 }
@@ -237,7 +237,7 @@ function dbb_selectGlobeProject($query, $recordID, $params, $globe_object){
 		return $record;
 		//echo "<br/><br/><br/><br/><br/>";
 	}catch(Exception $e){
-		echo "<br/>Error: ".$e."<br/>"; 
+		//echo "<br/>Error: ".$e."<br/>"; 
 		return -1;
 	}
 }
@@ -263,7 +263,7 @@ function dbb_selectGlobeID($query, $recordID, $params, $globe_project){
 		while ($row = $result->fetch_assoc()) $record = $row[$recordID];
 		return $record;
 	}catch(Exception $e){
-		echo "<br/>Error: ".$e."<br/>"; 
+		//echo "<br/>Error: ".$e."<br/>"; 
 		return -1;
 	}
 }
@@ -276,7 +276,7 @@ function dbb_selectGlobeRevision($query, $field_name, $params, $globe_project){
 		$configs = $configuration->configs;
 		$query = $configs["database_statements"][$query];
 		$prepSTMT = $databaseConnection->prepare($query);
-		echo "<br/>Query: ".$query."<br/>"; echo "<br/>Project: ".$globe_project."<br/>";
+		//echo "<br/>Query: ".$query."<br/>"; echo "<br/>Project: ".$globe_project."<br/>";
 		$prepSTMT ->bind_param($params, $globe_project);
 		$prepSTMT->execute();
 		$prepSTMT->store_result();
@@ -289,7 +289,7 @@ function dbb_selectGlobeRevision($query, $field_name, $params, $globe_project){
 		while ($row = $result->fetch_assoc()) $record = $row[$field_name];
 		return $record;
 	}catch(Exception $e){
-		echo "<br/>Error: ".$e."<br/>"; 
+		//echo "<br/>Error: ".$e."<br/>"; 
 		return -1;
 	}
 }
@@ -347,18 +347,18 @@ function dbb_insertNewAsset($query, $params, $globe_object, $globe_id){
 function dbb_selectUnnassignedProjects($query){
 	try{
 		$listHolder = array();
-		echo "<br/>Attempting Unassigned Project Retrieval<br/>"; 
+		//echo "<br/>Attempting Unassigned Project Retrieval<br/>"; 
 		global $databaseConnection;
 		$configuration = new configurations();
 		$configs = $configuration->configs;
 		$query = $configs["database_statements"][$query];
-		echo "<br/>Query: ".$query."<br/>"; 
+		//echo "<br/>Query: ".$query."<br/>"; 
 		$prepSTMT = $databaseConnection->prepare($query);
 		$prepSTMT->bind_result($globe_project);
 		$prepSTMT->execute();
 		$prepSTMT->store_result();
 		$numRows = $prepSTMT->num_rows;
-		echo "<br/>Found : ".$numRows."<br/>"; 
+		//echo "<br/>Found : ".$numRows."<br/>"; 
 		array_push($listHolder, strval($numRows));
 		while ($prepSTMT->fetch()) array_push($listHolder, $globe_project);
 		$prepSTMT->close();

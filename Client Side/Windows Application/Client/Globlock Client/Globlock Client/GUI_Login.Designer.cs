@@ -82,6 +82,7 @@
             this.txtBoxPass.PasswordChar = '*';
             this.txtBoxPass.Size = new System.Drawing.Size(400, 30);
             this.txtBoxPass.TabIndex = 1;
+            this.txtBoxPass.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtBoxPass_KeyDown);
             // 
             // btnGo
             // 

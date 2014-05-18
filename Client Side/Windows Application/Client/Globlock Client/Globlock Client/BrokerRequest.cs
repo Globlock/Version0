@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Globlock_Client {
 
     public class BrokerRequest {
+
         public Header header { get; set; }
         public Error error { get; set; }
         public User user { get; set; }

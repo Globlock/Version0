@@ -83,6 +83,7 @@
     <Compile Include="BrokerDatabase.cs" />
     <Compile Include="BrokerDevice.cs" />
     <Compile Include="BrokerManager.cs" />
+    <Compile Include="BrokerReader.cs" />
     <Compile Include="BrokerRequest.cs" />
     <Compile Include="BrokerToast.cs" />
     <Compile Include="GUI_Login.cs">
@@ -91,6 +92,13 @@
     <Compile Include="GUI_Login.Designer.cs">
       <DependentUpon>GUI_Login.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI_SetProject.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI_SetProject.Designer.cs">
+      <DependentUpon>GUI_SetProject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Obj_Project.cs" />
     <Compile Include="Obj_SettingsAccess.cs" />
     <Compile Include="GUI_Main.cs">
       <SubType>Form</SubType>
@@ -115,6 +123,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI_Main.resx">
       <DependentUpon>GUI_Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI_SetProject.resx">
+      <DependentUpon>GUI_SetProject.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -61,7 +61,7 @@ select_globe_asset="SELECT asset_id FROM gb_assets WHERE asset_object =?"
 select_globe_project="SELECT gb_globes.globe_name FROM gb_globes, gb_assets WHERE gb_assets.globe_id = gb_globes.globe_id AND gb_assets.asset_object = ?"
 select_globe_id="SELECT globe_id FROM gb_globes WHERE globe_name = ?"
 insert_globe_asset="INSERT INTO gb_assets(asset_id , asset_object, asset_revision, asset_create, globe_id) VALUES (null, ?, 0, CURRENT_TIMESTAMP, ?)"
-select_globe_project_unnassigned="SELECT gb_globes.globe_name FROM gb_globes,gb_assets  WHERE gb_assets.globe_id <> gb_globes.globe_id";
+select_globe_project_unnassigned="SELECT gb_globes.globe_name FROM gb_globes LEFT JOIN gb_assets ON gb_globes.globe_id = gb_assets.globe_id WHERE gb_assets.globe_id IS NULL"
 select_globe_id_from_object="SELECT globe_id FROM gb_assets WHERE asset_object = ?"
 select_globe_revision="SELECT asset_revision FROM gb_assets WHERE asset_object = ?"
 

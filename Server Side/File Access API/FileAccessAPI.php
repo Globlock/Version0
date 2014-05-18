@@ -124,7 +124,8 @@ function returnHandshake(&$broker){
 function handleSessionToken(&$broker){
 	//$super = isSuper(&$broker);
 	$super = "1";
-	$session_token = $super . sh_getSessionToken();
+	//$session_token = $super . sh_getSessionToken();
+	$session_token = sh_getSessionToken();
 	$broker->setValue('header', 'type', "SESSION TOKEN RESPONSE");
 	$broker->setValue('session', 'token', $session_token);
 }
@@ -136,10 +137,10 @@ function handleValidation(&$broker){
 	if (!(isset($_POST["session_token"]))) throw new Exception("Exception Thrown (SESSION TOKEN NOT SET)");
 	$broker->setValue("session", "token", $_POST["session_token"]);
 
-	//if (sh_validSessionToken($broker, 1)) {//TO DO  Validate for production
+	if (sh_validSessionToken($broker, 1)) {//TO DO  Validate for production
 		//echo "<br/>Temp Valid Session<br/>";
 		gh_validateGlobe($broker);
-	//}//TO DO  Validate for production
+	}//TO DO  Validate for production
 }
 
 /** */
@@ -159,10 +160,13 @@ function handleSet(&$broker){
 	//Pass broker to validSession with activity at 2 (gets updated to -1 and dropped)
 	if (!(isset($_POST["session_token"]))) throw new Exception("Exception Thrown (EMPTY POST):");
 	$broker->setValue("session", "token", $_POST["session_token"]);
-	//if (sh_validSessionToken($broker, 2)) { //TO DO  Validate for production
+	if (sh_validSessionToken($broker, 2)) { //TO DO  Validate for production
 		//echo "<br/>Temp Valid Session<br/>";
+		$broker->setValue("header", "message", "Valid Session");
 		gh_setGlobeProject($broker);
-	//}
+	} else {
+		$broker->setValue("header", "message", "InValid Session");
+	}
 	//TO DO
 	// gh_setGlobeProject($broker);
 }
@@ -171,22 +175,22 @@ function handleSet(&$broker){
 //PULL FILES
 function handlePull(&$broker){
 	try{
-		echo "<br/>Attempting To Handle Pull<br/>"; 
+		//echo "<br/>Attempting To Handle Pull<br/>"; 
 		//if(validSession($broker, 2)){
 			$broker->setValue('header', 'type', "PULL RESPONSE");
 			$fileDetails = gh_getGlobeRevisionDetails($broker);
-			echo "<br/>File Details: <br/>"; 
+			//echo "<br/>File Details: <br/>"; 
 			print_r($fileDetails );
 			if (($fileDetails['globe_id']==-1)||($fileDetails['asset_revision']==-1)) {
-				echo "<br/>Globe/Revision Failed!<br/>"; 
+				//echo "<br/>Globe/Revision Failed!<br/>"; 
 				throw new Exception("Exception Thrown (INVALID ID OR REVISION):");
 			} else {
-				echo "<br/>All good!<br/>"; 
+				//echo "<br/>All good!<br/>"; 
 			}
 			fh_pullRequest($broker, $fileDetails['globe_id']);
 		//}
 		}catch(Exception $e){
-			echo "<br/>ERROR!! ".$e."<br/>"; 
+			//echo "<br/>ERROR!! ".$e."<br/>"; 
 		}
 }
 

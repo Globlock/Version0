@@ -9,9 +9,9 @@ namespace Globlock_Client {
             private string username;
             private string password;
             private string encryptedPassword;
-            private bool superUser;
+           // private bool superUser;
             private string salt = "";
-            private StringBuilder returnValue;
+            //private StringBuilder returnValue;
             private bool super;
 
             public Obj_User(string username, string password) {
@@ -27,6 +27,10 @@ namespace Globlock_Client {
                 this.super = super;
             }
 
+            public string getName() {
+                return this.username;
+            }
+            
             public string encryptPassword() {
                 return SHA1HashStringForUTF8String(password);
             }

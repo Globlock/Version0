@@ -12,7 +12,6 @@ using System.Windows.Forms;
 
 namespace Globlock_Client {
     public partial class GUI_Login : Form {
-        private Icon ico;
         private AutoCompleteStringCollection userSource;
         private Obj_User user;
         private SerialPort arduino;
@@ -33,6 +32,7 @@ namespace Globlock_Client {
             this.brokerManager = brokerManager;
             setupAutoComplete();
             attemptDeviceComms();
+            this.Visible = true;
         }
         #endregion
 
@@ -88,20 +88,19 @@ namespace Globlock_Client {
 
 
         private void attemptDeviceComms() {
-            MessageBox.Show("Serial Test Attempt");
-            portList = SerialPort.GetPortNames();
+            //portList = SerialPort.GetPortNames();
 
-            foreach (string port in portList) {
-                arduino = new SerialPort(port); // Default port settings
-                arduino.DataReceived += new SerialDataReceivedEventHandler(dataReceived);
-                arduino.Open();
-                arduino.Write("#H#");
-                Thread.Sleep(SERIAL_TIMEOUT); //2000
-                if (receivedResponse == true) {
-                    validPort = arduino.PortName;
-                    MessageBox.Show(validPort);
-                }
-            }
+            //foreach (string port in portList) {
+            //    arduino = new SerialPort(port); // Default port settings
+            //    arduino.DataReceived += new SerialDataReceivedEventHandler(dataReceived);
+            //    arduino.Open();
+            //    arduino.Write("#H#");
+            //    Thread.Sleep(SERIAL_TIMEOUT); //2000
+            //    if (receivedResponse == true) {
+            //        validPort = arduino.PortName;
+            //        MessageBox.Show(validPort);
+            //    }
+            //}
         }
 
         private void dataReceived(object sender, SerialDataReceivedEventArgs e) {
@@ -120,6 +119,10 @@ namespace Globlock_Client {
             }catch(Exception exception){
                 MessageBox.Show(exception.ToString());
             }
+        }
+
+        private void txtBoxPass_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Enter) btnGo_Click(sender, e);
         }
 
 

@@ -217,7 +217,7 @@ ALLOW TO BUFFER
     }
 
 /*
-SERIALIZE C3PO
+SERIALIZE C3PO - Example: [#H:TAG#B:TAGID:72004107E5#F:COMPLETE]
 * Format the data, depending on type in the correct format for Client 3 Part Object reponse, and print to the serial object  
 */  void serializeC3PO(String data, int typeCode){
         response += GLOBLOCK_SERIAL_DATA_STX;  
