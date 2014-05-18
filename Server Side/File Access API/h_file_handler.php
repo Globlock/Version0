@@ -8,22 +8,22 @@ function fh_pullRequest(&$broker, $globe_id){
 	$configs = $configuration->configs;
 
 	try {
-		echo "<br/>Attempting File Pull Request<br/>"; 
+		//echo "<br/>Attempting File Pull Request<br/>"; 
 		$working_Directory = getWorkingDirectory($globe_id, $configs);
-		echo "<br/>Working Directory: ".$working_Directory."<br/>"; 
+		//echo "<br/>Working Directory: ".$working_Directory."<br/>"; 
 		prepareRoot($configs["file_locations"]["publish_directory"]);
 		$publish_Directory = getPublishDirectory($configs);
-		echo "<br/>Publish Directory: ".$publish_Directory."<br/>"; 
+		//echo "<br/>Publish Directory: ".$publish_Directory."<br/>"; 
 		prepareSub($publish_Directory);
 		publishFiles($working_Directory, $publish_Directory);
 		listFiles($publish_Directory, $broker, $configs);
 		
 	} catch (Exception $e){
 		// TO DO
-		echo "<br/>Exception in 'pullRequest' !!<br/>";
+		//echo "<br/>Exception in 'pullRequest' !!<br/>";
 	}
 	$funcTy->getSeconds($time_seconds);
-	echo "<br/>Time Taken".$time_seconds."<br/>";
+	//echo "<br/>Time Taken".$time_seconds."<br/>";
 }
 
 
@@ -47,7 +47,7 @@ function getPublishDirectory(&$configs){
 /** */
 function prepareRoot($publish_directory){
 	// TODO Error handling as this step is critical for security of the file access
-	echo "<br/>Attempting Root Preparation<br/>"; 
+	//echo "<br/>Attempting Root Preparation<br/>"; 
 	if (!file_exists($publish_directory)){
 		createDirectory($publish_directory);
 		writeAccessFile("root", $publish_directory);
@@ -83,17 +83,17 @@ function writeAccessFile($type, $directoryTo){
 	$fileContents = "Order ". $first .",". $second ."\n". $first ." from all";
 	if(file_put_contents($fullname, $fileContents)){
 		// TO DO - Replace with writelog
-		echo "<br/>File created (".basename($fullname).") <br/>";
+		//echo "<br/>File created (".basename($fullname).") <br/>";
 	}else{
 		// TO DO - Replace with writelog
-		echo "<br/>Cannot create file (".basename($fullname).") <br/>";
+		//echo "<br/>Cannot create file (".basename($fullname).") <br/>";
 	}
 
 }
 
 /** */
 function prepareSub($publish_Sub_Directory){
-	echo "<br/>Attempting Sub Folder Preparation<br/>"; 
+	//echo "<br/>Attempting Sub Folder Preparation<br/>"; 
 	// TODO Error handling as this step is critical for security of the file access
 	if (!file_exists($publish_Sub_Directory)){
 		createDirectory($publish_Sub_Directory);
@@ -103,7 +103,7 @@ function prepareSub($publish_Sub_Directory){
 
 /** */
 function publishFiles($directoryFrom, $directoryTo){
-	echo "<br/>Attempting File Publish<br/>"; 
+	//echo "<br/>Attempting File Publish<br/>"; 
 	// TODO Error handling and writeLog
 	if (!file_exists($directoryFrom)) return false;
 	// For each file in from, copy 
@@ -116,7 +116,7 @@ function publishFiles($directoryFrom, $directoryTo){
 
 /** */
 function listFiles($directoryFrom, &$broker, &$configs){
-	echo "<br/>Attempting To List Files<br/>"; 
+	//echo "<br/>Attempting To List Files<br/>"; 
 	//TODO - Add size information
 	$count = $fileSize = 0;
 	if (! file_exists($directoryFrom)) return false;

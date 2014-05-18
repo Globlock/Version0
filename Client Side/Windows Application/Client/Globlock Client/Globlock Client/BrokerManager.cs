@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Net;
 using Newtonsoft.Json;
 using System.Data;
+using System.IO;
 
 namespace Globlock_Client {
     public class BrokerManager {
@@ -26,6 +27,7 @@ namespace Globlock_Client {
         private Obj_FilePaths drivePaths;
         private Obj_User currentUser;
         public string tagID;
+        public string localFile;
 
         private string saltValue;
 
@@ -131,7 +133,7 @@ namespace Globlock_Client {
 
         #region Requests
         /// <summary>
-        /// The main entry point for the application.
+        /// The main entry point for the applications interactions with the Server.
         /// </summary>
         public void requestResponse(string type, string[] args = null){ 
             switch(type){
@@ -171,11 +173,12 @@ namespace Globlock_Client {
                     break;
                 case REQUEST_TYPE_PULL:
                 case "07":
-                    serverRequest("PUSH");
+                    setupPULL(args);
+                    serverRequest("PULL");
                     break;
                 case REQUEST_TYPE_PUSH:
                 case "08":
-                    serverRequest("PULL");
+                    serverRequest("PUSH");
                     break;
             }
             if (int.Parse(brokerRequest.error.code) > 0) {
@@ -301,11 +304,11 @@ namespace Globlock_Client {
         }
 
         private void setupPULL(string[] args) {
-            // TO DO
-            //dataPOST.Add(["request_header"] = "PUSH";
-            //dataPOST.Add(["session_token"] = args[0];
-            //dataPOST.Add(["globe_id"] = args[1];
-            //dataPOST.Add(["globe_project"] = args[2];
+            dataPOST = new NameValueCollection();
+            dataPOST.Add("request_header", "PULL");
+            dataPOST.Add("session_token", args[0]);
+            dataPOST.Add("globe_id", args[1]);
+            //dataPOST.Add(["globe_project"] = args[2]; Not needed
         }
         
         private void validateHANDSHAKE() { 
@@ -333,5 +336,29 @@ namespace Globlock_Client {
             if (brokerDevice.arduinoPort.Equals("Error")) return false;
             return true;
         }
+
+        #region File Download
+        internal bool downloadFile() {
+            try {
+                //Local File & Paths
+                string localPath = System.IO.Path.Combine(this.drivePaths.dPath_Working_Directory, this.brokerRequest.globe.id); //Working Dir combined with globe Object ID
+                localFile = System.IO.Path.Combine(localPath, this.brokerRequest.listitem[0]);
+                if (File.Exists(localFile)) File.Delete(localFile);
+                if (Directory.Exists(localPath)) Directory.Delete(localPath);
+                if (!Directory.Exists(localPath)) Directory.CreateDirectory(localPath);
+                //Remote File and Paths
+                string downloadfile = this.brokerRequest.list.root + "/" + this.brokerRequest.listitem[0];
+                Uri uri1 = new Uri(downloadfile);
+                MessageBox.Show(downloadfile);
+                using (WebClient downloadClient = new WebClient()) {
+                        downloadClient.DownloadFile(uri1, @localFile);
+                }
+                if (File.Exists(localFile)) System.Diagnostics.Process.Start(@localFile);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        #endregion
     }
 }

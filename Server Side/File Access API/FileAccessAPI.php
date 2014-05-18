@@ -180,7 +180,7 @@ function handlePull(&$broker){
 			$broker->setValue('header', 'type', "PULL RESPONSE");
 			$fileDetails = gh_getGlobeRevisionDetails($broker);
 			//echo "<br/>File Details: <br/>"; 
-			print_r($fileDetails );
+			//print_r($fileDetails );
 			if (($fileDetails['globe_id']==-1)||($fileDetails['asset_revision']==-1)) {
 				//echo "<br/>Globe/Revision Failed!<br/>"; 
 				throw new Exception("Exception Thrown (INVALID ID OR REVISION):");

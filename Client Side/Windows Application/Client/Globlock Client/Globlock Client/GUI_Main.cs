@@ -63,7 +63,7 @@ namespace Globlock_Client {
         }
 
         private void handleTagRead(string deviceMessage) {
-            MessageBox.Show(arduino.STATUSMESSAGE);
+            //MessageBox.Show(arduino.STATUSMESSAGE);
             tagID = getTagFromMessage(deviceMessage);
             brokerM.tagID = tagID;
             brokerM.writetoDB(String.Format("User {0} received TAG ID: {1} on {2}", currentUser.getName(), tagID, arduino.validPort));
@@ -75,8 +75,7 @@ namespace Globlock_Client {
             possibleActions += "Set: " + brokerM.brokerRequest.action.set + "\n";
             possibleActions += "Assigned: " + brokerM.brokerRequest.status.assigned;
             //MessageBox.Show(possibleActions);
-            //waitForComms();
-             
+            handleResponse();
         }
 
         private void handleResponse() {
@@ -95,17 +94,27 @@ namespace Globlock_Client {
             }
             // In the event the globe object read at the device is pullable
             if (brokerM.brokerRequest.action.pull.Equals("true")) {
-                string size = brokerM.brokerRequest.list.size;
-                string count = brokerM.brokerRequest.list.count;
-                string proj = brokerM.brokerRequest.globe.project;
-                string message = String.Format("Found {0} files on the server for project '{1}'. Total file size {2}", count, proj, size);
-                new Thread(() => new GUI_Toast(message).ShowDialog()).Start();
+                downloadAndOpen();
+                //
                 //Grab the file/files
+
                 //DownloadLocally
             }
             waitForComms();
         }
 
+        private void downloadAndOpen() {
+            attemptPull(); 
+            string size = brokerM.brokerRequest.list.size;
+            string count = brokerM.brokerRequest.list.count;
+            string proj = brokerM.brokerRequest.globe.project;
+            string message = String.Format("Found {0} files on the server for project '{1}'. Total file size {2}", count, proj, size);
+            new Thread(() => new GUI_Toast(message).ShowDialog()).Start();
+            if (brokerM.downloadFile()) {
+               
+            }
+                
+        }
 
         private void setupGUIForSet() {
             var dataSource = new List<Obj_Project>();
@@ -123,10 +132,11 @@ namespace Globlock_Client {
             MessageBox.Show("Generating Combo");
         }
 
+        #region SERVER CALLS
         private string getSession() {
             brokerM.requestResponse(BrokerManager.REQUEST_TYPE_SESH, currentUser.getServerFormat());
             if (brokerM.errorState) outputError();
-            return brokerM.getSessionToken();  // Remove first value which identifies super user
+            return brokerM.getSessionToken();
         }
 
         private void validateTag() {
@@ -134,6 +144,13 @@ namespace Globlock_Client {
             brokerM.requestResponse(BrokerManager.REQUEST_TYPE_VALD, args);
             if (brokerM.errorState) outputError();
         }
+
+        private void attemptPull() {
+            string[] args = { brokerM.getSessionToken(), tagID };
+            brokerM.requestResponse(BrokerManager.REQUEST_TYPE_PULL, args);
+            if (brokerM.errorState) outputError();
+        }
+        #endregion
 
         private string getTagFromMessage(string deviceMessage) {
             string identifier = "TAGID:";

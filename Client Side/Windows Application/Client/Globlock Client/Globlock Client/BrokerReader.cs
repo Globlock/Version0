@@ -77,10 +77,7 @@ namespace Globlock_Client {
                 if (lastSerialResponse.Contains("Complete") || lastSerialResponse.Contains("COMPLETE")) {
                     Console.Beep();
                     System.Diagnostics.Debug.WriteLine(String.Format("Received Complete: {0}", lastSerialResponse));
-                    Console.Beep();
                     STATUS = DEVICE_STATE_READ_COMPLETE;
-                    Console.Beep();
-                    arduino.Close();
                     STATUSMESSAGE = lastSerialResponse;
                     Console.Beep();
                 } else {

@@ -22,8 +22,8 @@ directory="LogFiles/"
 filename="system_error.log"session
 
 [file_locations]
-server_address="http://192.168.1.11/globlock/Version0/Server%20Side/File%20Access%20API/"
-sysroot_directory="http://192.168.1.11/globlock/Version0/Server%20Side/File%20Access%20API/"
+server_address="http://localhost/"
+sysroot_directory="http://localhost/16052014/"
 storage_directory="Storage"
 working_directory="Current"
 archive_directory="Archive"
@@ -75,7 +75,7 @@ select_all_documents="SELECT doc_name, doc_desc, doc_filename, doc_create FROM g
 select_all_groups="SELECT group_name, group_desc, group_create FROM gb_groups"
 select_all_globes="SELECT globe_name, globe_desc, globe_create FROM gb_globes"
 select_all_groupids="SELECT group_id, group_name FROM gb_groups"
-select_all_users="SELECT gb_users.user_id, gb_users.user_name AS name, gb_users.user_email AS last, gb_users.user_email AS email, IF( gb_groups.group_name IS NULL , 'undefined2', gb_groups.group_name ) AS groupname, IF( gb_users.user_super =1, 'Yes',  'No' ) AS superuser FROM gb_users LEFT JOIN gb_groups ON gb_groups.group_id = gb_users.group_id"
+select_all_users="SELECT gb_users.user_id, gb_users.user_name AS name, gb_users.user_email AS last, gb_users.user_email AS email, IF( gb_groups.group_name IS NULL , 'Undefined', gb_groups.group_name ) AS groupname, IF( gb_users.user_super =1, 'Yes',  'No' ) AS superuser FROM gb_users LEFT JOIN gb_groups ON gb_groups.group_id = gb_users.group_id"
 
 table_users="CREATE TABLE IF NOT EXISTS gb_users (user_id int(11) NOT NULL AUTO_INCREMENT, user_name VARCHAR(64) NOT NULL DEFAULT '1',user_password int(11) NOT NULL DEFAULT '0',user_super int(1)NOT NULL DEFAULT '0',user_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (user_id))"
 table_documents="CREATE TABLE IF NOT EXISTS gb_documents (document_id int(11) NOT NULL AUTO_INCREMENT, doc_owner int(11) NOT NULL DEFAULT '0', doc_name varchar(120) NOT NULL , doc_desc varchar(250) NOT NULL, doc_filename varchar(250) NOT NULL, doc_type varchar(10) NOT NULL, doc_create datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (document_id))"

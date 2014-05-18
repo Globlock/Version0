@@ -108,7 +108,7 @@ function gh_getGlobeRevisionDetails(&$broker){
 		//echo "<br/> Revision Found: ".$revision_id."<br/>";
 		$fileDetails['globe_id']=$globe_id;
 		$fileDetails['asset_revision']=$revision_id;
-		print_r($fileDetails);
+		//print_r($fileDetails);
 	}
 	return $fileDetails;
 }
