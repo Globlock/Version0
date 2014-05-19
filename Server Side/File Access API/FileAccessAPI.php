@@ -27,16 +27,6 @@ TO DO:
 */
 
 	/* Global Files, Libraries and Declarations */
-	//include 'configurations.php';
-	//include 'logWrite.php';
-	//include 'dbconnection.php';
-	//include 'databaseBroker.php';
-	//include 'sessionHandler.php';
-	//include 'encryptionHelper.php';
-	//include 'requestBroker.php';
-	//include 'userHandler.php';
-	//include 'globeHandler.php';
-	
 	include 's_logWrite.php';
 	include 'b_configBroker.php';
 	include 'b_databaseBroker.php';
@@ -46,27 +36,23 @@ TO DO:
 	include 'h_user_handler.php';
 	include 'h_globe_handler.php';
 	include 'h_file_handler.php';
-	
+	# Function Timer for Testing
 	include 't_functionTimer.php';
 	
-	
-	/* Strain Inputs */
-	//htmlspecialchars etc..
-
-
+/** */
 	$broker = new requestBroker("Initialised", null);
 	if(!start($broker)) exit();
 	handleRequest($broker);
-
-function start(&$broker){
-	if (!($_SERVER["REQUEST_METHOD"] == "POST")) {
-		$broker->handleErrors("NON [POST] TYPE SERVER REQUEST ",121);
-		echo $broker->returnJSON();
-		return false;
-	}
-	//echo $broker->brokerData['header']['type'];
-	return true;
-}	
+	
+/** */
+	function start(&$broker){
+		if (!($_SERVER["REQUEST_METHOD"] == "POST")) {
+			$broker->handleErrors("NON [POST] TYPE SERVER REQUEST ",121);
+			echo $broker->returnJSON();
+			return false;
+		}
+		return true;
+	}	
 
 function handleRequest(&$broker){
 		$broker->setValue("header", "type", $_POST["request_header"]);
