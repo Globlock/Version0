@@ -70,7 +70,11 @@ namespace Globlock_Client {
             while (arduino.BytesToRead > 0) bBuffer.Add((byte)arduino.ReadByte());
             ProcessBuffer(bBuffer);
         }
-
+        /** 
+         * Process Buffer
+         * Takes byte list as input and appends the byte stream to the response string
+         * if the footer of the message is not read, continue to read
+         */
         private void ProcessBuffer(List<byte> bBuffer) {
             lastSerialResponse += System.Text.Encoding.ASCII.GetString(bBuffer.ToArray());
             if (lastSerialResponse.Length > 10) {

@@ -1,1 +1,1 @@
-[to do]
+Client Device folder contains source code for Arduino Device

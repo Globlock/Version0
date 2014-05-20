@@ -1,0 +1,40 @@
+globeHandler.readme
+
+Validate Globe
+	Validates the globe submitted exists in the DB
+	and returns a request Broker with 
+		Current state
+			Globe Free
+			Globe Assigned
+			Permission Denied
+			
+		Possible actions
+			Free
+				SET (S)
+					- Returns available Globe Projects
+				ABORT
+					- Dispose Session
+			
+			Assigned
+				REDO (S)
+					- Returns available Globe Projects
+				DROP (S)
+					- Remove association
+					- Dispose Session
+				
+				PULL 
+					- (>>TO DO: May be auto enabled on client software)
+					- Presents files
+					- Returns location 
+					- Initiates garbage collector
+				
+				PUSH
+					- Allows files that have been modified to be uploaded
+				
+				ABORT (S)
+					- Dispose Session
+					
+			Permission Denied
+				- Logs security risk
+				- Returns access denied error
+pullGlobe

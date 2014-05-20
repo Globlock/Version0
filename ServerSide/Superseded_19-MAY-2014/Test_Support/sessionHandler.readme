@@ -1,0 +1,15 @@
+.Test the table
+.create a table if it doesnt exist
+.create an empty session record in the database Activity flag at 0 by default
+.Generate a token
+.select 1st record where activity and token are 0
+.update token to read generated token
+.When finished/dropped activity flag marked -1
+.Activity can then be used to map to each step/stage
+	handleActivity($tep) //if repeat set activity =-1, else ++
+
+sessionhandler
+	<<Stored Procs
+	Verify session exists at particular stage, and update stage
+	>>verify session times, greater than 1hr = drop session
+

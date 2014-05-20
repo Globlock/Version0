@@ -1,0 +1,33 @@
+README for FileAccessAPI.php for Globlock
+Filename:	FileAccessAPI.readme
+Version: 	1.0
+Author: 	Alex Quigley, x10205691
+Created: 	22/02/2014
+Updated: 	22/02/2014
+
+
+Structure:
+01 > Setup DB environment variables/constants
+03 > Check DB Connectivity
+04 > Perform Handshake
+05 > Strain Inputs
+	05_a > Return JSON
+	05_b > 
+	 Accept Input and write
+	06_a > write to System log
+	06_b > write to Error log
+	06_c > write to Security log
+07 > Accept Input and write
+	07_a > write to System DB log
+	07_b > write to Error DB log
+	07_c > write to Security DB log
+
+Usage:
+<?php
+	include 'logWrite.php';
+	writeLogInfo("Writing to Transaction Log");
+	writeLogInfo("Writing to System Error Log", 1);
+	writeLogInfo("Writing to Security Log", -1);
+	//Test Case
+	writeLogInfo("Writing to Test Log Log", 99);
+?>
