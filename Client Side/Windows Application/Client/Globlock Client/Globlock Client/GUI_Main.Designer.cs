@@ -26,51 +26,36 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GUI_Main));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.listenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logOffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.btnGo = new System.Windows.Forms.Button();
             this.lblHelp = new System.Windows.Forms.Label();
+            this.listenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.listenToolStripMenuItem,
-            this.showToolStripMenuItem,
             this.logOffToolStripMenuItem,
-            this.exitToolStripMenuItem});
+            this.exitToolStripMenuItem,
+            this.listenToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(115, 92);
-            // 
-            // listenToolStripMenuItem
-            // 
-            this.listenToolStripMenuItem.Name = "listenToolStripMenuItem";
-            this.listenToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
-            this.listenToolStripMenuItem.Text = "Listen";
-            this.listenToolStripMenuItem.Click += new System.EventHandler(this.listenToolStripMenuItem_Click);
-            // 
-            // showToolStripMenuItem
-            // 
-            this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-            this.showToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
-            this.showToolStripMenuItem.Text = "Show";
-            this.showToolStripMenuItem.Click += new System.EventHandler(this.showToolStripMenuItem_Click);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 92);
             // 
             // logOffToolStripMenuItem
             // 
             this.logOffToolStripMenuItem.Name = "logOffToolStripMenuItem";
-            this.logOffToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.logOffToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.logOffToolStripMenuItem.Text = "Log Off";
+            this.logOffToolStripMenuItem.Click += new System.EventHandler(this.logOffToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click_2);
             // 
@@ -100,6 +85,7 @@
             this.btnGo.Size = new System.Drawing.Size(64, 65);
             this.btnGo.TabIndex = 4;
             this.btnGo.UseVisualStyleBackColor = true;
+            this.btnGo.Click += new System.EventHandler(this.btnGo_Click);
             // 
             // lblHelp
             // 
@@ -109,6 +95,13 @@
             this.lblHelp.Size = new System.Drawing.Size(258, 13);
             this.lblHelp.TabIndex = 5;
             this.lblHelp.Text = "Select a Globe Projoect above and click go to assign";
+            // 
+            // listenToolStripMenuItem
+            // 
+            this.listenToolStripMenuItem.Name = "listenToolStripMenuItem";
+            this.listenToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.listenToolStripMenuItem.Text = "Listen";
+            this.listenToolStripMenuItem.Click += new System.EventHandler(this.listenToolStripMenuItem_Click);
             // 
             // GUI_Main
             // 
@@ -136,10 +129,9 @@
         private System.Windows.Forms.ToolStripMenuItem logOffToolStripMenuItem;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem listenToolStripMenuItem;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Button btnGo;
         private System.Windows.Forms.Label lblHelp;
+        private System.Windows.Forms.ToolStripMenuItem listenToolStripMenuItem;
     }
 }

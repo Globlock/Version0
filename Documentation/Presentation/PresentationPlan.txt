@@ -1,0 +1,20 @@
+PRE PREP:
+Start Apache/MySQL
+Open Management Site
+Connect Arduino
+Test Add User
+Test Add Document
+
+Presentation:
+
+
+
+Demonstration:
+Brief Website Overview
+Add Globe
+Add Document
+Show Groups
+Show Users
+
+
+

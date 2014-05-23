@@ -113,11 +113,24 @@
 										</li>		
 										
 										<li id="li_3" >
-											<label class="description" for="element_3">Select a Document to Upload </label>
+											<label class="description" for="element_3">Primary Globe Project</label>
 											<div>
-												<input id="element_3" name="file" class="element file" type="file"/> 
+												<select class="element select medium" id="element_3" name="globe"> 
+													<option value="0" selected="selected">Undefined</option>
+													<?php
+														include '../package/management/e_globeids.php';
+													?>
+												</select>
+											</div>
+											<p class="guidelines" id="guide_3"><small>A Globe Project is not required but may make it easier if defined at the start.</small></p> 
+										</li>
+										
+										<li id="li_4" >
+											<label class="description" for="element_4">Select a Document to Upload </label>
+											<div>
+												<input id="element_4" name="file" class="element file" type="file"/> 
 											</div> 
-											<p class="guidelines" id="guide_3"><small>There is a limit of 5mb on current document uploads. </small></p> 
+											<p class="guidelines" id="guide_4"><small>There is a limit of 5mb on current document uploads. </small></p> 
 										</li>									
 											
 										<li class="buttons">

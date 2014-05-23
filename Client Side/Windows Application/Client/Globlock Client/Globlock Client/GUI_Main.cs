@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace Globlock_Client {
         private string tagID;
         public bool showMe;
         private bool receiveddata;
+        private string lastGlobeObject;
         //private string historicalTag;
         BrokerReader arduino;
 
@@ -27,6 +29,7 @@ namespace Globlock_Client {
             initializeSettings();
         }
         public GUI_Main(BrokerManager brokerManager) {
+            lastGlobeObject = "";
             this.brokerM = brokerManager;
             currentUser = brokerM.retrieveUser();
             InitializeComponent();
@@ -40,6 +43,7 @@ namespace Globlock_Client {
         private void initializeSettings() {
             arduino = new BrokerReader("COM6");
             new GUI_Toast("Handshaking Complete, you may now listen on device...").Show();
+            //envokeThread();
         }
 
         private void waitForComms(bool restart = true) {
@@ -83,37 +87,56 @@ namespace Globlock_Client {
             if (brokerM.brokerRequest.status.assigned.Equals("false") && brokerM.brokerRequest.action.set.Equals("true")) {
                 DialogResult result = MessageBox.Show("This globe has not been assigned to a globe project,\nwould you like to assign it?", "New Globe Object", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 if (result == DialogResult.Yes) {
-                    //Code for yes
-                    //setupGUIForSet();
                     envokeSetProject();
-                } else if (result == DialogResult.No) {
-                    //code for No
-                } else if (result == DialogResult.Cancel) {
-                    //code for Cancel
                 }
             }
             // In the event the globe object read at the device is pullable
             if (brokerM.brokerRequest.action.pull.Equals("true")) {
-                downloadAndOpen();
-                //
-                //Grab the file/files
-
-                //DownloadLocally
+                //Test to see if its the same globe as the last one read
+                string thisGlobe = brokerM.brokerRequest.globe.id;
+                if (lastGlobeObject.Equals(thisGlobe)){
+                    new Thread(() => new GUI_Toast("Attempting to PUSH!").ShowDialog()).Start();
+                    grabAndPush(thisGlobe);
+                } else {
+                    downloadAndOpen();
+                }
             }
             waitForComms();
         }
 
+
+
         private void downloadAndOpen() {
-            attemptPull(); 
-            string size = brokerM.brokerRequest.list.size;
-            string count = brokerM.brokerRequest.list.count;
-            string proj = brokerM.brokerRequest.globe.project;
-            string message = String.Format("Found {0} files on the server for project '{1}'. Total file size {2}", count, proj, size);
+            // Attempt Pull Request on Server
+            attemptPull();
+            string size, count, proj, message;
+            size = brokerM.brokerRequest.list.size;
+            count = brokerM.brokerRequest.list.count;
+            proj = brokerM.brokerRequest.globe.project;
+            message = String.Format("Found {0} files on the server for project '{1}'. Total file size {2}", count, proj, size);
             new Thread(() => new GUI_Toast(message).ShowDialog()).Start();
-            if (brokerM.downloadFile()) {
-               
+            if (!brokerM.downloadFile()) {
+                new Thread(() => new GUI_Toast("Unable to download Globe, please try again later!").ShowDialog()).Start();
+            } else {
+                // If successfully pulled, update the lastGlobeObject (so PUSH can be attempted later)
+                lastGlobeObject = brokerM.brokerRequest.globe.id;
             }
                 
+        }
+
+        private void grabAndPush(string thisGlobe) {
+            if (!brokerM.uploadFile()) {
+                new Thread(() => new GUI_Toast("Unable to upload Globe, please try again later!").ShowDialog()).Start();
+            } else {
+                // If successfully pulled, update the lastGlobeObject (so PUSH can be attempted later)
+                if (brokerM.fileUploaded) {
+                    new Thread(() => new GUI_Toast("Upload Successful!").ShowDialog()).Start();
+                } else {
+                    new Thread(() => new GUI_Toast("No changes or files for Upload...").ShowDialog()).Start();
+                }
+                Thread.Sleep(3000);
+                lastGlobeObject = "";
+            }
         }
 
         private void setupGUIForSet() {
@@ -168,26 +191,11 @@ namespace Globlock_Client {
             this.brokerM = brokerM;
         }
 
-        private void exitToolStripMenuItem_Click_2(object sender, EventArgs e) {
-            Environment.Exit(0);
-        }
-
-        private void testDeviceToolStripMenuItem_Click(object sender, EventArgs e) {
-            //if (brokerM.testDevice()) MessageBox.Show(String.Format("Device Available on {0}",brokerM.getPort()));
-        }
-
-        private void showToolStripMenuItem_Click(object sender, EventArgs e) {
-            this.Visible = true;
-        }
-
-        private void listenToolStripMenuItem_Click(object sender, EventArgs e) {
-            envokeThread();
-        }
 
         #region THREADING
         public void envokeThread() {
             if (arduino.RUNNING) {
-                new GUI_Toast("Listening on Device...").Show();
+                new Thread(() => new GUI_Toast("Listening on Device...").ShowDialog()).Start();
                 System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ThreadStart(waitThread));
                 t.Start();
             }
@@ -202,5 +210,23 @@ namespace Globlock_Client {
             new Thread(() => new GUI_SetProject(brokerM).ShowDialog()).Start();
         }
         #endregion
+
+        private void btnGo_Click(object sender, EventArgs e) {
+
+        }
+
+        private void logOffToolStripMenuItem_Click(object sender, EventArgs e) {
+            Environment.Exit(0);
+        }        
+        
+        private void exitToolStripMenuItem_Click_2(object sender, EventArgs e) {
+            // Remove user from current
+            Environment.Exit(0);
+        }
+
+        private void listenToolStripMenuItem_Click(object sender, EventArgs e) {
+            envokeThread();
+        }
+
     }
 }

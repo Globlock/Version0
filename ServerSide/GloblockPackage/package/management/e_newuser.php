@@ -1,5 +1,12 @@
 <?php
-
+#---------------------------------------------------------------#
+# Insert External Support for Management - Globlock
+# Filename:	e_newuser.php
+# Version: 	1.0
+# Author: 	Alex Quigley, x10205691
+# Created: 	18/05/2014
+# Updated: 	20/05/2014
+#---------------------------------------------------------------#
 	//Includes Needed
 	include '../s_logWrite.php';
 	include '../b_configBroker.php';

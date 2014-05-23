@@ -58,7 +58,7 @@ namespace Globlock_Client {
             this.Hide();
             brokerManager.requestResponse(BrokerManager.REQUEST_TYPE_HAND);
             if (brokerManager.errorState) {
-                outputError();
+                outputError("Server Handshake Failed!");
             } else { 
                 attemptSessionRetrieval();
                 abortSession();

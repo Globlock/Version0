@@ -13,7 +13,10 @@ using System.Data;
 using System.IO;
 
 namespace Globlock_Client {
+
     public class BrokerManager {
+        
+        #region Data Members
         // Test
         private bool testMode;
         private bool irrecoverableError;
@@ -28,6 +31,7 @@ namespace Globlock_Client {
         private Obj_User currentUser;
         public string tagID;
         public string localFile;
+        public bool fileUploaded;
 
         private string saltValue;
 
@@ -41,8 +45,7 @@ namespace Globlock_Client {
         private string messageHolder;
         public bool errorState;
         
-        /// <summary>
-        /// Request Types
+        // Request Types
         public const string REQUEST_TYPE_HAND = "Handshake Request";                         // 00 "HANDSHAKE"
         public const string REQUEST_TYPE_SESH = "Session Token Request";                     // 01 "SESSION"
         public const string REQUEST_TYPE_VALD = "Validate a Globe Object";                   // 02 "VALIDATE"
@@ -52,14 +55,15 @@ namespace Globlock_Client {
         public const string REQUEST_TYPE_DROP = "Drop a Globe association";                  // 06 "DROP"
         public const string REQUEST_TYPE_PULL = "Pull down Globe Files from Server";         // 07 "PUSH"
         public const string REQUEST_TYPE_PUSH = "Push files to the Server";                  // 08 "PULL"
-        /// </summary>
-        
+                
         public const string HTTP_POST = "POST";
         public const string REQUEST_ERROR_400 = "SERVER ERROR 400";
-        
+        #endregion
+
+        #region Constructor
         // Constructor
         public BrokerManager() {
-            testMode = true;
+            testMode = false;
             irrecoverableError = false;                    
             prepareINIFile();
             prepareDatabase();
@@ -67,23 +71,7 @@ namespace Globlock_Client {
             prepareRequest();
             //prepareDevice(); handled in Login
         }
-
-        public bool userIsCurrent() {
-            DataTable users = brokerDatabase.getCurrentUser();
-            if (users.Columns.Count == 1){
-                DataRow dr = users.Rows[0];
-                string username = dr["username"].ToString();
-                string password = dr["password"].ToString();
-                bool super = dr["super"].ToString().Equals("1");
-                currentUser = new Obj_User(username, password, super);
-                return true;
-            }
-            return false;
-        }
-
-        public string[] listUsers() {
-            return brokerDatabase.listAllUsers();
-        }
+        #endregion
 
         #region Broker Prep
         private void prepareINIFile(){
@@ -126,14 +114,12 @@ namespace Globlock_Client {
             brokerDatabase.databaseTransaction(messageHolder);
         }
         #endregion
-
-        public string getSessionToken() {
-            return brokerRequest.session.token;
-        }
-
+                
         #region Requests
         /// <summary>
-        /// The main entry point for the applications interactions with the Server.
+        /// REQUEST REPONSE
+        /// Accepts string parameters (optional) and envokes the appropriate 
+        /// methods (i.e. setups up each POST request) depending on the type selected.
         /// </summary>
         public void requestResponse(string type, string[] args = null){ 
             switch(type){
@@ -189,27 +175,35 @@ namespace Globlock_Client {
 
         }
 
+        // Get the current session token
+        public string getSessionToken() {
+            return brokerRequest.session.token;
+        }
+
+        /** SERVER REQUEST 
+         * Attempts to POST to the server, and deserialises the returned JSON message 
+         * to a an instance of a BrokerRequest object
+         */
         private void serverRequest(string type) {
-            Debug.WriteLine("Attempting '{0}' Server Interaction on {1}", type, HTTP_ADDR);
+            this.writetoDB(String.Format("Attempting '{0}' Server Interaction on {1}", type, HTTP_ADDR));
             try {
                 serverResponse = webClient.UploadValues(HTTP_ADDR, HTTP_POST, dataPOST);
                 if (serverResponse.Equals(null)) throw new Exception("Server Unavailable");
                 decodedString = System.Text.Encoding.Default.GetString(serverResponse);
+                // DeserializeObject
                 brokerRequest = JsonConvert.DeserializeObject<BrokerRequest>(decodedString);
-                //MessageBox.Show(decodedString);//TEST
             } catch (Exception e) {
+                this.writetoDB(String.Format("'{0}' failed on {1} with Exception {2}", type, HTTP_ADDR, e.ToString()));
                 Debug.WriteLine("Exception occured {0}", e);
                 brokerRequest = new BrokerRequest();
                 brokerRequest.updateError("9999", e.Source + ": " + e.Message);
                 irrecoverableError = true;
-            } finally {
-                Debug.WriteLine("Request broker Error [{0}]:[{1}]", brokerRequest.error.code, brokerRequest.error.message);
             }
-
         }
-        
-        #endregion
 
+        /** HANDLE SESSION RESPONSE
+         * Alert user of failed session request attempts
+         */
         private void handleSessionResponse() {
             if (!(int.Parse(brokerRequest.error.code) == 0)) {
                 switch (int.Parse(brokerRequest.error.code)) {
@@ -217,40 +211,85 @@ namespace Globlock_Client {
                         MessageBox.Show("Invalid Username or Password! Server will not allow access!");
                         irrecoverableError = true;
                         break;
-                    // TO DO - Add error codes
+                    case 500:
+                        MessageBox.Show("Internal Server Error! Server will not allow access!");
+                        irrecoverableError = true;
+                        break;
+                    case 404:
+                        MessageBox.Show("Server Location not Found or File not Found!");
+                        irrecoverableError = true;
+                        break;
+                    default:
+                        MessageBox.Show("Server Error: " + brokerRequest.error.code);
+                        irrecoverableError = true;
+                        break;
                 }
             }
-            if (irrecoverableError) {
-                //MessageBox.Show("An irrecoverable error has occured!");
-                Environment.Exit(0);
-            } else {
-                if (getSessionToken()[0] != '0') {
-                    currentUser.setSuper();
-                    //MessageBox.Show("Server Access granted at Super User Level!");
-                } else {
-                    MessageBox.Show("Access granted!");
-                }
-            }
-            
+            if (irrecoverableError) Environment.Exit(0);
+                
+            currentUser.setSuper();
         }
+        #endregion
 
+        #region User Definition
+        /** Assign User as Current */
         public void assignUser(Obj_User user) {
             this.currentUser = user;
         }
 
+        /** Retrieve Current User */
         public Obj_User retrieveUser() {
             return this.currentUser;
         }
 
+        // Dispose of the current user
+        public void dispose(bool rememberMe) {
+            if (!rememberMe) brokerDatabase.markNonCurrent();
+            else markUserCurrent();
+        }
+
+        /** Mark User Current */
+        public void markUserCurrent() {
+            brokerDatabase.markNonCurrent();
+            string[] tempDetails = currentUser.getServerFormat();
+            if (!brokerDatabase.userExists(tempDetails[0])) brokerDatabase.insertUser(tempDetails[0], tempDetails[1]);
+            brokerDatabase.markCurrent(tempDetails[0]);
+        }
+
+        // Make the user curernt
+        public bool userIsCurrent() {
+            DataTable users = brokerDatabase.getCurrentUser();
+            if (users.Columns.Count == 1) {
+                DataRow dr = users.Rows[0];
+                string username = dr["username"].ToString();
+                string password = dr["password"].ToString();
+                bool super = dr["super"].ToString().Equals("1");
+                currentUser = new Obj_User(username, password, super);
+                return true;
+            }
+            return false;
+        }
+        #endregion
+
+        #region Database Transactions
+        // Write to the database using database broker
         public void writetoDB(string message) {
             brokerDatabase.databaseTransaction(message);
         }
+        // List all users in local DB
+        public string[] listUsers() {
+            return brokerDatabase.listAllUsers();
+        }
+        #endregion
 
+        #region POST Setups
+        /** HANDSHAKE */
         private void setupHAND() {
             dataPOST.Add("request_header","HANDSHAKE");
             dataPOST.Add("request_body", "aq7548aq");
         }
 
+        /** SESSION */
         private void setupSession(string[] args) {
             dataPOST = new NameValueCollection();
             dataPOST.Add("request_header", "SESSION");
@@ -258,7 +297,8 @@ namespace Globlock_Client {
             dataPOST.Add("user_pass", args[1]);
             //MessageBox.Show(String.Format("Header: {0}\nUsername: {1}\nPass: {2}", dataPOST["request_header"], dataPOST["user_name"], dataPOST["user_pass"]));//TEST
         }
-        
+
+        /** VALIDATE */
         private void setupVALIDATE(string[] args){
             dataPOST = new NameValueCollection();
             dataPOST.Add("request_header", "VALIDATE");
@@ -266,12 +306,14 @@ namespace Globlock_Client {
             dataPOST.Add("globe_id", args[1]);
         }
 
+        /** ABORT */
         private void setupABORT(string[] args) {
             dataPOST = new NameValueCollection();
             dataPOST.Add("request_header", "ABORT");
             dataPOST.Add("session_token", args[0]);
         }
 
+        /** SET */
         private void setupSET(string[] args) {
             dataPOST = new NameValueCollection();
             dataPOST.Add("request_header","SET");
@@ -280,85 +322,129 @@ namespace Globlock_Client {
             dataPOST.Add("globe_id", args[2]);
         }
 
+        /** FORCE */
         private void setupFORCE(string[] args) {
+            dataPOST = new NameValueCollection();
             dataPOST.Add("request_header","FORCE");
             dataPOST.Add("session_token", args[0]);
             dataPOST.Add("globe_id",args[1]);
             dataPOST.Add("globe_project",args[2]);
         }
 
+        /** DROP */
         private void setupDROP(string[] args) {
+            dataPOST = new NameValueCollection();
             dataPOST.Add("request_header", "DROP");
             dataPOST.Add("session_token", args[0]);
             dataPOST.Add("globe_id", args[1]);
             dataPOST.Add("globe_project",  args[2]);
         }
-        
+
+        /** PUSH */
         private void setupPUSH(string[] args) {
-            // TO DO
-            //dataPOST.Add(["request_header"] = "PUSH";
-            //dataPOST.Add(["session_token"] = args[0];
-            //dataPOST.Add(["globe_id"] = args[1];
-            //dataPOST.Add(["globe_project"] = args[2];
-        
+            dataPOST = new NameValueCollection();
+            dataPOST.Add("request_header",  "PUSH");
+            dataPOST.Add("session_token", args[0]);
+            dataPOST.Add("globe_id", args[1]);
         }
 
+        /** PULL */
         private void setupPULL(string[] args) {
             dataPOST = new NameValueCollection();
             dataPOST.Add("request_header", "PULL");
             dataPOST.Add("session_token", args[0]);
             dataPOST.Add("globe_id", args[1]);
-            //dataPOST.Add(["globe_project"] = args[2]; Not needed
         }
-        
-        private void validateHANDSHAKE() { 
-            
-        }
+        #endregion
 
-        public void dispose(bool rememberMe) {
-            if (!rememberMe) brokerDatabase.markNonCurrent();
-            else markUserCurrent();
-        }
-
-        public void markUserCurrent() {
-            brokerDatabase.markNonCurrent();
-            string[] tempDetails = currentUser.getServerFormat();
-            if (!brokerDatabase.userExists(tempDetails[0])) brokerDatabase.insertUser(tempDetails[0], tempDetails[1]);
-            brokerDatabase.markCurrent(tempDetails[0]);
-        }
-
+        #region Port/Device Methods
+        // Get the Port
         public string getPort() {
             return brokerDevice.arduinoPort;
         }
 
+        // Test the Reader Device
         public bool testDevice() {
             brokerDevice.connectToDevice();
             if (brokerDevice.arduinoPort.Equals("Error")) return false;
             return true;
         }
+        #endregion
 
-        #region File Download
+        #region File Upload & Download
+        // Download the files listed in broker
         internal bool downloadFile() {
             try {
+                int count = 0;
                 //Local File & Paths
                 string localPath = System.IO.Path.Combine(this.drivePaths.dPath_Working_Directory, this.brokerRequest.globe.id); //Working Dir combined with globe Object ID
-                localFile = System.IO.Path.Combine(localPath, this.brokerRequest.listitem[0]);
-                if (File.Exists(localFile)) File.Delete(localFile);
-                if (Directory.Exists(localPath)) Directory.Delete(localPath);
+                if (Directory.Exists(localPath)) Directory.Delete(localPath, true);
                 if (!Directory.Exists(localPath)) Directory.CreateDirectory(localPath);
-                //Remote File and Paths
-                string downloadfile = this.brokerRequest.list.root + "/" + this.brokerRequest.listitem[0];
-                Uri uri1 = new Uri(downloadfile);
-                MessageBox.Show(downloadfile);
-                using (WebClient downloadClient = new WebClient()) {
-                        downloadClient.DownloadFile(uri1, @localFile);
+                foreach (string file in brokerRequest.listitem) {
+                    if (file.Length > 4) {
+                        localFile = System.IO.Path.Combine(localPath, file);
+                        if (File.Exists(localFile)) File.Delete(localFile);
+                        //Remote File and Paths
+                        string downloadfile = this.brokerRequest.list.root + "/" + this.brokerRequest.listitem[count];
+                        count++;
+                        Uri uri1 = new Uri(downloadfile);
+                        //MessageBox.Show(downloadfile);
+                        using (WebClient downloadClient = new WebClient()) {
+                            downloadClient.DownloadFile(uri1, @localFile);
+                        }
+                        if (File.Exists(localFile)) System.Diagnostics.Process.Start(@localFile);
+                    }
                 }
-                if (File.Exists(localFile)) System.Diagnostics.Process.Start(@localFile);
                 return true;
             } catch (Exception e) {
+                //MessageBox.Show(e.ToString());
                 return false;
             }
         }
+        // Upload files for current Globe Project
+        internal bool uploadFile() {
+            try {
+                // Setup Variables
+                HttpWebResponse response = null;
+                HttpData httpForm;
+                string localPath, yourUrl;
+                string[] dirs;
+                int filecount;
+                fileUploaded = false;
+                //Local File & Paths
+                localPath = System.IO.Path.Combine(this.drivePaths.dPath_Working_Directory, this.brokerRequest.globe.id); //Working Dir combined with globe Object ID
+                // Ensure the localPath exists before attempting to read its contents
+                if (Directory.Exists(localPath)) {
+                    dirs = Directory.GetFiles(localPath);
+                    //MessageBox.Show(this.API_ADDRESS);
+                    yourUrl = "http://localhost/API/GLOBLOCK.php";
+                    httpForm = new HttpData(yourUrl);
+                    filecount = 0;
+                    foreach (string file in dirs) {
+                        filecount++;
+                        //file = @"C:\Globlock\test1.txt";
+                        httpForm.AttachFile("file" + filecount, @file);
+                    }
+                    httpForm.SetValue("request_header", "PUSH");
+                    httpForm.SetValue("session_token", this.brokerRequest.session.token);
+                    httpForm.SetValue("globe_id", this.brokerRequest.globe.id);
+                    response = httpForm.Submit();
+                    fileUploaded = (filecount>0);
+                }
+                try {
+                    Directory.Delete(localPath, true);
+                } catch(Exception e) { 
+                }
+                return true;
+            } catch (Exception e) {
+                MessageBox.Show(e.ToString());
+                return false;
+            }
+        
+        }
+
         #endregion
+    
     }
+
 }

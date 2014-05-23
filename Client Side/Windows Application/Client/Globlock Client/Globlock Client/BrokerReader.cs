@@ -11,6 +11,7 @@ namespace Globlock_Client {
 
     class BrokerReader {
 
+        #region Data Members
         /** Private Members */
         private SerialPort arduino;
         private List<byte> bBuffer;
@@ -34,7 +35,9 @@ namespace Globlock_Client {
         public string STATUSMESSAGE;
         public string validPort;
         public bool RUNNING;
+        #endregion
 
+        #region Constructor
         /** Constructor */
         public BrokerReader(string port) {
             this.port = port;
@@ -43,9 +46,11 @@ namespace Globlock_Client {
                 start();
             }
         }
+        #endregion
 
+        #region Command
+        // Start Comms
         private void start() {
-            //MessageBox.Show("Start!");
             clearcontainers();
             arduino = new SerialPort(port, 9600);
             arduino.DataReceived += new SerialDataReceivedEventHandler(receivedTag);
@@ -53,6 +58,7 @@ namespace Globlock_Client {
             STATUS = DEVICE_STATE_LISTENING;
         }
 
+        // Restart Comms
         public void restart() {
             if (arduino.IsOpen) {
                 try { 
@@ -63,13 +69,17 @@ namespace Globlock_Client {
             }
             start();
         }
+        #endregion
 
+        #region Continued Communcations
+        //Received Tag Read event from device
         private void receivedTag(object sender, SerialDataReceivedEventArgs e) {
             STATUS = DEVICE_STATE_READING;
             bBuffer = new List<byte>();
             while (arduino.BytesToRead > 0) bBuffer.Add((byte)arduino.ReadByte());
             ProcessBuffer(bBuffer);
         }
+
         /** 
          * Process Buffer
          * Takes byte list as input and appends the byte stream to the response string
@@ -79,48 +89,71 @@ namespace Globlock_Client {
             lastSerialResponse += System.Text.Encoding.ASCII.GetString(bBuffer.ToArray());
             if (lastSerialResponse.Length > 10) {
                 if (lastSerialResponse.Contains("Complete") || lastSerialResponse.Contains("COMPLETE")) {
-                    Console.Beep();
+                    //Console.Beep();
                     System.Diagnostics.Debug.WriteLine(String.Format("Received Complete: {0}", lastSerialResponse));
                     STATUS = DEVICE_STATE_READ_COMPLETE;
                     STATUSMESSAGE = lastSerialResponse;
                     Console.Beep();
                 } else {
                     //Not yet complete, allow to buffer
-                    Console.Beep();
+                    //Console.Beep();
                     System.Diagnostics.Debug.WriteLine(String.Format("Received Not Complete: {0}", lastSerialResponse));
                 }
             } else {
                 //Not yet complete, allow to buffer
-                Console.Beep();
+                //Console.Beep();
                 System.Diagnostics.Debug.WriteLine(String.Format("Received Short: {0}", lastSerialResponse));
             }
         }
 
+        // Clear containers to prevent contamination
+        private void clearcontainers() {
+            lastSerialResponse = "";
+            STATUS = 0;
+            STATUSMESSAGE = "";
+            bBuffer = new List<byte>();
+        }
+        #endregion
+
+        #region Initial Setup
+        // Initial setup and test
         private bool initialPortConfiguration() {
             clearcontainers();
             STATUS = DEVICE_STATE_INITIALIZING;
             arduino = new SerialPort(port, 9600);
             arduino.DataReceived += new SerialDataReceivedEventHandler(receivedDeviceHandshake);
-            arduino.Open();
-            if (arduino.IsOpen) {
-                STATUS = DEVICE_STATE_WRITING;
-                arduino.WriteLine("#H#");
-                STATUS = DEVICE_STATE_WAITING;
-                Thread.Sleep(SERIAL_TIMEOUT);
-                if (STATUS == DEVICE_STATE_READ_COMPLETE) {
-                    if (testResponse() == DEVICE_STATE_HANDSHAKE_SUCCESS) {
-                        return true;
+            try {
+                arduino.Open();
+                if (arduino.IsOpen) {
+                    STATUS = DEVICE_STATE_WRITING;
+                    arduino.WriteLine("#H#");
+                    STATUS = DEVICE_STATE_WAITING;
+                    Thread.Sleep(SERIAL_TIMEOUT);
+                    if (STATUS == DEVICE_STATE_READ_COMPLETE) {
+                        if (testResponse() == DEVICE_STATE_HANDSHAKE_SUCCESS) {
+                            return true;
+                        }
                     }
                 }
+            } catch (Exception e) {
+                string error = e.ToString();
+                if (e.GetType() == typeof(System.IO.IOException)) {
+                    error = String.Format("Device not connected on {0}", port);
+                    MessageBox.Show(e.GetType().ToString());
+                } 
+                outputError(error);
+                
             }
             return false;
         }
 
+        // Test Handshake Response
         private int testResponse() {
             if (lastSerialResponse.Contains("RESPONSE")) return DEVICE_STATE_HANDSHAKE_SUCCESS;
             return 99;
         }
         
+        // Respond to Handshake Recieved
         private void receivedDeviceHandshake(object sender, SerialDataReceivedEventArgs e) {
             STATUS = DEVICE_STATE_READING;
             bBuffer = new List<byte>();
@@ -128,6 +161,7 @@ namespace Globlock_Client {
             ProcessHandshakeBuffer(bBuffer);
         }
 
+        // Received comms Buffer for Handshake
         private void ProcessHandshakeBuffer(List<byte> bBuffer) {
             lastSerialResponse += System.Text.Encoding.ASCII.GetString(bBuffer.ToArray());
             if (lastSerialResponse.Length > 10) {
@@ -150,13 +184,16 @@ namespace Globlock_Client {
                 System.Diagnostics.Debug.WriteLine(String.Format("Received Short: {0}", lastSerialResponse));
             }
         }
-       
-        private void clearcontainers() {
-            lastSerialResponse = "";
-            STATUS = 0;
-            STATUSMESSAGE = "";
-            bBuffer = new List<byte>();
+        #endregion
+                
+        #region Error Handle
+        // Output an error and exit
+        private void outputError(string error = "") {
+            MessageBox.Show("An irrecoverable error has occured! " + error);
+            Environment.Exit(0);
         }
-
+        #endregion
+    
     }
+
 }

@@ -33,13 +33,14 @@ namespace Globlock_Client {
             dPath_Database_FullPath = System.IO.Path.Combine(dPath_Working_Directory, dPath_Database_Location);
             dPath_Database_Absolute = System.IO.Path.Combine(dPath_Working_Directory, dPath_Database_Location, dPath_Database_Filename);
 
+            /*
             if (testMode) {                                                                        //Testing only
-                server_API_URI = new System.Uri("http://localhost/16052014/FileAccessAPI.php");    //Testing only
+                server_API_URI = new System.Uri("http://localhost/21052014/GLOBLOCK.php");    //Testing only
                 server_API_Filename = "FileAccessAPI.php";                                         //Testing only
-                server_API_Address = "http://localhost/16052014/";                                 //Testing only
+                server_API_Address = "http://localhost/21052014/";                                 //Testing only
                 return;
             }
-
+            */
             server_API_Address = iniAccess.IniReadValue("SERVER", "location");
             server_API_Filename = iniAccess.IniReadValue("SERVER", "filename");
             server_API_URI = new System.Uri(System.IO.Path.Combine(server_API_Address, server_API_Filename));    //Testing only

@@ -4,7 +4,7 @@
 echo 
 "<html>
 <body>
-<form action='FileAccessAPI.php' method='post'>
+<form action='GLOBLOCK.php' method='post'>
 Header: <input type='text' name='request_header'><br>
 Message: <input type='text' name='request_body'><br>
 TEST: <input type='text' name='testtest'><br>

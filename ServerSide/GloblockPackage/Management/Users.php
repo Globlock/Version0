@@ -153,6 +153,7 @@
 											</div>
 											<p class="guidelines" id="guide_6"><small>A primary group is not required but may make it easier if defined at the start.</small></p> 
 										</li>		
+										
 										<li id="li_5" >
 											<label class="description" for="element_5">User Type </label>
 											<div>

@@ -41,7 +41,7 @@
 		# File access handler
 		include '../package/h_file_handler.php';
 		# Function Timer for Testing
-		include '.../package/t_functionTimer.php';
+		include '../package/t_functionTimer.php';
 	
 	
 ?>

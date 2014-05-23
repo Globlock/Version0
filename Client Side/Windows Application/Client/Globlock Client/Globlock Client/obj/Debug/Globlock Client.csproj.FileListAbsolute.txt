@@ -1,16 +1,18 @@
-A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\x64\SQLite.Interop.dll
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\x86\SQLite.Interop.dll
-A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Globlock Client.exe.config
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Globlock Client.exe
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Globlock Client.pdb
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Newtonsoft.Json.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Data.SQLite.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\x64\SQLite.Interop.dll
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Globlock Client.exe.config
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Globlock Client.exe.manifest
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Globlock Client.application
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Configuration.dll
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\EntityFramework.dll
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\EntityFramework.SqlServer.dll
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Microsoft.WindowsAzure.Configuration.dll
-A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Newtonsoft.Json.dll
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\Simple.Config.dll
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Configuration.Abstractions.dll
-A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Data.SQLite.dll
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Data.SQLite.EF6.dll
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Data.SQLite.Linq.dll
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Management.Automation.dll
@@ -24,10 +26,11 @@ A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Glo
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\bin\Debug\System.Data.SQLite.xml
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock_Client.GUI_Login.resources
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock_Client.GUI_Main.resources
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock_Client.GUI_SetProject.resources
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock_Client.Properties.Resources.resources
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock_Client.GUI_Toast.resources
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock Client.csproj.GenerateResource.Cache
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock Client.exe.manifest
+A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock Client.application
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock Client.exe
 A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock Client.pdb
-A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock Client.csprojResolveAssemblyReference.cache
-A:\_Globlock\Version0\Client Side\Windows Application\Client\Globlock Client\Globlock Client\obj\Debug\Globlock_Client.GUI_SetProject.resources

@@ -87,7 +87,7 @@ function handleRequest(&$broker){
 				handlePull($broker);
 				break;
 			case "PUSH":
-				pushFiles($broker);
+				handlePush($broker);
 				break;
 		}
 		echo $broker->returnJSON();
@@ -165,7 +165,7 @@ function handleSet(&$broker){
 function handlePull(&$broker){
 	try{
 		//echo "<br/>Attempting To Handle Pull<br/>"; 
-		if(validSession($broker, 2)){
+		//if(sh_validSessionToken($broker, 2)){
 			$broker->setValue('header', 'type', "PULL RESPONSE");
 			$fileDetails = gh_getGlobeRevisionDetails($broker);
 			//echo "<br/>File Details: <br/>"; 
@@ -176,9 +176,9 @@ function handlePull(&$broker){
 				//echo "<br/>All good!<br/>"; 
 			}
 			fh_pullRequest($broker, $fileDetails['globe_id']);
-		} else {
-			$broker->setValue("header", "message", "InValid Session");
-		}
+		//} else {
+		//	$broker->setValue("header", "message", "InValid Session");
+		//}
 		}catch(Exception $e){
 			//echo "<br/>ERROR!! ".$e."<br/>"; 
 		}
@@ -187,13 +187,23 @@ function handlePull(&$broker){
 /** */
 //PUSH FILES
 function handlePush(&$broker){
-	// TO DO - Handle validGlobe & project from here
-	if(validSession($broker, 2)){
-		$broker->setValue('header', 'type', "PUSH RESPONSE");
-		$globe_id = gh_searchGlobeProject($broker);
-		if ($globe_id > 0){
-			fh_pushRequest($broker, $globe_id);
-		}
+	try {
+		// Ensure Globe_ID set
+		if (!(isset($_POST["globe_id"]))) throw new Exception("Exception Thrown (GLOBE ID NOT SET)");
+		$broker->setValue("globe", "id", $_POST["globe_id"]);
+		file_put_contents('output.txt', "\n\r globe_id set ".$_POST["globe_id"]." \n\r", FILE_APPEND);
+		//if(sh_validSessionToken($broker, 2)){
+			$broker->setValue('header', 'type', "PUSH RESPONSE");
+			$globe_id = gh_searchGlobeProject($broker);
+			if ($globe_id > 0){
+				file_put_contents('output.txt', "\n\r globe_id found $globe_id \n\r", FILE_APPEND);
+				fh_pushRequest($broker, $globe_id);
+			} else {
+				file_put_contents('output.txt', "\n\r No Globe ID charles \n\r", FILE_APPEND);
+			}
+		//}
+	}catch(Exception $e){
+		file_put_contents('output.txt', "\n\r No Globe ID not Set \n\r", FILE_APPEND);
 	}
 }
 

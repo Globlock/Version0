@@ -61,7 +61,7 @@ namespace Globlock_Client {
             string[] defaultSettings = {    "[PROJECT]", "title=Globlock","version=1.0","default=empty",
                                             "[WORKINGDIRECTORY]","directory="+ path,"settings="+ filename,"source=", "default=empty",
                                             "[DATABASE]","location=Database","filename=GloblockLocal.db","default=empty",
-                                            "[SERVER]","location=http://localhost/Globlock", "filename=FileAccessAPI.php", "default=empty",
+                                            "[SERVER]","location=http://localhost/API", "filename=Globlock.php", "default=empty",
                                             "[PORT]","port_num=","default=empty",
                                             "[SALT]","handshake=","default=empty" };
             // For each String in Array, write to file (Add extra line space for sections)

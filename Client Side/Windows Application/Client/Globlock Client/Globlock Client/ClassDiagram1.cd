@@ -1,2 +1,81 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram /> 
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Globlock_Client.BrokerDatabase" Collapsed="true">
+    <Position X="3.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABABABBEkUAEAQQAChBkAIEAMQJAEAAIASAAEQAAA=</HashCode>
+      <FileName>BrokerDatabase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Globlock_Client.BrokerManager" Collapsed="true">
+    <Position X="5.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACgDaAAAjAIAgdC4QDIoQQgoIgAACDAgIhGEACQoAmQ=</HashCode>
+      <FileName>BrokerManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Globlock_Client.BrokerRequest" Collapsed="true">
+    <Position X="6" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQABgQAAAAAAAAAEQEAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>BrokerRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Globlock_Client.Header" Collapsed="true">
+    <Position X="6" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAACA=</HashCode>
+      <FileName>BrokerRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Globlock_Client.Error" Collapsed="true">
+    <Position X="7.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>BrokerRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Globlock_Client.User" Collapsed="true">
+    <Position X="7.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BrokerRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Globlock_Client.Session" Collapsed="true">
+    <Position X="4.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BrokerRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Globlock_Client.Globe" Collapsed="true">
+    <Position X="4.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>BrokerRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Globlock_Client.Status" Collapsed="true">
+    <Position X="6" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>BrokerRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Globlock_Client.Action" Collapsed="true">
+    <Position X="4.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAUgAAAAAAAAAAAIAACIAAAAAAA=</HashCode>
+      <FileName>BrokerRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Globlock_Client.List" Collapsed="true">
+    <Position X="7.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABIAgAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BrokerRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
