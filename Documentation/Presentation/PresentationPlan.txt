@@ -1,12 +1,13 @@
 PRE PREP:
 Start Apache/MySQL
 Open Management Site
+Enter Sample Data
 Connect Arduino
 Test Add User
 Test Add Document
 
 Presentation:
-
+Slides
 
 
 Demonstration:
@@ -15,6 +16,8 @@ Add Globe
 Add Document
 Show Groups
 Show Users
+
+Code Links:
 
 
 
